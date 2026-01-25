@@ -1,0 +1,7 @@
+this is multivendor e-commerce website having four user role super admin, admin, staff and client(customer)
+
+super admin=permission manage overall system
+admin(vendor shop owner) =create staff and mange shop 
+one vendor have multiple shops
+staff=manage product and other 
+client =buying the product and visitor 
