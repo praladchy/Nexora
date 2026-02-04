@@ -10,9 +10,8 @@ import {
 
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, phone, password, verifyBy } = req.body;
-
   try {
-    if (!email && !phone) {
+    if (!email && !phone && !password && !firstName ) {
       return res.status(400).json({
         message: "Email or phone is required",
       });
@@ -27,8 +26,10 @@ export const registerUser = async (req, res) => {
     const existingUser = await User.findOne({
       $or: orConditions,
     });
-
-    // Rest of your code remains the same...
+    if (existingUser && existingUser.isVerified)
+     return res.status().json({
+        message: "User is already registered",
+      });
     let verificationMethod = "email";
 
     if (verifyBy === "phone") {
@@ -58,9 +59,9 @@ export const registerUser = async (req, res) => {
 
     try {
       if (verificationMethod === "email") {
-        await sendEmail({ email, otp });
+        sendEmail({ email, otp });
       } else {
-        await sendOtpSms(phone, otp);
+        sendOtpSms(phone, otp);
       }
     } catch (error) {
       console.error("Error sending OTP:", error.message);
@@ -127,7 +128,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       message: "User Login successfully",
       success: true,
-      user: safeUser,
+        safeUser,
       accessToken,
     });
   } catch (error) {
@@ -198,8 +199,8 @@ export const logout = (req, res) => {
   }
 };
 export const sendOtp = async (req, res) => {
-  const { email:email,phone:phone,verifyBy} = req.body;
-  
+  const { email: email, phone: phone, verifyBy } = req.body;
+
   try {
     if (!email || !phone)
       return res.status(400).json({
@@ -207,21 +208,60 @@ export const sendOtp = async (req, res) => {
         success: false,
       });
     const user = await User.findOne({ email });
+
     if (!user)
       return res.status(400).json({
         message: "User not found",
         success: false,
       });
-      if (user.isVerified === true)
+    if (user.isVerified === true)
       return res.status(400).json({
         message: "User is already verified",
         success: false,
       });
     const otp = Math.floor(10000 + Math.random() * 90000).toString();
     if (verifyBy === "phone") {
-      await sendOtpSms(phone, otp);
+      sendOtpSms(phone, otp);
     } else {
-      await sendEmail({ email, otp });
+      sendEmail({ email, otp });
+    }
+    user.otp = otp;
+    user.isVerified = false;
+    user.otpExpireAt = new Date();
+    await user.save();
+    res.status(200).json({
+      message: "Otp sent to your email successfully",
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "internal server error",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+export const reSendOtp = async (req, res) => {
+  const { userId } = req.body;
+  console.log(userId);
+  try {
+    const user = await User.findById(userId);
+
+    if (!user)
+      return res.status(400).json({
+        message: "User not found",
+        success: false,
+      });
+    if (user.isVerified === true)
+      return res.status(400).json({
+        message: "User is already verified",
+        success: false,
+      });
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    if (user.verifyBy === "phone") {
+      sendOtpSms({ phone: user.phone, otp });
+    } else {
+      sendEmail({ email: user.email, otp });
     }
     user.otp = otp;
     user.isVerified = false;
@@ -241,37 +281,47 @@ export const sendOtp = async (req, res) => {
 };
 export const verifyOtp = async (req, res) => {
   const { userId, otp } = req.body;
-
   try {
     const user = await User.findById(userId);
-    console.log("Verifying OTP for user:", userId, "with OTP:", otp);
     if (!user)
       return res.status(404).json({
         message: "User not found",
         success: false,
       });
-    if (user.otpExpireAt < new Date()) {
+    if (!user.otpExpireAt || user.otpExpireAt < new Date()) {
       return res.status(400).json({
         message: "OTP has expired",
         success: false,
       });
     }
-    if (user.otp !== otp)
+    if (String(user.otp) !== String(otp))
       return res.status(400).json({
         message: "Invalid OTP",
         success: false,
       });
+    // const refreshToken = await generaterefreshToken(user);
+    // const accessToken = await generateAccessToken(user);
+
+    // user.refreshToken = refreshToken;
+
     user.otp = null;
     user.otpExpireAt = null;
     user.isVerified = true;
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   sameSite: "lax", // for localhost
+    //   secure: false,
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
     await user.save();
     res.status(200).json({
       message: "User verified successfully",
       success: true,
+      // accessToken,
     });
   } catch (error) {
     res.status(500).json({
-      message: "OTP verification failed",
+      message: "OTP verification failed server error",
       data: error.message,
       success: false,
     });
