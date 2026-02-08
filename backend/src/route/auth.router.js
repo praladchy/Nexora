@@ -9,5 +9,5 @@ router.post("/user/send-otp",sendOtp);
 
 router.post("/user/resend-otp",reSendOtp);
 router.post("/user/forgot-password", forgotPassword);
-router.post("/refresh",refresh);
+router.get("/refresh",refresh);
 export const authRouter = router;   

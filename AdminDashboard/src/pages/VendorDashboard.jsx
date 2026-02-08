@@ -1,9 +1,11 @@
- 
 import StatGrid from "../components/dashboard/StatGrid";
 import SalesPurchaseChart from "../components/dashboard/SalesPurchaseChart";
 import TopSellingTable from "../components/dashboard/TopSellingTable";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const VendorDashboard = () => {
+  
   return (
     <>
       <div className=" p-4 space-y-4">

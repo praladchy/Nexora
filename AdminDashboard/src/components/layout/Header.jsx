@@ -14,8 +14,8 @@ import { useSelector } from "react-redux";
 const Header = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const userProfile = useSelector((state) => state.user.data);
-  console.log(userProfile);
+  // const userProfile = useSelector((state) => state.user.data);
+  // console.log(userProfile);
   return (
     <header
       className={`flex items-center justify-between px-6 py-3 border-b transition-colors duration-300 ${

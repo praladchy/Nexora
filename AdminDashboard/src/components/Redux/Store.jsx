@@ -3,11 +3,11 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import { shopSlice } from "./Shop.apiSlice.jsx";
 import { productApi } from "./Product.slice.jsx";
-import userData from "./userData.slice.js";
+import authReducer from "./userData.slice.js";
 import { authApi } from "./auth.slice.js";
 export const Store = configureStore({
   reducer: {
-    user: userData,
+    authApi: authReducer,   /*this is name of reducer use any name you want only manditory name of slice name */
     [authApi.reducerPath]: authApi.reducer,
     [shopSlice.reducerPath]: shopSlice.reducer,
     [productApi.reducerPath]: productApi.reducer,

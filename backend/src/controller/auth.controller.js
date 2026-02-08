@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { sendEmail } from "../utils/emailVerification.js";
 import { sendOtpSms } from "../utils/phoneVerification.js";
 import { generateOTP } from "../utils/otp.js";
+import jwt from "jsonwebtoken";
 import {
   generateAccessToken,
   generaterefreshToken,
@@ -11,7 +12,7 @@ import {
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, phone, password, verifyBy } = req.body;
   try {
-    if (!email && !phone && !password && !firstName ) {
+    if (!email && !phone && !password && !firstName) {
       return res.status(400).json({
         message: "Email or phone is required",
       });
@@ -27,7 +28,7 @@ export const registerUser = async (req, res) => {
       $or: orConditions,
     });
     if (existingUser && existingUser.isVerified)
-     return res.status().json({
+      return res.status(400).json({
         message: "User is already registered",
       });
     let verificationMethod = "email";
@@ -128,7 +129,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       message: "User Login successfully",
       success: true,
-        safeUser,
+      safeUser,
       accessToken,
     });
   } catch (error) {
@@ -328,16 +329,29 @@ export const verifyOtp = async (req, res) => {
   }
 };
 export const refresh = async (req, res) => {
-  const token = req.cookies.refreshToken;
-  if (!token) return res.sendStatus(401);
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-  const user = await User.findOne({ refreshToken: token });
-  if (!user) return res.sendStatus(403);
+    const user = await User.findOne({ refreshToken: token });
+    if (!user) return res.status(403).json({ message: "User not found" });
+const safeuser={
+  id:user._id,
+  firstName:user.firstName,
+  lastName:user.lastName,
+  email:user.email,
+  phone:user.phone,
+}
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err || user._id.toString() !== decoded.id) return res.sendStatus(403);
+    if (user._id.toString() !== decoded.userId)
+      return res.status(403).json({ message: "Forbidden" });
 
-    const newAccessToken = generateAccessToken(user);
-    res.json({ accessToken: newAccessToken });
-  });
+    const newAccessToken = await generateAccessToken(user);
+
+    res.json({ accessToken: newAccessToken ,safeuser});
+  } catch (err) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
 };
+

@@ -10,7 +10,7 @@ const SignUp = () => {
     phone: "",
     password: "",
   });
-  const [signup]=useRegisterMutation()
+  const [signup] = useRegisterMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -19,19 +19,16 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res=await signup(formData).unwrap()
+    const res = await signup(formData).unwrap();
 
     try {
       console.log(res);
-      alert(res.message)  
+      alert(res.message);
       navigate(`/verify-otp/${res.userid}`);
-      
-
     } catch (error) {
-      console.log("failed to registered",error)
+      alert(error.data.message);
+      console.error("failed to registered", error);
     }
-
-    
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">

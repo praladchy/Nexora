@@ -25,7 +25,7 @@ api.interceptors.response.use(
     ) {
       originalReq._retry = true;
 
-      try {
+      try {d
         const res = await api.post(
           "/api/auth/refresh",
           {},

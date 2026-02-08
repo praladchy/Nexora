@@ -1,17 +1,18 @@
 import React from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../components/Redux/auth.slice";
-import { UserData } from "../components/Redux/userData.slice";
+import { setCredentials  } from "../components/Redux/userData.slice";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [Login] = useLoginMutation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -22,15 +23,17 @@ const Login = () => {
 
     try {
       const res = await Login(formData).unwrap();
-      console.log(res.data.message);
-      // alert(res.data.message);
-      dispatch(UserData(res.safeUser));
-      localStorage.setItem("userData", JSON.stringify(res.safeUser));
-      localStorage.setItem("accessToken", JSON.stringify(res.accessToken));
+      console.log("Login response:", res);
+      alert(res.message);
+      dispatch(setCredentials(res.accessToken));
+
+      // localStorage.setItem("accessToken", JSON.stringify(res.accessToken));
+
       navigate("/");
       setFormData({ email: "", password: "" });
     } catch (error) {
-      console.log(error);
+      alert(error?.data?.message);
+      console.error("Login failed:", error.data.message);
     }
   };
   return (
