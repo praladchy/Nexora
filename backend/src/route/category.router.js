@@ -1,0 +1,12 @@
+import express from "express";
+import { createCategory, deleteCategory, getCategory, getCategoryByShop, getCategoryBySlug, updateCategory } from "../controller/admin/category.controller.js";
+import { adminMiddleware, checkPermission } from "../middleware/auth.middleware.js";
+import { upload } from "../middleware/upload.multer.js";
+const router=express.Router();
+router.post("/createCategory",adminMiddleware,checkPermission(""),upload.array("images",5),createCategory);
+router.get("getCategory",adminMiddleware,checkPermission(""),getCategory);
+router.get("/shop/:shopId",adminMiddleware,checkPermission(""),getCategoryByShop);  
+router.get("/:slug",adminMiddleware,checkPermission(""),getCategoryBySlug);
+router.patch("/:id",adminMiddleware,checkPermission(""),upload.array("images",5),updateCategory);
+router.delete("/:id",adminMiddleware,checkPermission(""),deleteCategory);
+export const categoryrouter=router;

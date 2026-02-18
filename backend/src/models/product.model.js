@@ -6,14 +6,13 @@ const variantSchema = new mongoose.Schema(
     value: { type: String, required: true }, // M, L, Red
     price: { type: Number }, // optional override price
     stock: { type: Number, default: 0 },
-  },
-  { _id: false }
+  } 
 );
 
 const productSchema = new mongoose.Schema(
   {
     /* ---------------- BASIC INFO ---------------- */
-    title: {
+    name: {
       type: String,
       required: true,
       trim: true,
@@ -53,10 +52,7 @@ const productSchema = new mongoose.Schema(
       },
     ],
 
-    thumbnail: {
-      url: String,
-      public_id: String,
-    },
+    
 
     /* ---------------- INVENTORY ---------------- */
     stock: {
@@ -128,10 +124,7 @@ const productSchema = new mongoose.Schema(
       default: false, // approved by super admin
     },
 
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
+    
   },
   {
     timestamps: true,

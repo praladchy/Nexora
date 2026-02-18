@@ -5,6 +5,7 @@ import { useLoginMutation } from "../components/Redux/auth.slice";
 import { setCredentials  } from "../components/Redux/userData.slice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -25,7 +26,11 @@ const Login = () => {
       const res = await Login(formData).unwrap();
       console.log("Login response:", res);
       alert(res.message);
-      dispatch(setCredentials(res.accessToken));
+
+      dispatch(setCredentials({
+          safeuser: res.safeuser, // matches slice
+          accessToken: res.accessToken,
+        }));
 
       // localStorage.setItem("accessToken", JSON.stringify(res.accessToken));
 
@@ -33,7 +38,7 @@ const Login = () => {
       setFormData({ email: "", password: "" });
     } catch (error) {
       alert(error?.data?.message);
-      console.error("Login failed:", error.data.message);
+      console.error("Login failed:", error);
     }
   };
   return (

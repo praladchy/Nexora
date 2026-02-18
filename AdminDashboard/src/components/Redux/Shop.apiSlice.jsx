@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithInterceptor } from "./baseQueryInterceptor";
 
 export const shopSlice = createApi({
-  reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/auth/shop",
-    credentials: "include", // IMPORTANT for cookies/JWT
-  }),
+  reducerPath: "shopApi",
+  baseQuery: baseQueryWithInterceptor,
   tagTypes: ["Shop"],
+  // baseUrl: "http://localhost:5000/api/",
+
   endpoints: (builder) => ({
     createShop: builder.mutation({
       query: (data) => {
@@ -14,9 +14,6 @@ export const shopSlice = createApi({
           method: "POST",
           url: "/createShop",
           body: data,
-          headers: {
-            "Content-Type": "application/json",
-          },
         };
       },
       invalidatesTags: ["Shop"],
@@ -29,30 +26,28 @@ export const shopSlice = createApi({
       providesTags: ["Shop"],
     }),
     getShopById: builder.query({
-      query: (id) => ({
-        url: ` /getShop/${id}`,
+      query: (shopId) => ({
+        url: `/getShop/${shopId}`,
         method: "GET",
-        providesTags: ["Shop"],
       }),
+      providesTags: ["Shop"],
     }),
-    upDateShop: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/updateShop/${id}`,
+    updateShop: builder.mutation({
+      query: ({ shopId, data }) => ({
+        url: `/updateShop/${shopId}`,
 
         method: "PATCH",
         body: data,
-        headers: {
-          "Content-Type": "application/json",
-        },
       }),
       invalidatesTags: ["Shop"],
     }),
 
     deleteShop: builder.mutation({
-      query: (id) => ({
-        url: `/deleteShop/${id}`,
-        method: " DELETE",
+      query: (shopId) => ({
+        url: `/deleteShop/${shopId}`,
+        method: "DELETE",
       }),
+      invalidatesTags: ["Shop"],
     }),
   }),
 });
@@ -62,4 +57,5 @@ export const {
   useGetShopByIdQuery,
   useUpDateShopMutation,
   useDeleteShopMutation,
+  useGetShopsQuery,
 } = shopSlice;

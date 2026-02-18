@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const shopSchema = new mongoose.Schema(
   {
     name: {
@@ -29,7 +31,7 @@ const shopSchema = new mongoose.Schema(
     address: String,
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   { timestamps: true }

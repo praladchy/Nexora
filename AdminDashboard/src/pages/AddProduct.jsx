@@ -1,6 +1,8 @@
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import ProductImageDropzone  from "../utils/ImageUploader.jsx"
 import { useState } from "react";
+
 const AddProduct = () => {
   const initialValues = {
 
@@ -215,7 +217,7 @@ const AddProduct = () => {
                   />
 
                   {/* SHOP SELECT */}
-                  <Field as="select" name="shopId" className="input flex-1">
+                  {/* <Field as="select" name="shopId" className="input flex-1">
                     <option value="">Select Shop</option>
 
                     {data?.data?.map((item) => (
@@ -226,7 +228,7 @@ const AddProduct = () => {
                         {item.name}
                       </option>
                     ))}
-                  </Field>
+                  </Field> */}
 
                   {/* GENDER */}
                   <Field as="select" name="gender" className="input flex-1">

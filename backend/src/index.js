@@ -7,7 +7,12 @@ import cookieParser from "cookie-parser";
 
 import { connectDb } from "./config/db.config.js";
 import { authRouter } from "./route/auth.router.js";
-
+import { authMiddleware } from "./middleware/auth.middleware.js";
+import { shoprouter } from "./route/shop.router.js";
+import { categoryrouter } from "./route/category.router.js";
+import { productrouter } from "./route/product.router.js";
+import { superAdmin } from "./controller/auth.controller.js";
+import {permissionRouter} from "./route/permission.router.js";
 const PORT = process.env.PORT || 8000;
 
 app.use(
@@ -20,7 +25,16 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRouter);
+app.use("/api/auth",authMiddleware,shoprouter);
+app.use("/api/auth",authMiddleware,permissionRouter);
+
+app.use("/api/auth",authMiddleware,categoryrouter);
+
+app.use("/api/auth",authMiddleware,productrouter);
+
+
 connectDb().then(() => {
+  superAdmin();
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });

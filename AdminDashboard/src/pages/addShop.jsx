@@ -1,99 +1,134 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { useCreateShopMutation, useGetShopQuery } from "../components/Redux/Shop.apiSlice";
+import { useState } from "react";
+import axios from "axios";
 
 const CreateShop = () => {
-  const [shopData]=useCreateShopMutation();
-  return (
-    <Formik
-      initialValues={{
-        name: "",
-        address: "",
-        city: "",
-        state: "",
-        // image: "",
-      }}
-      validationSchema={Yup.object({
-        name: Yup.string().required("Shop name is required"),
-        address: Yup.string().required("Address is required"), 
-        city: Yup.string().required("City is required"),
-        state: Yup.string().required("State is required"),
-      })}
-      onSubmit={async (values, { resetForm }) => {
-        try {
-          const res = await shopData(values).unwrap();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    owner: "",
+    admins: "",
+    description: "",
+    logo: "",
+    address: "",
+    isActive: true,
+  });
 
-        //   const res = await axios.post(
-        //     "http://localhost:5000/api/shop/create",
-        //     values,
-        //     { withCredentials: true }
-        //   );
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-          console.log("Shop Created:", res);
-          resetForm();
-        } catch (error) {
-          console.error(error);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      ...formData,
+      admins: formData.admins.split(",").map(id => id.trim())
+    };
+
+    try {
+      await axios.post("http://localhost:5000/api/shops", payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         }
-      }}
-    >
-      <Form className="max-w-lg mx-auto p-6 bg-white shadow rounded space-y-4">
-        <h2 className="text-xl font-semibold">Create Shop</h2>
+      });
+      alert("Shop created successfully");
+    } catch (err) {
+      alert(err.response?.data?.message || "Error creating shop");
+    }
+  };
 
-        <div>
-          <label>Shop Name</label>
-          <Field
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-6">
+        <h2 className="text-2xl font-bold mb-6">Create New Shop</h2>
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+
+          <input
+            type="text"
             name="name"
-            className="border p-2 w-full rounded"
+            placeholder="Shop Name"
+            className="input"
+            onChange={handleChange}
+            required
           />
-          <ErrorMessage name="name" component="p" className="text-red-500" />
-        </div>
 
-        <div>
-          <label>Address</label>
-          <Field
+          <input
+            type="email"
+            name="email"
+            placeholder="Shop Email"
+            className="input"
+            onChange={handleChange}
+          />
+
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone Number"
+            className="input"
+            onChange={handleChange}
+          />
+
+          <input
+            type="text"
+            name="owner"
+            placeholder="Owner User ID"
+            className="input"
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="admins"
+            placeholder="Admin IDs (comma separated)"
+            className="input col-span-2"
+            onChange={handleChange}
+          />
+
+          <input
+            type="text"
+            name="logo"
+            placeholder="Logo URL"
+            className="input col-span-2"
+            onChange={handleChange}
+          />
+
+          <textarea
+            name="description"
+            placeholder="Shop Description"
+            className="input col-span-2 h-24"
+            onChange={handleChange}
+          />
+
+          <textarea
             name="address"
-            className="border p-2 w-full rounded"
+            placeholder="Shop Address"
+            className="input col-span-2 h-20"
+            onChange={handleChange}
           />
-          <ErrorMessage name="address" component="p" className="text-red-500" />
-        </div>
 
-        <div className="flex gap-4">
-          <div className="w-1/2">
-            <label>City</label>
-            <Field
-              name="city"
-              className="border p-2 w-full rounded"
+          <div className="col-span-2 flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.isActive}
+              onChange={() =>
+                setFormData({ ...formData, isActive: !formData.isActive })
+              }
             />
-            <ErrorMessage name="city" component="p" className="text-red-500" />
+            <span>Is Active</span>
           </div>
 
-          <div className="w-1/2">
-            <label>State</label>
-            <Field
-              name="state"
-              className="border p-2 w-full rounded"
-            />
-            <ErrorMessage name="state" component="p" className="text-red-500" />
-          </div>
-        </div>
-
-        {/* <div>
-          <label>Shop Image URL</label>
-          <Field
-            name="image"
-            placeholder="https://image-url.com"
-            className="border p-2 w-full rounded"
-          />
-        </div> */}
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded w-full"
-        >
-          Create Shop
-        </button>
-      </Form>
-    </Formik>
+          <button
+            type="submit"
+            className="col-span-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+          >
+            Create Shop
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithInterceptor } from "./baseQueryInterceptor";
 export const authApi = createApi({
-  reducerPath: "auth",
+  reducerPath: "authApi",
   baseQuery:  baseQueryWithInterceptor,
-  tagTypes: ["auth"],
+  tagTypes: ["authApi"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data) => ({
@@ -15,6 +15,13 @@ export const authApi = createApi({
     register: builder.mutation({
       query: (data) => ({
         url: "auth/user/register",
+        method: "POST",
+        body: data,
+      }),
+    }),
+     superadminregister: builder.mutation({
+      query: (data) => ({
+        url: "auth/user/superAdminregister",
         method: "POST",
         body: data,
       }),

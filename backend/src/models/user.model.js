@@ -16,18 +16,22 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       lowercase: true,
+      sparse: true,
     },
 
     phone: {
       type: String,
+      sparse: true,
     },
 
     password: {
       type: String,
       required: true,
+      select: false,
     },
     refreshToken:{
       type: String,
+      select: false
     },
     otp: {
       type: String,
@@ -46,6 +50,11 @@ const userSchema = new mongoose.Schema(
       enum: ["superAdmin", "admin", "user", "deliveryMan"],
       default: "user",
     },
+    permissions:[{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Permission",
+    }
+    ],
 
     isActive: {
       type: Boolean,
@@ -79,11 +88,7 @@ const userSchema = new mongoose.Schema(
     },
 
     address: {
-      street: String,
-      city: String,
-      state: String,
-      country: String,
-      postalCode: String,
+       type: String,
     },
   },
   { timestamps: true }

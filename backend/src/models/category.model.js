@@ -5,34 +5,34 @@ const categorySchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     slug: {
       type: String,
       required: true,
       lowercase: true,
-      unique: true
+      unique: true,
     },
 
     description: {
-      type: String
+      type: String,
     },
 
     image: {
-      type: String // cloudinary / s3 url
+      type: String, // cloudinary / s3 url
     },
 
     parent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      default: null
+      default: null,
     },
 
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
-      default: null
+      default: null,
       /*
         null  => Global category (created by super admin)
         value => Shop specific category
@@ -41,20 +41,23 @@ const categorySchema = new mongoose.Schema(
 
     isGlobal: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     isActive: {
       type: Boolean,
-      default: true
+      default: true,
     },
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
+    },
+    updatedAt:{
+      type: Date,
     }
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Category", categorySchema);
