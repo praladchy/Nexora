@@ -3,7 +3,7 @@ const vendorSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true, // role = ADMIN
+      required: true,
     },
 
     vendorName: { type: String, required: true },
@@ -15,10 +15,16 @@ const vendorSchema = new mongoose.Schema(
       enum: ["PENDING", "ACTIVE", "SUSPENDED"],
       default: "PENDING",
     },
-
-    commissionRate: { type: Number, default: 10 }, // platform cut %
+    isActive: { type: Boolean, default: false },
+    commissionRate: { type: Number }, // platform cut %
+    createdDate: {
+      type: Date,
+    },
+    updatedDate: {
+      type: Date,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Vendor", vendorSchema);

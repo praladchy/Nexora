@@ -1,299 +1,290 @@
-import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import ProductImageDropzone  from "../utils/ImageUploader.jsx"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const AddProduct = () => {
-  const initialValues = {
-
-
-     
-    productName: "",
-    brand: "",
-    category: "",
-    shopId: "", // ✅ ADD THIS
-    price: "",
-    stockLimit: "",
-    SKU: "",
+  const [formData, setFormData] = useState({
+    name: "",
     description: "",
-    stockLevel: "",
+    price: "",
+    finalPrice: "",
     discount: "",
-    images: [],
-    
-   productType: "",
-    // variants: [
-    //   {
-    //     color: "",
-    //     size: "",
-    //     sku: "",
-    //     price: "",
-    //     stock: "",
-    //     discount: "",
-    //     isDefault: false,
-    //   },
-    // ],
-  };
-
-  const productSchema = Yup.object({
-    productName: Yup.string().required("Product name required"),
-    category: Yup.string().required("Category required"),
-    brand: Yup.string().required("Brand required"),
-    price: Yup.number().required("Price required"),
-    SKU: Yup.string().required("SKU required"),
-    stockLevel: Yup.number().required("Stock level required"),
-    stockLimit: Yup.number().required("Stock limit required"),
-    discount: Yup.number(),
-   productType: Yup.string().required("Select variant type"),
-    // variants: Yup.array().of(
-    //   Yup.object({
-    //     color: Yup.string().required("Color required"),
-    //     size: Yup.string().required("Size required"),
-    //     sku: Yup.string().required("SKU required"),
-    //     price: Yup.number().required("Price required"),
-    //     stock: Yup.number().required("Stock required"),
-    //     discount: Yup.number(),
-    //     isDefault: Yup.boolean(),
-    //   })
-    // ),
+    category: "",
+    subCategory: "",
+    brand: "",
+    stock: "",
+    shop: "",
+    sku: "",
+    stockLimit: "",
+    status: "active",
+    vendor: "",
   });
 
-  const handleSubmit = async (values) => {
-    const formData = new FormData();
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [shops, setShops] = useState([]);
+  const [vendors, setVendors] = useState([]);
 
-    // ✅ Append normal fields
-    formData.append("productName", values.productName);
-    formData.append("brand", values.brand);
-    formData.append("category", values.category);
-    formData.append("shopId", values.shopId);
-    formData.append("price", values.price);
-    formData.append("SKU", values.SKU);
-    formData.append("stockLevel", values.stockLevel);
-    formData.append("stockLimit", values.stockLimit);
-    formData.append("discount", values.discount);
-    formData.append("productType", values.productType);
-    formData.append("description", values.description);
+  const [loading, setLoading] = useState(false);
 
-    formData.append("variants", JSON.stringify(values.variants));
+  // 🔹 Handle Change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-    
-   
+    let updatedData = { ...formData, [name]: value };
+
+    // Auto calculate finalPrice
+    if (name === "price" || name === "discount") {
+      const price = name === "price" ? value : formData.price;
+      const discount = name === "discount" ? value : formData.discount;
+
+      if (price && discount) {
+        const final =
+          parseFloat(price) -
+          (parseFloat(price) * parseFloat(discount)) / 100;
+
+        updatedData.finalPrice = final.toFixed(2);
+      }
+    }
+
+    setFormData(updatedData);
+  };
+
+  // 🔹 Fetch Dropdown Data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const catRes = await fetch("http://localhost:5000/api/category");
+        const shopRes = await fetch("http://localhost:5000/api/shop");
+        const vendorRes = await fetch("http://localhost:5000/api/vendor");
+
+        const catData = await catRes.json();
+        const shopData = await shopRes.json();
+        const vendorData = await vendorRes.json();
+
+        setCategories(catData?.data || []);
+        setShops(shopData?.data || []);
+        setVendors(vendorData?.data || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // 🔹 Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.category || !formData.price || !formData.stock) {
+      alert("Name, Category, Price and Stock are required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch("http://localhost:5000/api/product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Product created successfully");
+        setFormData({
+          name: "",
+          description: "",
+          price: "",
+          finalPrice: "",
+          discount: "",
+          category: "",
+          subCategory: "",
+          brand: "",
+          stock: "",
+          shop: "",
+          sku: "",
+          stockLimit: "",
+          status: "active",
+          vendor: "",
+        });
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="p-6">
-      <Formik
-        initialValues={initialValues}
-        // validationSchema={productSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ values, setFieldValue }) => (
-          <Form className="flex gap-6">
-            {/* LEFT */}
-            <div className="w-[40%] flex flex-col gap-6">
-              <div className="bg-white rounded-xl p-4 shadow">
-                <h3 className="font-semibold mb-3">Upload Images*</h3>
-                <ProductImageDropzone
-                  images={values.images}
-                  setFieldValue={setFieldValue}
-                />
-              </div>
+      <form onSubmit={handleSubmit} className="flex gap-6">
+        {/* LEFT SIDE */}
+        <div className="w-[60%] flex flex-col gap-6">
+          {/* Basic Info */}
+          <div className="bg-white rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
 
-              {/* VARIANTS */}
-              {/* <div className="bg-white p-4 rounded-xl shadow">
-                <h2 className="text-xl font-semibold mb-4">Product Variants</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Product Name"
+                value={formData.name}
+                onChange={handleChange}
+                className="input"
+              />
 
-                <FieldArray name="variants">
-                  {({ push, remove }) => (
-                    <div className="flex flex-col gap-4">
-                      {values.variants.map((_, index) => (
-                        <div
-                          key={index}
-                          className="bg-gray-50 p-4 rounded-xl shadow flex gap-4"
-                        >
-                          <div className="flex-1 flex flex-col gap-3">
-                            <div className="flex gap-4">
-                              <Field
-                                name={`variants.${index}.color`}
-                                className="input flex-1"
-                                placeholder="Color"
-                              />
-                              <Field
-                                name={`variants.${index}.size`}
-                                className="input flex-1"
-                                placeholder="Size"
-                              />
-                              <Field
-                                name={`variants.${index}.sku`}
-                                className="input flex-1"
-                                placeholder="SKU"
-                              />
-                            </div>
+              <input
+                type="text"
+                name="brand"
+                placeholder="Brand"
+                value={formData.brand}
+                onChange={handleChange}
+                className="input"
+              />
 
-                            <div className="flex gap-4">
-                              <Field
-                                name={`variants.${index}.price`}
-                                className="input flex-1"
-                                placeholder="Price"
-                              />
-                              <Field
-                                name={`variants.${index}.stock`}
-                                className="input flex-1"
-                                placeholder="Stock"
-                              />
-                              <Field
-                                name={`variants.${index}.discount`}
-                                className="input flex-1"
-                                placeholder="Discount %"
-                              />
-                            </div>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
 
-                            <div className="flex items-center gap-4">
-                              <label className="flex items-center gap-2 text-sm">
-                                <Field
-                                  type="checkbox"
-                                  name={`variants.${index}.isDefault`}
-                                />
-                                Default Variant
-                              </label>
-
-                              <button
-                                type="button"
-                                onClick={() => remove(index)}
-                                className="text-red-500 ml-auto"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          push({
-                            color: "",
-                            size: "",
-                            sku: "",
-                            price: "",
-                            stock: "",
-                            discount: "",
-                            isDefault: false,
-                          })
-                        }
-                        className="bg-purple-600 text-white px-6 py-2 rounded-lg self-end"
-                      >
-                        + Add Variant
-                      </button>
-                    </div>
-                  )}
-                </FieldArray>
-              </div> */}
+              <select
+                name="shop"
+                value={formData.shop}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="">Select Shop</option>
+                {shops.map((shop) => (
+                  <option key={shop._id} value={shop._id}>
+                    {shop.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* RIGHT */}
-            <div className="w-[60%] flex flex-col gap-6">
-              <div className="bg-white rounded-xl p-4 shadow">
-                <h3 className="font-semibold mb-4">Basic Information</h3>
+            <textarea
+              name="description"
+              rows="4"
+              placeholder="Description"
+              value={formData.description}
+              onChange={handleChange}
+              className="input mt-4 w-full"
+            />
+          </div>
 
-                <div className="flex gap-4 mb-4">
-                  <Field
-                    name="productName"
-                    className="input flex-1"
-                    placeholder="Product name"
-                  />
-                  <Field
-                    name="category"
-                    className="input flex-1"
-                    placeholder="Category"
-                  />
-                </div>
+          {/* Product Details */}
+          <div className="bg-white rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold mb-4">Product Details</h3>
 
-                <div className="flex gap-4 mb-4">
-                  <Field
-                    name="brand"
-                    className="input flex-1"
-                    placeholder="Brand"
-                  />
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={formData.price}
+                onChange={handleChange}
+                className="input"
+              />
 
-                  {/* SHOP SELECT */}
-                  {/* <Field as="select" name="shopId" className="input flex-1">
-                    <option value="">Select Shop</option>
+              <input
+                type="number"
+                name="discount"
+                placeholder="Discount %"
+                value={formData.discount}
+                onChange={handleChange}
+                className="input"
+              />
 
-                    {data?.data?.map((item) => (
-                      <option
-                        key={item._id}
-                        value={item._id}
-                      >
-                        {item.name}
-                      </option>
-                    ))}
-                  </Field> */}
+              <input
+                type="number"
+                name="finalPrice"
+                placeholder="Final Price"
+                value={formData.finalPrice}
+                readOnly
+                className="input bg-gray-100"
+              />
 
-                  {/* GENDER */}
-                  <Field as="select" name="gender" className="input flex-1">
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </Field>
-                </div>
+              <input
+                type="text"
+                name="sku"
+                placeholder="SKU"
+                value={formData.sku}
+                onChange={handleChange}
+                className="input"
+              />
 
-                <Field
-                  as="textarea"
-                  name="description"
-                  rows="4"
-                  className="input w-full"
-                  placeholder="Description"
-                />
-              </div>
+              <input
+                type="number"
+                name="stock"
+                placeholder="Stock"
+                value={formData.stock}
+                onChange={handleChange}
+                className="input"
+              />
 
-              <div className="bg-white rounded-xl p-4 shadow">
-                <h3 className="font-semibold mb-4">Product Details</h3>
+              <input
+                type="number"
+                name="stockLimit"
+                placeholder="Stock Limit"
+                value={formData.stockLimit}
+                onChange={handleChange}
+                className="input"
+              />
 
-                <div className="grid grid-cols-2 gap-4">
-                  <Field name="price" className="input" placeholder="Price" />
-                  <Field name="SKU" className="input" placeholder="SKU" />
-                  <Field
-                    name="stockLevel"
-                    className="input"
-                    placeholder="Stock Level"
-                  />
-                  <Field
-                    name="stockLimit"
-                    className="input"
-                    placeholder="Stock Limit"
-                  />
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
 
-                  <Field as="select" name="productType" className="input">
-                    <option value="">Select Type</option>
-                    <option value="simple">Simple</option>
-                    <option value="variant">Variant</option>
-                  </Field>
-
-                  <Field
-                    name="discount"
-                    className="input"
-                    placeholder="Discount %"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-4">
-                <button
-                  type="submit"
-                  className="px-6 py-2 rounded-lg bg-purple-600 text-white"
-                >
-                  Add Product
-                </button>
-
-                <button type="button" className="px-6 py-2 rounded-lg border">
-                  Save to Draft
-                </button>
-              </div>
+              <select
+                name="vendor"
+                value={formData.vendor}
+                onChange={handleChange}
+                className="input"
+              >
+                <option value="">Select Vendor</option>
+                {vendors.map((v) => (
+                  <option key={v._id} value={v._id}>
+                    {v.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          </Form>
-        )}
-      </Formik>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-purple-600 text-white px-6 py-2 rounded-lg"
+            >
+              {loading ? "Creating..." : "Add Product"}
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   );
 };

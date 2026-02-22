@@ -20,7 +20,7 @@ export const createShop = async (req, res) => {
     if (!email && !phone)
       return res.status().json({ message: "Email or phone is required" });
     if (!name) return res.status().json({ message: "Shop name is required" });
-
+   
     const shop = await shopModel
       .findOne(query)
       .populate("owner")
@@ -128,4 +128,3 @@ export const deleteShop = async (req, res) => {
     });
   }
 };
- 

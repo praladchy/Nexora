@@ -32,8 +32,8 @@ function App() {
   const user = useSelector((state) => state.auth.user);
   const accessToken = useSelector((state) => state.auth.accessToken);
 
-  if(isLoading) return <h1>Loading...</h1>;
-   
+  if (isLoading) return <h1>Loading...</h1>;
+
   return (
     <>
       <Routes>

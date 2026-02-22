@@ -19,7 +19,9 @@ const Sidebar = () => {
         <NavLink to="/addShop">
           <SidebarItem icon={<PlusSquare />} text="Add Shop" />
         </NavLink>
-
+        <NavLink to="/permission">
+          <SidebarItem icon={<PlusSquare />} text="Permission Managements" />
+        </NavLink>
         <NavLink to="/productManag">
           <SidebarItem icon={<List />} text="Product Management List" />
         </NavLink>
