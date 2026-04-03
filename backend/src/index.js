@@ -13,6 +13,7 @@ import { categoryrouter } from "./route/category.router.js";
 import { productrouter } from "./route/product.router.js";
 import { superAdmin } from "./controller/auth.controller.js";
 import {permissionRouter} from "./route/permission.router.js";
+import { vendorRouter } from "./route/vendor.router.js";
 const PORT = process.env.PORT || 8000;
 
 app.use(
@@ -25,12 +26,12 @@ app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRouter);
-app.use("/api/auth",authMiddleware,shoprouter);
-app.use("/api/auth",authMiddleware,permissionRouter);
+app.use("/api/shop",shoprouter);
+app.use("/api/permission",permissionRouter);
+app.use("/api/category",categoryrouter);
+app.use("/api/product",productrouter);
+app.use("/api/vendor",vendorRouter);
 
-app.use("/api/auth",authMiddleware,categoryrouter);
-
-app.use("/api/auth",authMiddleware,productrouter);
 
 
 connectDb().then(() => {

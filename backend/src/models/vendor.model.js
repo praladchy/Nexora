@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 const vendorSchema = new mongoose.Schema(
   {
     owner: {
@@ -14,6 +15,10 @@ const vendorSchema = new mongoose.Schema(
       type: String,
       enum: ["PENDING", "ACTIVE", "SUSPENDED"],
       default: "PENDING",
+    },
+    otp: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Otp",
     },
     isActive: { type: Boolean, default: false },
     commissionRate: { type: Number }, // platform cut %

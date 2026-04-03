@@ -4,7 +4,9 @@ import { sendEmail } from "../utils/emailVerification.js";
 import { sendOtpSms } from "../utils/phoneVerification.js";
 import { generateOTP } from "../utils/otp.js";
 import jwt from "jsonwebtoken";
-import { generateAccessToken, generaterefreshToken,
+import {
+  generateAccessToken,
+  generaterefreshToken
 } from "../utils/jwttoken.js";
 
 export const registerUser = async (req, res) => {
@@ -24,7 +26,7 @@ export const registerUser = async (req, res) => {
     // Check if user exists with EITHER the same email OR same phone
     const existingUser = await User.findOne({
       $or: orConditions,
-    });
+    }).populate("permissions");
     if (existingUser && existingUser.isVerified)
       return res.status(400).json({
         message: "User is already registered",
@@ -78,39 +80,42 @@ export const registerUser = async (req, res) => {
     });
   }
 };
-export const superAdmin=async(req,res)=>{
-  const email=process.env.superAdmin;
-  const password=process.env.superAdminPassword;
-  const role="superAdmin";
+export const superAdmin = async (req, res) => {
+  const email = process.env.superAdmin;
+  const password = process.env.superAdminPassword;
+  const role = "superAdmin";
   try {
-    if(!email&& !password){ 
-      return console.log("enter super email and passworrd");}
-    const user=await User.findOne({email,role});
-    if(role==="superAdmin" && user){
-      return  }
+    if (!email && !password) {
+      return console.log("enter super email and passworrd");
+    }
+    const user = await User.findOne({ email, role });
+    if (role === "superAdmin" && user) {
+      return;
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const superAdmin=new User({
-      firstName:"Super",
-      lastName:"Admin",
+    const superAdmin = new User({
+      firstName: "Super",
+      lastName: "Admin",
       email,
-      password:hashedPassword,
+      password: hashedPassword,
       role,
-      isActive:true,
-      isVerified:true,
-
-    })
+      isActive: true,
+      isVerified: true,
+    });
     await superAdmin.save();
   } catch (error) {
-    console.log("server error not able to create super admin",error.message);
+    console.log("server error not able to create super admin", error.message);
   }
-}
+};
 export const login = async (req, res) => {
   const { email, phone, password } = req.body;
   try {
     const query = {};
     if (email) query.email = email;
     // if (phone) query.phone = phone;
-    const user = await User.findOne(query).select("+password");
+    const user = await User.findOne(query)
+      .select("+password")
+      .populate("permissions");
     if (!user)
       return res
         .status(401)
@@ -120,14 +125,12 @@ export const login = async (req, res) => {
       return res
         .status(403)
         .json({ message: "User not verified", success: false });
- 
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid)
       return res
         .status(401)
         .json({ message: "Invalid password", success: false });
-
-
 
     const refreshToken = await generaterefreshToken(user);
     const accessToken = await generateAccessToken(user);
@@ -148,6 +151,7 @@ export const login = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       phone: user.phone,
+      permissions: user.permissions,
     };
 
     res.status(200).json({
@@ -166,7 +170,7 @@ export const login = async (req, res) => {
 };
 export const forgotPassword = async (req, res) => {
   const { email, phone, password, confirmPassword } = req.body;
-  
+
   try {
     if (!email || !phone || !password || !confirmPassword)
       return res.status(400).json({
@@ -210,7 +214,7 @@ export const forgotPassword = async (req, res) => {
 };
 export const logout = (req, res) => {
   try {
-    res.clearCookie("token");
+    res.clearCookie("refreshToken", { httpOnly: true, sameSite: "lax" });
 
     return res.status(200).json({
       success: true,
@@ -357,15 +361,18 @@ export const refresh = async (req, res) => {
     const token = req.cookies.refreshToken;
     if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-    const user = await User.findOne({ refreshToken: token });
+    const user = await User.findOne({ refreshToken: token }).populate(
+      "permissions",
+    );
     if (!user) return res.status(403).json({ message: "User not found" });
-const safeuser={
-  id:user._id,
-  firstName:user.firstName,
-  lastName:user.lastName,
-  email:user.email,
-  phone:user.phone,
-}
+    const safeuser = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      permissions: user.permissions.map((p) => p.name),
+    };
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
     if (user._id.toString() !== decoded.userId)
@@ -373,9 +380,8 @@ const safeuser={
 
     const newAccessToken = await generateAccessToken(user);
 
-    res.json({ accessToken: newAccessToken ,safeuser});
+    res.json({ accessToken: newAccessToken, safeuser });
   } catch (err) {
     return res.status(403).json({ message: "Forbidden" });
   }
 };
-

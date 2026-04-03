@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  useVerificationMutation,
-  useReSendOtpMutation,
-} from "../components/Redux/auth.slice";
+ 
 const Verification = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [verifyOtp] = useVerificationMutation();

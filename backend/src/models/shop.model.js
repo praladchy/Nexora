@@ -10,7 +10,6 @@ const shopSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
 
     admins: [
@@ -18,7 +17,7 @@ const shopSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
-    ],
+    ], 
 
     deliveryMen: [
       {

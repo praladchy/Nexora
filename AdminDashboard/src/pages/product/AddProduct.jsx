@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useGetShopsActiveQuery } from "../../components/Redux/Shop.apiSlice";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const AddProduct = () => {
     stockLimit: "",
     status: "active",
     vendor: "",
+    
   });
 
   const [categories, setCategories] = useState([]);
@@ -24,7 +26,8 @@ const AddProduct = () => {
   const [vendors, setVendors] = useState([]);
 
   const [loading, setLoading] = useState(false);
-
+const {data}=useGetShopsActiveQuery();
+console.log("this is shops dta",data)
   // 🔹 Handle Change
   const handleChange = (e) => {
     const { name, value } = e.target;

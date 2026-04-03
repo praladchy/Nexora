@@ -12,7 +12,7 @@ export const shopSlice = createApi({
       query: (data) => {
         return {
           method: "POST",
-          url: "/createShop",
+          url: "shop/createShop",
           body: data,
         };
       },
@@ -21,6 +21,13 @@ export const shopSlice = createApi({
     getShop: builder.query({
       query: () => ({
         url: "/getShops",
+        method: "GET",
+      }),
+      providesTags: ["Shop"],
+    }),
+    getShopsActive: builder.query({
+      query: () => ({
+        url: "/shop/getActiveShops",
         method: "GET",
       }),
       providesTags: ["Shop"],
@@ -49,13 +56,48 @@ export const shopSlice = createApi({
       }),
       invalidatesTags: ["Shop"],
     }),
+    assignOwner: builder.mutation({
+      query: ({shopId,userId}) => ({
+        url: `shop/assignOwner/${shopId}/${userId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Shop"],
+    }),
+    assignAdmin: builder.mutation({                                                     
+      query: ({shopId,userId}) => ({
+        url: `shop/assignAdmin/${shopId}/${userId}`,
+
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Shop"],
+    }),
+    removeOwner: builder.mutation({
+      query: ({shopId,userId}) => ({
+        url: `shop/removeOwner/${shopId}/${userId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Shop"],
+    }),
+    removeAdmin: builder.mutation({
+      query: ({shopId,userId}) => ({
+        url: `shop/removeAdmin/${shopId}/${userId}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Shop"],
+    }),
+
   }),
 });
-export const {
+export const {  
   useCreateShopMutation,
   useGetShopQuery,
   useGetShopByIdQuery,
-  useUpDateShopMutation,
+  useUpdateShopMutation,
   useDeleteShopMutation,
-  useGetShopsQuery,
+  useGetShopsActiveQuery,
+  useAssignOwnerMutation,
+  useAssignAdminMutation,
+  useRemoveOwnerMutation,
+  useRemoveAdminMutation,
+  
 } = shopSlice;

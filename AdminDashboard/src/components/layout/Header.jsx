@@ -9,13 +9,28 @@ import {
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useLogoutMutation } from "../Redux/auth.slice";
+import { logout } from "../Redux/userData.slice";
 const Header = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const [authLogout , {isLoading}] = useLogoutMutation();
+  console.log("header",user);
   // const userProfile = useSelector((state) => state.user.data);
   // console.log(userProfile);
+  const handleLogout = async () => {
+    try {
+      console.log("logout");
+      await authLogout().unwrap();
+      dispatch(logout());
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <header
       className={`flex items-center justify-between px-6 py-3 border-b transition-colors duration-300 ${
@@ -88,7 +103,7 @@ const Header = () => {
               <p
                 className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
               >
-                Nabin Islam
+                {user.firstName}
               </p>
               <p className="text-xs text-gray-500">Admin</p>
             </div>
@@ -138,8 +153,12 @@ const Header = () => {
                       isDarkMode ? "border-slate-700" : "border-gray-100"
                     }
                   />
-                  <button className="flex items-center w-full px-4 py-2 text-sm space-x-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-                    <LogOut size={16} /> <span>Logout</span>
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoading}
+                    className="flex items-center w-full px-4 py-2 text-sm space-x-2 text-red-500 hover:bg-red-50"
+                  >
+                    {isLoading ? "Logging out..." : "Logout"}
                   </button>
                 </div>
               </div>

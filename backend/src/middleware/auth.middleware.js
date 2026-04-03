@@ -1,6 +1,6 @@
-export const authMiddleware = async (req, res, next) => {
+import jwt from "jsonwebtoken";
+export const authMiddleware =  (req, res, next) => {
   const authHeader = req.headers.authorization;
-  console.log("Auth Header:", authHeader);
   try {
     if (!authHeader && !authHeader.startsWith("Bearer "))
       return res.status(401).json({
@@ -19,36 +19,36 @@ export const authMiddleware = async (req, res, next) => {
     });
   }
 };
-export const adminMiddleware = async (req, res, next) => {
-  const userRole = req.user;
-  try {
-    if (!userRole || userRole.role !== "admin") {
-      return res.status(403).json({
-        message: "Forbidden,unauthorized role",
+export const roleMiddleware =  (roles=[]) => {
+  return (req, res, next) => {
+    try {
+      if (!req.user.role||!roles.includes(req.user.role)) {
+        return res.status(403).json({
+          message: "Forbidden,unauthorized role",
+          success: false,
+        });
+      }
+      next();
+    } catch (error) {
+      return res.status(500).json({
+        message: "Server error ,not able to verify role",
         success: false,
+        error: error.message,
       });
     }
-    if (userRole.role === "admin") {
-      next();
-    }
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server error ,not able to verify role",
-      success: false,
-      error: error.message,
-    });
-  }
+  };
 };
 export const checkPermission = (permission) => {
   return (req, res, next) => {
-    if (!req.user.permissions.includes(permission)) {
+    const permissions = req.user?.permissions || [];
+    if (!permissions.some((p) => p === permission)) {
       return res.status(403).json({ message: "Access Denied" });
     }
     next();
   };
 };
 
-export const superAdminMiddleware = async (req, res, next) => {
+export const superAdminMiddleware =  (req, res, next) => {
   const userRole = req.user;
   try {
     if (!userRole || userRole.role !== "superAdmin") {

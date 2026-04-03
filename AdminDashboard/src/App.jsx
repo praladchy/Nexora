@@ -1,61 +1,124 @@
-import Navbar from "./components/Navbar";
-import AddProduct from "./pages/AddProduct";
-import MarketPlace from "./pages/MarketPlace";
-import ProductManag from "./pages/ProductManag";
 import { Routes, Route } from "react-router-dom";
-import VendorDashboard from "./pages/VendorDashboard";
-import Verification from "./pages/verification";
-import CreateShop from "./pages/addShop";
-import SignUp from "./pages/SignUp";
-import Login from "./pages/Login";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRefreshTokenQuery } from "./components/Redux/auth.slice";
 import { setCredentials } from "./components/Redux/userData.slice";
+import AddProduct from "./pages/product/AddProduct";
+import MarketPlace from "./pages/MarketPlace";
+import ProductManag from "./pages/product/list.product.jsx";
+import VendorDashboard from "./pages/VendorDashboard";
+import Verification from "./pages/verification";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
+import PermissionCreate from "./pages/permission/create.permission";
+import AdminCreate from "./pages/createadmin";
+import CreateVendor from "./pages/vendor/vendor.create";
+import Navbar from "./components/Navbar";
+import ListCategory from "./pages/category/List.category";
+import CreateShop from "./pages/shop/addShop.jsx";
+import { PrivateRoute } from "./middleware/privateRoutes";
+import PermissionList from "./pages/permission/list.permission.jsx";
+import AssignPermission from "./pages/permission/assign.permission.jsx";
+import ShopReport from "./pages/shop/shop.report.jsx";
+import AdminAssign from "./pages/shop/AdminAssign.shop.jsx";
+import OwnerAssign from "./pages/shop/OwnerAssign.shop.jsx";
+import ShopList from "./pages/shop/shop.list.jsx";
+import CreateAdmin from "./pages/vendor/createAdmin.vendor.jsx";
+
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
-  console.log("Data from refresh token:", data);
-  // Dispatch user + accessToken after refresh token resolves
   useEffect(() => {
     if (isSuccess && data?.safeuser && data?.accessToken) {
       dispatch(
         setCredentials({
-          safeuser: data.safeuser, // matches slice
+          safeuser: data.safeuser,
           accessToken: data.accessToken,
         }),
       );
     }
   }, [isSuccess, data, dispatch]);
 
-  // Selector
   const user = useSelector((state) => state.auth.user);
-  const accessToken = useSelector((state) => state.auth.accessToken);
 
   if (isLoading) return <h1>Loading...</h1>;
 
   return (
-    <>
-      <Routes>
-        {user ? (
-          <Route path="/" element={<Navbar />}>
-            <Route index element={<VendorDashboard />} />
-            <Route path="/addproduct" element={<AddProduct />} />
-            <Route path="/marketplace" element={<MarketPlace />} />
-            <Route path="/productmanag" element={<ProductManag />} />
-            <Route path="/addShop" element={<CreateShop />} />
-          </Route>
-        ) : (
-          <Route path="/login" element={<Login />} />
-        )}
-        <Route path="/Signup" element={<SignUp />} />
+    <Routes>
+      {user ? (
+        <Route path="/" element={<Navbar />}>
+          {/* {privateRoutes.map((route, idx) =>
+            route.index ? (
+            <Route element={<PrivateRoute allowRoutes={user.permission} />} >
+              <Route key={idx} index element={route.element} />
 
-        <Route path="/verify-otp/:userId" element={<Verification />} />
+            </Route>
+            ) : (
+            <Route element={<PrivateRoute allowRoutes={user.permission} />} >
 
-        <Route path="*" element={<h1>404 Not Found</h1>} />
-      </Routes>
-    </>
+              <Route key={idx} path={route.path} element={route.element} />
+            </Route>
+            )
+          )} */}
+
+          {privateRoutes.map((route, idx) =>
+            route.index ? (
+              <Route key={idx} index element={route.element} />
+            ) : (
+              <Route key={idx} path={route.path} element={route.element} />
+            ),
+          )}
+        </Route>
+      ) : (
+        <Route path="/login" element={<Login />} />
+      )}
+
+      {publicRoutes.map((route, idx) => (
+        <Route key={idx} path={route.path} element={route.element} />
+      ))}
+    </Routes>
   );
 }
 
 export default App;
+
+// routesConfig.js
+
+// Private routes
+export const privateRoutes = [
+  { path: "/", element: <VendorDashboard />, index: true },
+  { path: "/product/create", element: <AddProduct /> },
+  { path: "/product/list", element: <ProductManag /> },
+  { path: "/marketplace", element: <MarketPlace /> },
+  { path: "/shop/create", element: <CreateShop /> },
+  { path: "/permission/create", element: <PermissionCreate /> },
+  { path: "/createAdmin", element: <AdminCreate /> },
+  { path: "/createVendor", element: <CreateVendor /> },
+  { path: "/shop/Report", element: <ShopReport /> },
+  { path: "/category/list", element: <ListCategory /> },
+  { path: "/permissions", element: <PermissionList /> },
+  { path: "/permission/assign", element: <AssignPermission /> },
+  { path: "/shop/assignOwner", element: <OwnerAssign /> },
+  { path: "/shop/assignAdmin", element: <AdminAssign /> },
+  { path: "/shop/list", element: <ShopList /> },
+
+  {path:"/vendor/createAdmin",element:<CreateAdmin/>},
+  // {path:"",element:},
+  // {path:"",element:},
+  // {path:"",element:},
+  // {path:"",element:},
+  // {path:"",element:},
+  // {path:"",element:},
+  // {path:"",element:},
+  // {path:"",element:},
+
+  //
+];
+
+// Public routes
+export const publicRoutes = [
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <SignUp /> },
+  { path: "/verify-otp/:userId", element: <Verification /> },
+  { path: "*", element: <h1>404 Not Found</h1> },
+];

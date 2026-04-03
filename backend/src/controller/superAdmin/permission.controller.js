@@ -22,14 +22,35 @@ export const createPermission = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "something went wrong",
+      message: "internal server error to create permission",
     });
   }
 };
 export const getPermissions = async (req, res) => {
   try {
     const permissions = await Permission.find();
-    if (permissions.length === 0)
+
+    if (!permissions.length)
+      return res.status(404).json({
+        message: "permissions not found",
+        success: false,
+      });
+    res.status(200).json({
+      message: "permissions fetched successfully",
+      success: true,
+      permissions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "something went wrong",
+      success: false,
+    });
+  }
+};
+export const getActivePermissions = async (req, res) => {
+  try {
+    const permissions = await Permission.find({status:true});
+    if (!permissions.length)
       return res.status(404).json({
         message: "permissions not found",
         success: false,
@@ -85,26 +106,27 @@ export const getPermissionById = async (req, res) => {
 //   }
 // };
 export const assignPermissionUserById = async (req, res) => {
-  const { Id, userId } = req.params;
+  const { id, userId } = req.params;
 
   try {
-    const permission = await Permission.findById(Id);
+    const permission = await Permission.findById(id);
     if (!permission && !permission.status)
       return res.status(404).json({
         message: "permission not found",
         success: false,
       });
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("permissions");
     if (!user)
       return res.status(404).json({
         message: "user not found",
         success: false,
       });
-      if(user.permissions.includes(permission._id))
-      return res.status(400).json({
-        message: "permission already assigned to user",
-        success: false,
-      });
+     if (user.permissions.some(p => p._id.toString() === permission._id.toString())) {
+  return res.status(400).json({
+    message: "permission already assigned to user",
+    success: false,
+  });
+}
 
     user.permissions.push(permission._id);
     await user.save();
@@ -121,19 +143,63 @@ export const assignPermissionUserById = async (req, res) => {
     });
   }
 };
+// export const assignPermissionUserById = async (req, res) => {
+//   const { id, userId } = req.params;
+
+//   try {
+//     const permission = await Permission.findById(id);
+//     console.log("sdfghjk",permission)
+//     if (!permission && !permission.status)
+//       return res.status(404).json({
+//         message: "permission not found",
+//         success: false,
+//       });
+//     const user = await User.findById(userId).populate("permissions");
+//     console.log("zxcvbnn",user)
+//     if (!user)
+//       return res.status(404).json({
+//         message: "user not found",
+//         success: false,
+//       });
+//      if (user.permissions.some(p => p._id.toString() === permission._id.toString())) {
+//   return res.status(400).json({
+//     message: "permission already assigned to user",
+//     success: false,
+//   });
+// }
+
+//     user.permissions.push(permission._id);
+//     await user.save();
+//     res.status(200).json({
+//       message: "permission assigned successfully",
+//       success: true,
+//       user,
+//       permission,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "something went wrong",
+//       success: false,
+//     });
+//   }
+// };
+
+
 export const removePermissionUserById = async (req, res) => {
-    const { Id, userId } = req.params;
+    const { id, userId } = req.params;
 
   try {
-    const permission = await Permission.findById(Id);
+    const permission = await Permission.findById(id);
+    console.log("kj",permission)
     if (!permission && !permission.status)
       return res.status(404).json({
         message: "permission not found",
         success: false,
       });
-    const user = await User.findByIdAndUpdate(
+   const user = await User.findByIdAndUpdate(
   userId,
-  { $pull: { permissions: Id },new: true }
+  { $pull: { permissions: permission._id } },
+  { new: true }
 );
 if (!user)
       return res.status(404).json({
@@ -154,6 +220,40 @@ if (!user)
     });
   }
 };
+// export const removePermissionUserById = async (req, res) => {
+//     const { id, userId } = req.params;
+
+//   try {
+//     const permission = await Permission.findById(id);
+//     if (!permission && !permission.status)
+//       return res.status(404).json({
+//         message: "permission not found",
+//         success: false,
+//       });
+//    const user = await User.findByIdAndUpdate(
+//   userId,
+//   { $pull: { permissions: permission._id } },
+//   { new: true }
+// );
+// if (!user)
+//       return res.status(404).json({
+//         message: "user not found",
+//         success: false,
+//       });
+      
+//     res.status(200).json({
+//       message: "permission removed successfully",
+//       success: true,
+//       user,
+//       permission,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "server error,to remove permission",
+//       success: false,
+//     });
+//   }
+// };
 export const updatePermission = async (req, res) => {
     const { id } = req.params;
   try {
@@ -162,7 +262,7 @@ export const updatePermission = async (req, res) => {
         message: "permission not found",
         success: false,
       });
-    res.status(200).json({
+    res.status(200).json({ 
       message: "permission updated successfully",
       success: true,
       permission,

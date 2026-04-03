@@ -4,6 +4,8 @@ import authReducer from "../Redux/userData.slice.js"
 import { shopSlice } from "./Shop.apiSlice.jsx";
 import { authApi } from "./auth.slice.js";
 import { productApi } from "./Product.apiSlice.jsx";
+import { vendorSlice } from "./vendor.apiSlice.js";
+import { permissionApi } from "./permission.apislice.jsx";
 
 export const Store = configureStore({
   reducer: {
@@ -11,9 +13,11 @@ export const Store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [shopSlice.reducerPath]: shopSlice.reducer,
     [productApi.reducerPath]: productApi.reducer,
+    [vendorSlice.reducerPath]: vendorSlice.reducer,
+    [permissionApi.reducerPath]:permissionApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(shopSlice.middleware, productApi.middleware,authApi.middleware),
+    getDefaultMiddleware().concat(shopSlice.middleware, productApi.middleware,authApi.middleware,vendorSlice.middleware,permissionApi.middleware),
 
   /*this middleware is used to store temporary data in the redux store when the data fetch from the api fetch only update data from api not all data fetch */
 });

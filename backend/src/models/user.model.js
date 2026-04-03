@@ -29,17 +29,22 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false,
     },
-    refreshToken:{
+    refreshToken: {
       type: String,
-      select: false
+      select: false,
     },
     otp: {
       type: String,
     },
+
+    otps: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Otp",
+    },
     otpExpireAt: {
       type: Date,
     },
-    
+
     verificationMethod: {
       type: String,
       enum: ["email", "phone"],
@@ -47,13 +52,22 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["superAdmin", "admin", "user", "deliveryMan"],
+      enum: [
+        "superAdmin",
+        "admin",
+        "vendor",
+        "vendorAdmin",
+        "owner",
+        "user",
+        "deliveryMan",
+      ],
       default: "user",
     },
-    permissions:[{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Permission",
-    }
+    permissions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Permission",
+      },
     ],
 
     isActive: {
@@ -72,7 +86,10 @@ const userSchema = new mongoose.Schema(
         ref: "Shop",
       },
     ],
-
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     deliveryProfile: {
       vehicleType: {
         type: String,
@@ -88,10 +105,10 @@ const userSchema = new mongoose.Schema(
     },
 
     address: {
-       type: String,
+      type: String,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const User= mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
