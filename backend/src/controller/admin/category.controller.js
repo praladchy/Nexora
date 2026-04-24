@@ -2,7 +2,7 @@ import { generateSlug } from "../../utils/slug.js";
 import Category from "../../models/category.model.js";
 export const createCategory = async (req, res) => {
   const { name, description, parent, shop, isGlobal, isActive } = req.body;
-  const { createdBy } = req.user._id;
+  const { createdBy } = req.user;
   try {
     if (!name)
       return res.status(400).json({
@@ -10,8 +10,7 @@ export const createCategory = async (req, res) => {
         success: false,
       });
     const slug = generateSlug(name);
-    const category = await Category
-      .findOne({ slug, shop: shop || null })
+    const category = await Category.findOne({ slug, shop: shop || null })
       .populate("shop")
       .populate("parent")
       .populate("createdBy");
@@ -46,11 +45,7 @@ export const createCategory = async (req, res) => {
 };
 export const getCategory = async (req, res) => {
   try {
-    const category = await Category
-      .find({})
-      .populate("parent")
-      .populate("shop")
-      .populate("createdBy");
+    const category = await Category.find();
     res.status(200).json({
       message: "Categories retrieved successfully",
       success: true,
@@ -72,8 +67,7 @@ export const getCategoryByShop = async (req, res) => {
         message: "Shop id is required",
         success: false,
       });
-    const category = await Category
-      .find({ shop, isActive: true })
+    const category = await Category.find({ shop, isActive: true })
       .populate("parent")
       .populate("shop")
       .populate("createdBy");
@@ -93,8 +87,7 @@ export const getCategoryByShop = async (req, res) => {
 export const getCategoryBySlug = async (req, res) => {
   const { slug } = req.params;
   try {
-    const category = await Category
-      .findOne({ slug, isActive: true })
+    const category = await Category.findOne({ slug, isActive: true })
       .populate("parent")
       .populate("shop")
       .populate("createdBy");
@@ -119,8 +112,9 @@ export const updateCategory = async (req, res) => {
       req.body.slug = generateSlug(req.body.name);
     }
 
-    const category = await Category
-      .findByIdAndUpdate(id, req.body, { new: true })
+    const category = await Category.findByIdAndUpdate(id, req.body, {
+      new: true,
+    })
       .populate("parent")
       .populate("shop")
       .populate("createdBy");

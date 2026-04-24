@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useReSendOtpMutation, useVerificationMutation } from "../redux/auth.slice";
  
 const Verification = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [verifyOtp] = useVerificationMutation();
   const [resendOtp] = useReSendOtpMutation();
-  const { userId } = useParams();
+  const navigate = useNavigate();
 
+  const { userId } = useParams();
   const handleChange = (e, index) => {
     const value = e.target.value.replace(/\D/, "");
     if (!value) return;
@@ -27,17 +29,18 @@ const Verification = () => {
 
     try {
       const res = await verifyOtp({ userId, otp: finalOtp }).unwrap();
-      alert(res.data.message);
+      navigate("/login");
       setOtp(["", "", "", ""]);
+      alert(res.message);
+      // localStorage.setItem("accessToken", res.accessToken);
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      console.log("user not verified server error", error.message);
     }
   };
   const handleResend = async () => {
     try {
-      const res = await resendOtp(userId);
-      console.log(res);
-      // alert(res.data.message);
+      const res = await resendOtp({ userId }).unwrap();
+      alert(res.message);
     } catch (error) {
       alert("Failed to resend OTP");
       console.log(error);

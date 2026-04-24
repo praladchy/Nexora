@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import api from "../../features/auth/axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useRegisterMutation } from "../redux/auth.slice";
 const SignUp = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -9,6 +10,8 @@ const SignUp = () => {
     phone: "",
     password: "",
   });
+  const [signup] = useRegisterMutation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,34 +19,14 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const res = await signup(formData).unwrap();
+
     try {
-       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        password: "",
-      });
-      navigate("/verify-otp");
-      const res = await api.post("/api/auth/user/register", formData, {
-        withCredentials: true,
-      });
-     
-
-      alert(res.data.message);
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          userId: res.data.userid,
-
-          email: formData.email,
-          phone: formData.phone,
-          verifyBy: "email",
-        }),
-      );
+      alert(res.message);
+      navigate(`/verify-otp/${res.userid}`);
     } catch (error) {
-      console.log("failed to SignUp", error);
-      alert("failed  to SignUP ");
+      alert(error.data.message);
+      console.error("failed to registered", error);
     }
   };
   return (

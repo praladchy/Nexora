@@ -79,11 +79,6 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
-    subCategory: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "SubCategory",
-    },
-
     brand: {
       type: String,
     },
@@ -95,11 +90,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
-    vendor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    
 
     /* ---------------- RATING & REVIEWS ---------------- */
     rating: {
@@ -134,7 +125,7 @@ const productSchema = new mongoose.Schema(
 /* ---------------- PRICE CALCULATION ---------------- */
 productSchema.pre("save", function (next) {
   this.finalPrice = this.price - (this.price * this.discount) / 100;
-  next();
+  
 });
 
 export default mongoose.model("Product", productSchema);

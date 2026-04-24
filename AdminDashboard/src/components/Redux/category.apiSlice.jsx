@@ -9,37 +9,37 @@ export const categorySlice = createApi({
 
   endpoints: (builder) => ({
     createCategory: builder.mutation({
-      query: () => ({
+      query: (data) => ({
         method: "POST",
-        url: "/createCategory",
+        url: "/category/createCategory",
         body: data,
       }),
       invalidatesTags: ["category"],
     }),
     getCategory: builder.query({
       query: () => ({
-        url: `/getCategory`,
+        url: `/category/getCategory`,
         method: "GET",
       }),
       providesTags: ["category"],
     }),
     getCategoryByShop: builder.query({
       query: () => ({
-        url: `/shop/${shopId}`,
+        url: `/category/shop/${shopId}`,
         method: "GET",
       }),
       providesTags: ["category"],
     }),
     getCategoryBySlug: builder.query({
       query: () => ({
-        url: `/${slug}`,
+        url: `/category/${slug}`,
         method: "GET",
       }),
       providesTags: ["category"],
     }),
     updateCategory: builder.mutation({
       query: () => ({
-        url: `/updateCategory/${id}`,
+        url: `/category/updateCategory/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -47,7 +47,7 @@ export const categorySlice = createApi({
     }),
     deleteCategory: builder.mutation({
       query: () => ({
-        url: `/deleteCategory/${id}`,
+        url: `/category/deleteCategory/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["category"],

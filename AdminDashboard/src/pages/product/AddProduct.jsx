@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useGetShopsActiveQuery } from "../../components/Redux/Shop.apiSlice";
+import { useGetCategoryQuery } from "../../components/Redux/category.apiSlice";
+import { useCreateproductMutation } from "../../components/Redux/Product.apiSlice";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -16,19 +18,20 @@ const AddProduct = () => {
     sku: "",
     stockLimit: "",
     status: "active",
-    vendor: "",
-    
   });
 
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [shops, setShops] = useState([]);
-  const [vendors, setVendors] = useState([]);
+  // IMAGE STATE
+  const [images, setImages] = useState([]);
 
-  const [loading, setLoading] = useState(false);
-const {data}=useGetShopsActiveQuery();
-console.log("this is shops dta",data)
-  // 🔹 Handle Change
+  const { data: shopData } = useGetShopsActiveQuery();
+  const shops = shopData?.shops || [];
+
+  const { data: categoryData } = useGetCategoryQuery();
+  const categories = categoryData?.category || [];
+
+  const [productCreate, { isLoading }] = useCreateproductMutation();
+
+  // NORMAL INPUT CHANGE
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -51,53 +54,58 @@ console.log("this is shops dta",data)
     setFormData(updatedData);
   };
 
-  // 🔹 Fetch Dropdown Data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const catRes = await fetch("http://localhost:5000/api/category");
-        const shopRes = await fetch("http://localhost:5000/api/shop");
-        const vendorRes = await fetch("http://localhost:5000/api/vendor");
+  // IMAGE CHANGE (MAX 5 + APPEND)
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
 
-        const catData = await catRes.json();
-        const shopData = await shopRes.json();
-        const vendorData = await vendorRes.json();
+    if (files.length + images.length > 5) {
+      alert("Maximum 5 images allowed");
+      return;
+    }
 
-        setCategories(catData?.data || []);
-        setShops(shopData?.data || []);
-        setVendors(vendorData?.data || []);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    // append old + new images
+    setImages((prev) => [...prev, ...files]);
+  };
 
-    fetchData();
-  }, []);
+  // REMOVE IMAGE
+  const removeImage = (index) => {
+    const updatedImages = images.filter((_, i) => i !== index);
+    setImages(updatedImages);
+  };
 
-  // 🔹 Submit
+  // SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.category || !formData.price || !formData.stock) {
+    if (
+      !formData.name ||
+      !formData.category ||
+      !formData.price ||
+      !formData.stock
+    ) {
       alert("Name, Category, Price and Stock are required");
       return;
     }
 
     try {
-      setLoading(true);
+      // FormData for image upload
+      const submitData = new FormData();
 
-      const res = await fetch("http://localhost:5000/api/product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      // append text fields
+      Object.keys(formData).forEach((key) => {
+        submitData.append(key, formData[key]);
       });
 
-      const data = await res.json();
+      // append multiple images
+      images.forEach((image) => {
+        submitData.append("images", image);
+      });
 
-      if (data.success) {
-        alert("Product created successfully");
+      const res = await productCreate(submitData).unwrap();
+
+      alert(res.message);
+
+      if (res.success) {
         setFormData({
           name: "",
           description: "",
@@ -112,27 +120,26 @@ console.log("this is shops dta",data)
           sku: "",
           stockLimit: "",
           status: "active",
-          vendor: "",
         });
-      } else {
-        alert(data.message);
+
+        setImages([]);
       }
     } catch (error) {
       console.log(error);
       alert("Something went wrong");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="p-6">
       <form onSubmit={handleSubmit} className="flex gap-6">
-        {/* LEFT SIDE */}
         <div className="w-[60%] flex flex-col gap-6">
-          {/* Basic Info */}
+
+          {/* BASIC INFO */}
           <div className="bg-white rounded-xl p-6 shadow">
-            <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Basic Information
+            </h3>
 
             <div className="grid grid-cols-2 gap-4">
               <input
@@ -192,9 +199,11 @@ console.log("this is shops dta",data)
             />
           </div>
 
-          {/* Product Details */}
+          {/* PRODUCT DETAILS */}
           <div className="bg-white rounded-xl p-6 shadow">
-            <h3 className="text-lg font-semibold mb-4">Product Details</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Product Details
+            </h3>
 
             <div className="grid grid-cols-2 gap-4">
               <input
@@ -250,42 +259,56 @@ console.log("this is shops dta",data)
                 onChange={handleChange}
                 className="input"
               />
-
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="input"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-
-              <select
-                name="vendor"
-                value={formData.vendor}
-                onChange={handleChange}
-                className="input"
-              >
-                <option value="">Select Vendor</option>
-                {vendors.map((v) => (
-                  <option key={v._id} value={v._id}>
-                    {v.name}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
 
+          {/* IMAGE UPLOAD */}
+          <div className="bg-white rounded-xl p-6 shadow">
+            <h3 className="text-lg font-semibold mb-4">
+              Product Images (Max 5)
+            </h3>
+
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+              className="input"
+            />
+
+            {/* IMAGE PREVIEW */}
+            <div className="flex gap-4 flex-wrap mt-4">
+              {images.map((img, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={URL.createObjectURL(img)}
+                    alt="preview"
+                    className="w-24 h-24 object-cover rounded"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white px-2 rounded"
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SUBMIT BUTTON */}
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={loading}
+              disabled={isLoading}
               className="bg-purple-600 text-white px-6 py-2 rounded-lg"
             >
-              {loading ? "Creating..." : "Add Product"}
+              {isLoading ? "Creating..." : "Add Product"}
             </button>
           </div>
+
         </div>
       </form>
     </div>

@@ -1,38 +1,43 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useLoginMutation } from "../../../AdminDashboard/src/components/Redux/auth.slice";
+import { useLoginMutation } from "../redux/auth.slice";
+import { setCredentials } from "../redux/userData.slice";
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const userLogin = useLoginMutation();
+  const [Login] = useLoginMutation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await userLogin(formData).unwrap();
-    console.log("csksmsc",res);
-    // alert();
+
     try {
+      const res = await Login(formData).unwrap();
+      console.log("Login response:", res);
+      alert(res.message);
 
-      dispatch(userLogin(res.data.user));
-      localStorage.setItem("userData", res.stringify(res.data));
+      dispatch(setCredentials({
+          safeuser: res.safeuser, // matches slice
+          accessToken: res.accessToken,
+        }));
 
+      // localStorage.setItem("accessToken", JSON.stringify(res.accessToken));
 
-      localStorage.setItem("accessToken", res.data.accessToken);
-
+      navigate("/");
       setFormData({ email: "", password: "" });
-      console.log(res.data.user);
-      alert(res.data.message);
     } catch (error) {
-      setFormData({ email: "", password: "" });
-
-      console.log(error);
+      alert(error?.data?.message);
+      console.error("Login failed:", error);
     }
   };
   return (
@@ -63,7 +68,10 @@ const Login = () => {
               Forgot Password?
             </a>
           </div>
-          <button className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          >
             Login
           </button>
         </form>

@@ -27,7 +27,7 @@ export const getUsers = async (req, res) => {
     // );
     const users = await User.find({
       $or: [
-        { role: "vendoradmin" },
+        { role: "vendorAdmin" },
         { role: "admin" },
         { role: "vendor" },
         { role: "superAdmin" },

@@ -16,7 +16,6 @@ import CreateVendor from "./pages/vendor/vendor.create";
 import Navbar from "./components/Navbar";
 import ListCategory from "./pages/category/List.category";
 import CreateShop from "./pages/shop/addShop.jsx";
-import { PrivateRoute } from "./middleware/privateRoutes";
 import PermissionList from "./pages/permission/list.permission.jsx";
 import AssignPermission from "./pages/permission/assign.permission.jsx";
 import ShopReport from "./pages/shop/shop.report.jsx";
@@ -24,6 +23,7 @@ import AdminAssign from "./pages/shop/AdminAssign.shop.jsx";
 import OwnerAssign from "./pages/shop/OwnerAssign.shop.jsx";
 import ShopList from "./pages/shop/shop.list.jsx";
 import CreateAdmin from "./pages/vendor/createAdmin.vendor.jsx";
+import CreateCategory from "./pages/category/create.category.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -95,6 +95,8 @@ export const privateRoutes = [
   { path: "/createAdmin", element: <AdminCreate /> },
   { path: "/createVendor", element: <CreateVendor /> },
   { path: "/shop/Report", element: <ShopReport /> },
+  { path: "/category/create", element: <CreateCategory /> },
+
   { path: "/category/list", element: <ListCategory /> },
   { path: "/permissions", element: <PermissionList /> },
   { path: "/permission/assign", element: <AssignPermission /> },

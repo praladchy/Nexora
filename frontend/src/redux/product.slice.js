@@ -1,5 +1,7 @@
 // productApi.js
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import { baseQueryWithInterceptor } from "./baseQueryInterceptor";
 
 export const productApi = createApi({
@@ -9,14 +11,7 @@ export const productApi = createApi({
   // baseUrl: "http://localhost:5000/api/",
 
   endpoints: (builder) => ({
-    createproduct: builder.mutation({
-      query: ( data ) => ({
-        url: `/product/createproduct`,
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: ["product"],
-    }),
+    
 
     getproducts: builder.query({
       query: () => ({
@@ -46,31 +41,13 @@ export const productApi = createApi({
       }),
       providesTags: ["product"],
     }),
-    upDateproduct: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/product/updateProduct/${id}`,
-        method: "PATCH",
-        body: data,
-        
-      }),
-      invalidatesTags: ["product"],
-    }),
-    deleteproduct: builder.mutation({
-      query: (id) => ({
-        url: `/product/deleteProduct/${id}`,
-        method: "DELETE",
-      }), 
-      providesTags: ["product"],
-    }),
+    
   }),
 });
 
 export const {
-  useCreateproductMutation,
   useGetproductsQuery,
   useGetproductQuery,
   useGetproductsByShopQuery,
   useGetproductsByCategoryQuery,
-  useUpdateproductMutation,
-  useDeleteproductMutation,
 } = productApi;

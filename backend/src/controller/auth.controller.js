@@ -343,7 +343,7 @@ export const verifyOtp = async (req, res) => {
     //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     // });
     await user.save();
-    res.status(200).json({
+    res.status(200).json({ 
       message: "User verified successfully",
       success: true,
       // accessToken,

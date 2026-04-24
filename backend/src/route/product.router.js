@@ -3,6 +3,7 @@ import {
   createProduct,
   deleteProduct,
   getProductById,
+  getProducts,
   getProductsByCategory,
   getProductsByShop,
   updateProduct,
@@ -11,11 +12,13 @@ import { roleMiddleware, authMiddleware, checkPermission } from "../middleware/a
 import { upload } from "../middleware/upload.multer.js";
 const router = express.Router();
 router.post("/createproduct",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.create"), upload.array("images",5),createProduct);
+// router.post("/createproduct",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.create"),createProduct);
+
+router.get("/getproducts",authMiddleware,roleMiddleware(["user"]),getProducts);
  
 router.get("/getProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.view"), getProductById);
-
 router.get("/getProducts/:shopId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.list"), getProductsByShop);
 router.get("/category/:categoryId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.list"), getProductsByCategory);
-router.patch("updateProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.update"), upload.array("images",5),updateProduct);
-router.delete("deleteProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.delete"), deleteProduct);
+router.patch("/updateProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.update"), upload.array("images",5),updateProduct);
+router.delete("/deleteProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.delete"), deleteProduct);
 export const productrouter=router;

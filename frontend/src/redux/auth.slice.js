@@ -19,13 +19,7 @@ export const authApi = createApi({
         body: data,
       }),
     }),
-    adminRegister: builder.mutation({
-      query: (data) => ({
-        url: "auth/admin/register",
-        method: "POST",
-        body: data,
-      }),
-    }),
+    
     
     verification: builder.mutation({
       query: (data) => ({
@@ -65,7 +59,6 @@ export const authApi = createApi({
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useAdminRegisterMutation,
   useVerificationMutation,
   useReSendOtpMutation,
   useRefreshTokenQuery,  

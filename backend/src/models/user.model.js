@@ -63,6 +63,8 @@ const userSchema = new mongoose.Schema(
       ],
       default: "user",
     },
+
+
     permissions: [
       {
         type: mongoose.Schema.Types.ObjectId,

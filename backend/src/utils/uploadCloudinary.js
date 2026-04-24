@@ -7,7 +7,6 @@ export const uploadToCloudinary = async (localFilePath) => {
     const result = await cloudinary.uploader.upload(localFilePath, {
       folder: "products", // optional
     });
-
     // delete local file after upload
     fs.unlinkSync(localFilePath);
 

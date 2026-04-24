@@ -4,7 +4,7 @@ import {   authMiddleware, checkPermission, roleMiddleware } from "../middleware
 import { upload } from "../middleware/upload.multer.js";
 const router=express.Router();
 router.post("/createCategory",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("category.create"),upload.array("images",5),createCategory);
-router.get("getCategory",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("category.list"),getCategory);
+router.get("/getCategory",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("category.list"),getCategory);
 
 router.get("/shop/:shopId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("category.view"),getCategoryByShop);  
 router.get("/:slug",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("category.view"),getCategoryBySlug);

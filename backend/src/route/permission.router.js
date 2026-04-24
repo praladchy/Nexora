@@ -8,19 +8,19 @@ router.post("/create",authMiddleware,roleMiddleware(["superAdmin","admin"]),chec
 // router.get("/get",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),checkPermission("permission.list"),getPermissions);
 //  router.get("/get/ActivePermissions",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),checkPermission("permission.list"),getActivePermissions);
 
-router.get("/get/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),checkPermission("permission.view"),getPermissionById);
+router.get("/get/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("permission.view"),getPermissionById);
 // router.patch("/assign/:id/:userId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),checkPermission("user.assign_permission"),assignPermissionUserById);
-router.patch("/remove/:id/:userId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),checkPermission("user.remove_permission"),removePermissionUserById);
+router.patch("/remove/:id/:userId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("user.remove_permission"),removePermissionUserById);
 // router.post("/create",authMiddleware,roleMiddleware(["superAdmin","admin"]),createPermission);
-router.get("/get",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),getPermissions);
-router.get("/gets/active",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),getActivePermissions);
+router.get("/get",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),getPermissions);
+router.get("/gets/active",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),getActivePermissions);
 
 
 // router.get("/get/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),getPermissionById);
-router.patch("/assign/:id/:userId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),assignPermissionUserById);
+router.patch("/assign/:id/:userId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),assignPermissionUserById);
 // router.patch("/remove/:id/:userId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),removePermissionUserById);
-router.patch("/update/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),updatePermission)
-router.patch("/delete/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),deletePermission);
+router.patch("/update/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),updatePermission)
+router.patch("/delete/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),deletePermission);
 
 
 
