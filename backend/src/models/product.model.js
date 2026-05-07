@@ -121,11 +121,6 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+ 
 
-/* ---------------- PRICE CALCULATION ---------------- */
-productSchema.pre("save", function (next) {
-  this.finalPrice = this.price - (this.price * this.discount) / 100;
-  
-});
-
-export default mongoose.model("Product", productSchema);
+export default   mongoose.model("Product", productSchema);

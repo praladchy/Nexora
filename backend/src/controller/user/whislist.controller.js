@@ -1,7 +1,7 @@
 import { User } from "../../models/user.model.js";
-import { Product } from "../../models/product.model.js";
-import { WhishList } from "../../models/whishList.model.js";
-export const whishList = async (req, res) => {
+import  Product  from "../../models/product.model.js";
+import  WhishList  from "../../models/whishList.model.js";
+export const addWhishList = async (req, res) => {
   const { productId } = req.body;
   const userId = req.user;
   try {
@@ -34,6 +34,27 @@ export const whishList = async (req, res) => {
       message: "product added to whishList",
       success: true,
       newWhishList
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "internal server error",
+      success: false,
+    });
+  }
+};
+export const getWhishList = async (req, res) => {
+  const userId = req.user;
+  try {
+    const whishList = await WhishList.find({ user: userId });
+    if (!whishList)
+      return res.status(400).json({
+        message: "whishList not found",
+        success: false,
+      });
+    return res.status(200).json({
+      message: "whishList found",
+      success: true,
+      whishList,
     });
   } catch (error) {
     return res.status(500).json({

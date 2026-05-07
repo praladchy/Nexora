@@ -18,7 +18,7 @@ const orderSchema = new mongoose.Schema(
 
         shop: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Shop",
+          ref: "Shop", 
           required: true,
         },
 
@@ -26,13 +26,16 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
-
-        price: {
+        itemPrice: {
           type: Number,
           required: true,
         },
+        discount: {
+          type: Number,
+          default: 0,
+        },
 
-        totalPrice: {
+        price: {
           type: Number,
           required: true,
         },
@@ -87,6 +90,10 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    totalDiscount: {
+      type: Number,
+      default: 0,
+    },
 
     totalAmount: {
       type: Number,
@@ -100,7 +107,7 @@ const orderSchema = new mongoose.Schema(
 
     paidAt: Date,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.model("Order", orderSchema);
+export const Order= mongoose.model("Order", orderSchema);

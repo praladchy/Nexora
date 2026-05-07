@@ -14,6 +14,9 @@ import { productrouter } from "./route/product.router.js";
 import { superAdmin } from "./controller/auth.controller.js";
 import {permissionRouter} from "./route/permission.router.js";
 import { vendorRouter } from "./route/vendor.router.js";
+import whishListRouter from "./route/whishList.router.js";
+import cartRouter from "./route/cart.router.js";
+import orderRouter from "./route/order.router.js";
 const PORT = process.env.PORT || 8000;
 
 app.use(
@@ -31,7 +34,9 @@ app.use("/api/permission",permissionRouter);
 app.use("/api/category",categoryrouter);
 app.use("/api/product",productrouter);
 app.use("/api/vendor",vendorRouter);
-
+app.use("/api/whishList",whishListRouter);
+app.use("/api/cart",cartRouter);
+app.use("/api/order",orderRouter);
 
 
 connectDb().then(() => {

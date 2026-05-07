@@ -4,15 +4,31 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useGetproductsQuery } from "../../redux/product.slice";
+import { useCreateCartMutation } from "../../redux/cart.slice";
 
 const ProductList = () => {
   const [param, setParam] = useState({
     productId: "",
-  }); 
-  console.log("param", param);
+  });
   const { data } = useGetproductsQuery();
-  
-console.log("data", data?.products[6].images[0].url);
+  const [createCart,{isLoading}] = useCreateCartMutation();
+
+  const handleAddToCart = async (productId) => {
+    // Implement the logic to add the product to the cart
+    console.log("Adding product to cart:", productId);
+    try {
+      const res = await createCart({
+        productId,
+        quantity: 1,
+      }).unwrap();
+      console.log("add to cart response", res);
+      alert(res.message);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
+
+  console.log("data", data?.products[6].images[0].url);
   return (
     <div className="bg-gray-50 py-4 ">
       <div className="w-[98%] mx-auto flex flex-wrap gap-4">
@@ -27,11 +43,8 @@ console.log("data", data?.products[6].images[0].url);
 
               {/* Image */}
               <div className="h-40 flex items-center justify-center py-2 overflow-hidden">
-                <NavLink
-                  to={`/product/productDetails/${products._id}`}
-                 
-                >
-                  <img  
+                <NavLink to={`/product/productDetails/${products._id}`}>
+                  <img
                     src={products?.images[0]?.url}
                     alt={products.name}
                     className="max-h-full object-contain"
@@ -58,7 +71,9 @@ console.log("data", data?.products[6].images[0].url);
                 </span>
 
                 <button className="border p-1 rounded hover:bg-gray-100">
-                  <ShoppingCart size={16} />
+                  <ShoppingCart
+                    size={16}
+                    onClick={() => handleAddToCart(products._id)}/>
                 </button>
               </div>
             </div>
