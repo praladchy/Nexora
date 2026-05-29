@@ -115,6 +115,7 @@ export const privateRoutes = [
   // {path:"",element:},
 
   //
+
 ];
 
 // Public routes

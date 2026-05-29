@@ -9,7 +9,7 @@ export const cartApi = createApi({
   endpoints: (builder) => ({
     createCart: builder.mutation({
       query: (cartData) => ({
-        url: `/cart/addToCart/${cartData.productId}`,
+        url: `/cart/addToCart/${cartData.shopId}/${cartData.productId}`,
         method: "POST",
         body: cartData,
       }),
@@ -23,8 +23,8 @@ export const cartApi = createApi({
       providesTags: ["cart"],
     }),
     updateCart: builder.mutation({
-      query: ({ productId, quantity }) => ({
-        url: `/cart/updateCart/${productId}`,
+      query: ({ productId,shopId, quantity }) => ({
+        url: `/cart/updateCart/${shopId}/${productId}`,
         method: "PATCH",
         body: { quantity },
       }),

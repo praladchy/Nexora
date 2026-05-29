@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 
 const categories = [
   {
@@ -113,7 +113,7 @@ const categories = [
   },
 ];
 
-function CategoryCard({ category, onClick }) {
+function MenuCategory({ category, onClick }) {
   const [pressed, setPressed] = useState(false);
 
   return (
@@ -203,7 +203,7 @@ export default function CategoryGrid() {
   const rows = chunkArray(categories, 2);
 
   return (
-    <div className="max-w-md mx-auto px-4 py-6 font-sans absolute top-20">
+    <div className="max-w-md mx-auto px-4 py-6 font-sans">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-semibold text-gray-800">

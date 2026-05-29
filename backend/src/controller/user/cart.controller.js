@@ -3,12 +3,18 @@ import Product from "../../models/product.model.js";
 import Cart from "../../models/cart.model.js";
 
 export const cart = async (req, res) => {
-  const { productId } = req.params;
+  const { productId, shopId } = req.params;
   const { quantity } = req.body;
   const userId = req.user.userId;
   console.log("userId:", userId);
 
-  console.log("product, quantity, userId:", productId, quantity, userId);
+  console.log(
+    "product, quantity, userId:",
+    productId,
+    quantity,
+    userId,
+    shopId,
+  );
 
   try {
     // check user
@@ -22,8 +28,10 @@ export const cart = async (req, res) => {
     }
 
     // check product
-    const product = await Product.findById(productId).populate("shop");
-
+    const product = await Product.findOne({
+      shop: shopId,
+      _id: productId,
+    }).populate("shop");
     if (!product) {
       return res.status(400).json({
         message: "Product not found",
@@ -134,7 +142,7 @@ export const updateCart = async (req, res) => {
     }
 
     const product = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item) => item.product.toString() === productId,
     );
 
     if (!product) {
@@ -150,7 +158,7 @@ export const updateCart = async (req, res) => {
 
     cart.subTotal = cart.items.reduce(
       (total, item) => total + item.totalPrice,
-      0
+      0,
     );
 
     await cart.save();
@@ -160,7 +168,6 @@ export const updateCart = async (req, res) => {
       message: "Cart updated successfully",
       cart,
     });
-
   } catch (error) {
     console.error("Update cart error:", error);
 

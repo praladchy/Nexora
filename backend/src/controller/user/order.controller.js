@@ -1,14 +1,14 @@
-import {Order} from "../../models/order.model.js";
-import  Product  from "../../models/product.model.js";
+import { Order } from "../../models/order.model.js";
+import Product from "../../models/product.model.js";
 import Shop from "../../models/shop.model.js";
-
+import { User } from "../../models/user.model.js";
 // helper: calculate commission
-const getCommissionRate = (product, shop) => {
+const getCommissionRate = (product ) => {
   // priority: product > category > shop default > global default
 
   if (product.commissionRate) return product.commissionRate;
   if (product.category?.commissionRate) return product.category.commissionRate;
-  if (shop?.commissionRate) return shop.commissionRate;
+  if (product.shop?.commissionRate) return product.shop?.commissionRate;
 
   return 10; // default 10%
 };
@@ -29,32 +29,33 @@ const applyDiscount = (price, discount) => {
 };
 
 export const createOrder = async (req, res) => {
-  const userId=req.user.userId
+  const userId = req.user.userId;
   try {
     const {
-      items, // [{ productId, quantity }]
-      shopId,
-      paymentMethod, // cash, khalti, esewa
+      selectedItems,
+      // [{ productId, quantity }]
+      paymentMethod = "cash", // cash, khalti, esewa
       isPOS = false,
       deliveryCharge = 0,
       discount = null, // { type: "percent", value: 10 }
     } = req.body;
-
-    const shop = await Shop.findById(shopId);
-    if (!shop) {
-      return res.status(400).json({ message: "Shop not found" });
-    }
+// console.log("selectedItems", selectedItems);
+    const user = await User.findById(userId);
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
 
     let subtotal = 0;
     let totalCommission = 0;
     let orderItems = [];
 
-    for (const item of items) {
+    for (const item of selectedItems) {
       const product = await Product.findOne({
-        _id: item.productId,
-        shop: shopId,
+        _id: item.product._id,
+        shop: item.shop,
       }).populate("category");
-
+      // console.log("dfghjkllgf",item, item.product._id, item.shop, product);
       if (!product) continue;
 
       const price = product.price;
@@ -68,7 +69,7 @@ export const createOrder = async (req, res) => {
       const finalItemPrice = itemTotal - discountAmount;
 
       // commission
-      const commissionRate = getCommissionRate(product, shop);
+      const commissionRate = getCommissionRate(product );
       const commission = (finalItemPrice * commissionRate) / 100;
 
       subtotal += finalItemPrice;
@@ -82,6 +83,7 @@ export const createOrder = async (req, res) => {
         discount: discountAmount,
         finalPrice: finalItemPrice,
         commission,
+        shop: product.shop,
       });
 
       // reduce stock (POS + online both)
@@ -103,9 +105,9 @@ export const createOrder = async (req, res) => {
     const vendorEarning = subtotal - totalCommission;
 
     const order = await Order.create({
-      shop: shopId,
-      items: orderItems,
-      subtotal,
+      user,
+      orderItems: orderItems,
+      itemsPrice: subtotal,
       tax,
       deliveryCharge,
       gatewayFee,
@@ -144,19 +146,17 @@ export const getOrdersForUser = async (req, res) => {
 
     res.status(200).json({ orders, success: true });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch orders",
-        error: error.message,
-        success: false,
-      });
+    res.status(500).json({
+      message: "Failed to fetch orders",
+      error: error.message,
+      success: false,
+    });
   }
 };
 export const getOrders = async (req, res) => {
   const { userId } = req.user;
   try {
-    const orders = await Order.find({paymentsStatus:"Pending" })
+    const orders = await Order.find({ paymentsStatus: "Pending" })
       .populate("items.product")
       .populate("shop");
     if (!orders)
@@ -166,13 +166,11 @@ export const getOrders = async (req, res) => {
 
     res.status(200).json({ orders, success: true });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch orders",
-        error: error.message,
-        success: false,
-      });
+    res.status(500).json({
+      message: "Failed to fetch orders",
+      error: error.message,
+      success: false,
+    });
   }
 };
 
@@ -185,9 +183,9 @@ export const updateOrder = async (req, res) => {
   //   const user=await Order.find({user:userId,paymentStatus:"Pending"})
   //   if(!user)
   //   return res.status(404).json({message:"order not found or complete order",success:false})
-  
+
   // } catch (error) {
-    
+
   // }
 };
 
@@ -196,16 +194,20 @@ export const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findById(userId);
     if (!order) {
-      return res.status(404).json({ message: "Order not found", success: false });
-    } 
-    order.orderItems=order.orderItems.filter((item)=>orderItems.product.toString()!==productId)
-    if(order.orderItems.length===0)
-      return await Order.findByIdAndDelete(userId)
-} catch(error){
-res.status(500).json({
-  message:`failed to delete oerder,`,
-  data:error.message,
-  success:false
-})
-}
-}
+      return res
+        .status(404)
+        .json({ message: "Order not found", success: false });
+    }
+    order.orderItems = order.orderItems.filter(
+      (item) => orderItems.product.toString() !== productId,
+    );
+    if (order.orderItems.length === 0)
+      return await Order.findByIdAndDelete(userId);
+  } catch (error) {
+    res.status(500).json({
+      message: `failed to delete oerder,`,
+      data: error.message,
+      success: false,
+    });
+  }
+};

@@ -26,7 +26,7 @@ const Header = () => {
     try {
       console.log("logout");
       await authLogout().unwrap();
-      dispatch(logout());
+      dispatch(logout()); 
     } catch (error) {
       console.log(error);
     }

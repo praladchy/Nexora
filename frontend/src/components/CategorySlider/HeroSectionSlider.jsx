@@ -40,7 +40,7 @@ const images = [
 // ----------------------------------
 export default function HeroSectionSlider() {
   const settings = {
-    dots: true,
+    // dots: true,
     arrows: true,
     infinite: true,
     speed: 1000,
@@ -62,7 +62,7 @@ export default function HeroSectionSlider() {
               
 
               <div className="w-full mx-auto flex justify-between mb-5 ">
-                <div className="w-[30%]   pl-1 ">
+                {/* <div className="w-[30%]   pl-1 ">
                   <Slider {...settings}>
                     {images.map((item) => (
                       <div key={item.id} className="px-3">
@@ -79,8 +79,8 @@ export default function HeroSectionSlider() {
                       </div>
                     ))}
                   </Slider>
-                </div>
-                <div className="flex flex-col   w-[70%] ps-1">
+                </div> */}
+                <div className="flex flex-col  w-full ps-1">
                   <div className=" w-full   pb-1  ">
                     <Slider {...settings}>
                       {images.map((item) => (
