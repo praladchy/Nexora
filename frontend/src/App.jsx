@@ -14,6 +14,7 @@ import CategorySlider from "./components/CategorySlider/CategorySlider";
 import HeroSectionSlider from "./components/CategorySlider/HeroSectionSlider";
 import SubcategorySlider from "./components/CategorySlider/SubcategorySlider";
 import Layout from "./page/layout";
+import ProductDetails from "./components/product/ProductDetails";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -29,6 +30,7 @@ function App() {
   }, [isSuccess, data, dispatch]);
 
   const user = useSelector((state) => state.auth.user);
+ 
   console.log("mnbvcxz", user);
   if (isLoading) return <h1>Loading...</h1>;
 
@@ -44,7 +46,7 @@ function App() {
           <Route path="/products" element={<ProductList />} />
           <Route path="/product/cart" element={<ShoppingCartPage />} />
           <Route path="/categorySlider" element={<SubcategorySlider />} />
-          {/* <Route path="" element={} /> */}
+          <Route path="/product/productdetails" element={<ProductDetails/>} />
           {/* <Route path="" element={} /> */}
           {/* <Route path="" element={} /> */}
           {/* <Route path="" element={} /> */}

@@ -27,7 +27,7 @@ const Login = () => {
       alert(res.message);
 
       dispatch(setCredentials({
-          safeuser: res.safeuser, // matches slice
+          safeuser: res.safeuser, 
           accessToken: res.accessToken,
         }));
 

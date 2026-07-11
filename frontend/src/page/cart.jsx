@@ -7,17 +7,20 @@ import {
   useUpdateCartMutation,
 } from "../redux/cart.slice";
 import { useCreateOrderMutation } from "../redux/order.slice";
+import { useDispatch } from "react-redux";
+import { setCart } from "../redux/userData.slice";
 
 export default function ShoppingCartPage() {
   const [cartItems, setCartItems] = useState([]);
-
-  const { data, isLoading, isError } = useGetCartQuery();
+const dispatch=useDispatch()
+  const { data, isLoading, isError ,refetch } = useGetCartQuery();
   const [updateCart] = useUpdateCartMutation();
   const [removeCart] = useRemoveCartMutation();
   const [createOrder] = useCreateOrderMutation();
 
   const cartData = data?.cart;
-
+console.log("Cart Data:", cartData);
+dispatch(setCart({cart:cartData}))
   // Sync API cart → local UI state
   useEffect(() => {
     if (cartData) {
@@ -116,6 +119,7 @@ export default function ShoppingCartPage() {
       }
 
       const res = await createOrder({selectedItems}).unwrap();
+      refetch();
       alert(res.message);
     } catch (error) {
       alert("Failed to create order: " + error.message);

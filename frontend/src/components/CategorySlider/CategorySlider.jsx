@@ -46,7 +46,7 @@ export default function CategorySlider() {
   const NextArrow = ({ onClick }) => (
     <button
       onClick={onClick}
-      className="absolute -top-10 right-0 z-10 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"
+      className="absolute -top-5 right-0 z-10 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"
     >
       ›
     </button>
@@ -55,7 +55,7 @@ export default function CategorySlider() {
   const PrevArrow = ({ onClick }) => (
     <button
       onClick={onClick}
-      className="absolute -top-10 right-10 z-10 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"
+      className="absolute -top-5 right-10 z-10 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"
     >
       ‹
     </button>

@@ -19,7 +19,7 @@ export default function UserProfile() {
     isLoading && <p>Logging out...</p>;
   }
   return (
-    <div className="absolute top-16 flex items-center justify-center bg-gray-100 p-6">
+    <div className="absolute top-16 flex items-center justify-center bg-gray-100 p-6 z-10">
       {/* Simple Profile Menu (NO dropdown, NO arrays, NO state) */}
       <div className="w-72 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         {/* Profile Header */}

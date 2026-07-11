@@ -8,6 +8,9 @@ import CategorySlider from "../components/CategorySlider/CategorySlider";
 import SubcategorySlider from "../components/CategorySlider/SubcategorySlider";
 export default function Navbar({onClick}) {
   const user = useSelector((state) => state.auth.user);
+   const cart=useSelector((state)=>state)
+  const cartItems = cart.auth.cart?.length || 0;
+  console.log("cartItems", cartItems);
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   console.log("navbar", user);
@@ -82,7 +85,7 @@ export default function Navbar({onClick}) {
             <div className="relative">
               <ShoppingCart size={34} strokeWidth={1.5} />
               <span className="absolute -top-1 left-4 bg-[#c7da25] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                0
+                {cartItems || 0}
               </span>
             </div>
             <span className="text-[13px] font-bold mt-2">Cart</span>

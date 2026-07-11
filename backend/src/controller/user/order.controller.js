@@ -2,8 +2,9 @@ import { Order } from "../../models/order.model.js";
 import Product from "../../models/product.model.js";
 import Shop from "../../models/shop.model.js";
 import { User } from "../../models/user.model.js";
+import Cart from "../../models/cart.model.js";
 // helper: calculate commission
-const getCommissionRate = (product ) => {
+const getCommissionRate = (product) => {
   // priority: product > category > shop default > global default
 
   if (product.commissionRate) return product.commissionRate;
@@ -39,7 +40,7 @@ export const createOrder = async (req, res) => {
       deliveryCharge = 0,
       discount = null, // { type: "percent", value: 10 }
     } = req.body;
-// console.log("selectedItems", selectedItems);
+    // console.log("selectedItems", selectedItems);
     const user = await User.findById(userId);
     if (!user)
       return res
@@ -69,7 +70,7 @@ export const createOrder = async (req, res) => {
       const finalItemPrice = itemTotal - discountAmount;
 
       // commission
-      const commissionRate = getCommissionRate(product );
+      const commissionRate = getCommissionRate(product);
       const commission = (finalItemPrice * commissionRate) / 100;
 
       subtotal += finalItemPrice;
@@ -85,7 +86,7 @@ export const createOrder = async (req, res) => {
         commission,
         shop: product.shop,
       });
-
+      console.log("orderItemsdfghj", orderItems);
       // reduce stock (POS + online both)
       product.stock -= quantity;
       await product.save();
@@ -118,6 +119,18 @@ export const createOrder = async (req, res) => {
       isPOS,
       status: isPOS ? "completed" : "pending",
     });
+    const cart = await Cart.findOne({ user: userId });
+    console.log("cart fghjk", cart);
+
+    if (cart) {
+      const orderItem =  orderItems.map((item) => item.product.toString());
+      console.log("orderItems", orderItems);
+      cart.items = cart.items.filter(
+        (item) =>! orderItem.includes(item.product.toString()),
+      );
+      console.log("cart.items", cart.items);
+    }
+      await cart.save();
 
     res.status(201).json({
       success: true,

@@ -13,7 +13,7 @@ export const orderApi = createApi({
         method: "POST",
         body: orderData,
   }),
-  inValidatesTags: ["order"],
+  invalidatesTags: ["cart", "order"],
 }),
     getOrdersForUser: builder.query({
       query: () => ({
@@ -36,7 +36,7 @@ export const orderApi = createApi({
         method: "PATCH",
         body: updateData,
       }),
-      invalidatesTags: ["order"],
+      invalidatesTags: ["cart","order"],
     }),
     deleteOrder: builder.mutation({
       query: (orderId) => ({

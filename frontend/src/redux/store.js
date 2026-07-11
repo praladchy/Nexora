@@ -6,9 +6,13 @@ import { productApi } from "./product.slice.js";
 import { cartApi } from "./cart.slice.js";
 import { whishlistApi } from "./whishList.js";
 import { orderApi } from "./order.slice.js";
+import { persistedReducer } from "./persist.config.jsx";
+import persistStore from "redux-persist/es/persistStore";
 export const store = configureStore({
   reducer: {
-    auth: authReducer,   /*this is name of reducer use any name you want only manditory name of slice name */
+        auth: persistedReducer,
+    
+       /*this is name of reducer use any name you want only manditory name of slice name */
     [authApi.reducerPath]: authApi.reducer,
     [productApi.reducerPath]:productApi.reducer,  
     [cartApi.reducerPath]:cartApi.reducer,
@@ -20,5 +24,6 @@ export const store = configureStore({
 
   /*this middleware is used to store temporary data in the redux store when the data fetch from the api fetch only update data from api not all data fetch */
 });
+export const persistor = persistStore(store);
 setupListeners(store.dispatch);
 /*this function is used to fetch data when action or dispatch the data or reconect from internet*/
