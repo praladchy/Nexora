@@ -16,7 +16,9 @@ router.post("/createproduct",authMiddleware,roleMiddleware(["superAdmin","admin"
 
 router.get("/getproducts",authMiddleware,roleMiddleware(["user"]),getProducts);
  
-router.get("/getProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.view"), getProductById);
+// router.get("/getProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","user"]),checkPermission("product.view"), getProductById);
+router.get("/getProducts/:id",authMiddleware,roleMiddleware(["user"]), getProductById);
+
 router.get("/getProducts/:shopId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.list"), getProductsByShop);
 router.get("/category/:categoryId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.list"), getProductsByCategory);
 router.patch("/updateProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.update"), upload.array("images",5),updateProduct);

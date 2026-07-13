@@ -1,10 +1,9 @@
 import { useState, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { useGetproductQuery } from "../../redux/product.slice";
+import { useCreateCartMutation } from "../../redux/cart.slice";
 
-const images = [
-  "https://images.unsplash.com/photo-1594938298603-c8148f4851f9?w=600&q=80",
-  "https://images.unsplash.com/photo-1547945090-7e8e4eb24d1a?w=600&q=80",
-  "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600&q=80",
-];
+ 
 
 const sizes = [6, 8, 10, 9, 10, 12, 14, 16, 18, 20, 22];
 const uniqueSizes = [6, 8, 9, 10, 12, 14, 16, 18, 20, 22];
@@ -12,9 +11,22 @@ const uniqueSizes = [6, 8, 9, 10, 12, 14, 16, 18, 20, 22];
 const tabs = ["Product Details", "Care Guide", "Reviews"];
 
 const reviews = [
-  { name: "Sarah M.", rating: 5, comment: "Absolutely love these joggers! The acid wash is so unique and the fit is perfect." },
-  { name: "Jamie L.", rating: 4, comment: "Great quality fabric, very comfortable for all-day wear." },
-  { name: "Alex T.", rating: 4, comment: "Stylish and comfortable. Runs a little big so size down." },
+  {
+    name: "Sarah M.",
+    rating: 5,
+    comment:
+      "Absolutely love these joggers! The acid wash is so unique and the fit is perfect.",
+  },
+  {
+    name: "Jamie L.",
+    rating: 4,
+    comment: "Great quality fabric, very comfortable for all-day wear.",
+  },
+  {
+    name: "Alex T.",
+    rating: 4,
+    comment: "Stylish and comfortable. Runs a little big so size down.",
+  },
 ];
 
 function StarRating({ rating, size = "sm" }) {
@@ -24,7 +36,13 @@ function StarRating({ rating, size = "sm" }) {
         <svg
           key={s}
           className={size === "sm" ? "w-4 h-4" : "w-5 h-5"}
-          fill={s <= Math.floor(rating) ? "#F59E0B" : s - 0.5 <= rating ? "url(#half)" : "#D1D5DB"}
+          fill={
+            s <= Math.floor(rating)
+              ? "#F59E0B"
+              : s - 0.5 <= rating
+                ? "url(#half)"
+                : "#D1D5DB"
+          }
           viewBox="0 0 20 20"
         >
           <defs>
@@ -49,11 +67,18 @@ export default function ProductPage() {
   const [dragging, setDragging] = useState(false);
   const dragStartX = useRef(null);
   const dragDelta = useRef(0);
-
+  const [createCart ] = useCreateCartMutation();
+  const { id } = useParams();
+  console.log("product details", id);
+  const { data ,isLoading } = useGetproductQuery(id);
+  console.log("product details data", data);
   const goTo = (index) => {
-    setActiveImage(Math.max(0, Math.min(images.length - 1, index)));
+    setActiveImage(Math.max(0, Math.min(data.product?.images.length - 1, index)));
   };
-
+if (isLoading) {
+  return <div>Loading...</div>;
+}
+  
   const handleDragStart = (clientX) => {
     dragStartX.current = clientX;
     dragDelta.current = 0;
@@ -76,15 +101,26 @@ export default function ProductPage() {
     setTimeout(() => setDragging(false), 0);
   };
 
-  const handleAddToCart = () => {
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
-  };
+ 
+   const handleAddToCart = async (productId, shopId) => {
+     try {
+       const res = await createCart({
+         productId,
+         shopId,
+         quantity: 1,
+       }).unwrap();
+ 
+       console.log("add to cart response", res);
+       alert(res.message);
+     } catch (error) {
+       console.error("Error adding to cart:", error);
+     }
+   };
 
   return (
     <div className="min-h-screen bg-[#F8F7F4] font-sans">
       {/* Navbar */}
-     
+
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -92,7 +128,7 @@ export default function ProductPage() {
           <div className="flex gap-4">
             {/* Thumbnails */}
             <div className="flex flex-col gap-3">
-              {images.map((img, i) => (
+              {data.product?.images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => goTo(i)}
@@ -102,7 +138,11 @@ export default function ProductPage() {
                       : "border-transparent opacity-50 hover:opacity-80 hover:border-gray-300"
                   }`}
                 >
-                  <img src={img} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`View ${i + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -125,15 +165,15 @@ export default function ProductPage() {
                 <div
                   className="flex h-full transition-transform duration-500 ease-in-out"
                   style={{
-                    transform: `translateX(calc(-${activeImage} * (100% / ${images.length})))`,
-                    width: `${images.length * 100}%`,
+                    transform: `translateX(calc(-${activeImage} * (100% / ${data.product?.images.length})))`,
+                    width: `${data.product?.images.length * 100}%`,
                   }}
                 >
-                  {images.map((img, i) => (
+                  {data.product?.images.map((img, i) => (
                     <div
                       key={i}
                       className="h-full flex-shrink-0"
-                      style={{ width: `calc(100% / ${images.length})` }}
+                      style={{ width: `calc(100% / ${data.product?.images.length})` }}
                     >
                       <img
                         src={img}
@@ -156,30 +196,52 @@ export default function ProductPage() {
                     onClick={() => goTo(activeImage - 1)}
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center hover:bg-white transition z-10"
                   >
-                    <svg className="w-4 h-4 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <svg
+                      className="w-4 h-4 text-gray-800"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
                     </svg>
                   </button>
                 )}
-                {activeImage < images.length - 1 && (
+                {activeImage < data.product?.images.length - 1 && (
                   <button
                     onClick={() => goTo(activeImage + 1)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm shadow flex items-center justify-center hover:bg-white transition z-10"
                   >
-                    <svg className="w-4 h-4 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg
+                      className="w-4 h-4 text-gray-800"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 )}
 
                 {/* Dot indicators */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                  {images.map((_, i) => (
+                  {data.product?.images.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => goTo(i)}
                       className={`rounded-full transition-all duration-300 ${
-                        activeImage === i ? "w-5 h-2 bg-white" : "w-2 h-2 bg-white/50 hover:bg-white/80"
+                        activeImage === i
+                          ? "w-5 h-2 bg-white"
+                          : "w-2 h-2 bg-white/50 hover:bg-white/80"
                       }`}
                     />
                   ))}
@@ -188,7 +250,7 @@ export default function ProductPage() {
 
               {/* Image counter */}
               <p className="text-center text-xs text-gray-400 tracking-wider">
-                {activeImage + 1} / {images.length}
+                {activeImage + 1} / {data.product?.images.length}
               </p>
             </div>
           </div>
@@ -197,7 +259,8 @@ export default function ProductPage() {
           <div className="pt-2 flex flex-col gap-5">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 leading-tight tracking-tight">
-                Grey Acid Wash<br />Wide Leg Jogger
+                {data.product?.brand}
+                
               </h1>
             </div>
 
@@ -211,7 +274,9 @@ export default function ProductPage() {
             {/* Price */}
             <div className="flex items-center gap-3">
               <span className="text-3xl font-bold text-gray-900">$215.00</span>
-              <span className="text-xl text-gray-400 line-through">$290.00</span>
+              <span className="text-xl text-gray-400 line-through">
+                $290.00
+              </span>
               <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-full">
                 26% OFF
               </span>
@@ -221,19 +286,24 @@ export default function ProductPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-gray-700">
-                  Color: <span className="font-normal text-gray-500">Black</span>
+                  Color:{" "}
+                  <span className="font-normal text-gray-500">Black</span>
                 </span>
               </div>
               <div className="flex gap-2">
-                {["#2D2D2D", "#6B7280", "#D1C4A8", "#9CA3AF"].map((color, i) => (
-                  <button
-                    key={i}
-                    className={`w-8 h-8 rounded-full border-2 transition ${
-                      i === 0 ? "border-black ring-2 ring-offset-1 ring-black" : "border-gray-200 hover:border-gray-400"
-                    }`}
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
+                {["#2D2D2D", "#6B7280", "#D1C4A8", "#9CA3AF"].map(
+                  (color, i) => (
+                    <button
+                      key={i}
+                      className={`w-8 h-8 rounded-full border-2 transition ${
+                        i === 0
+                          ? "border-black ring-2 ring-offset-1 ring-black"
+                          : "border-gray-200 hover:border-gray-400"
+                      }`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ),
+                )}
               </div>
             </div>
 
@@ -241,7 +311,10 @@ export default function ProductPage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold text-gray-700">
-                  Size: <span className="font-normal text-gray-500">{selectedSize}</span>
+                  Size:{" "}
+                  <span className="font-normal text-gray-500">
+                    {selectedSize}
+                  </span>
                 </span>
                 <button className="text-sm text-gray-500 underline hover:text-black transition">
                   View size guide
@@ -267,17 +340,32 @@ export default function ProductPage() {
             {/* CTAs */}
             <div className="flex gap-3 pt-1">
               <button
-                onClick={handleAddToCart}
+                 onClick={() =>
+                    handleAddToCart(
+                      data.product?._id,
+                      data.product?.shop?._id
+                    )
+                  }
                 className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-sm transition-all duration-300 ${
                   added
                     ? "bg-green-600 text-white"
                     : "bg-gray-900 text-white hover:bg-gray-700 active:scale-95"
                 }`}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
                 </svg>
-                {added ? "Added to Cart ✓" : "Add to Cart"}
+                {isLoading ? "Added to Cart ✓" : "Add to Cart"}
               </button>
               <button
                 onClick={() => setWished(!wished)}
@@ -287,13 +375,33 @@ export default function ProductPage() {
                     : "bg-white border-gray-200 text-gray-400 hover:border-gray-400"
                 }`}
               >
-                <svg className="w-5 h-5" fill={wished ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <svg
+                  className="w-5 h-5"
+                  fill={wished ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
                 </svg>
               </button>
               <button className="flex items-center gap-1.5 px-4 h-14 rounded-xl border border-gray-200 text-sm text-gray-600 hover:border-gray-400 transition bg-white">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
                 </svg>
                 Find in store
               </button>
@@ -302,22 +410,36 @@ export default function ProductPage() {
             {/* Shipping Banner */}
             <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm">
               <p className="text-gray-800">
-                Enjoy <span className="font-bold text-amber-700">FREE express</span> &amp;{" "}
-                <span className="font-bold text-amber-700">Free Returns</span> on orders over £35!
+                Enjoy{" "}
+                <span className="font-bold text-amber-700">FREE express</span>{" "}
+                &amp;{" "}
+                <span className="font-bold text-amber-700">Free Returns</span>{" "}
+                on orders over £35!
               </p>
               <p className="text-gray-500 mt-0.5 text-xs">
-                Place your order by 6pm on December 22nd for expedited processing.
+                Place your order by 6pm on December 22nd for expedited
+                processing.
               </p>
             </div>
 
             {/* Payment */}
             <div>
-              <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wider">Payment methods</p>
+              <p className="text-xs text-gray-400 mb-2 font-medium uppercase tracking-wider">
+                Payment methods
+              </p>
               <div className="flex items-center gap-3">
                 {/* Visa */}
                 <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 flex items-center">
                   <svg width="38" height="12" viewBox="0 0 38 12" fill="none">
-                    <text x="0" y="10" fontSize="12" fontWeight="bold" fill="#1A1F71">VISA</text>
+                    <text
+                      x="0"
+                      y="10"
+                      fontSize="12"
+                      fontWeight="bold"
+                      fill="#1A1F71"
+                    >
+                      VISA
+                    </text>
                   </svg>
                 </div>
                 {/* Mastercard */}
@@ -327,7 +449,9 @@ export default function ProductPage() {
                 </div>
                 {/* Amex */}
                 <div className="bg-blue-600 border border-blue-600 rounded-lg px-3 py-2">
-                  <span className="text-white text-xs font-bold tracking-tight">AMEX</span>
+                  <span className="text-white text-xs font-bold tracking-tight">
+                    AMEX
+                  </span>
                 </div>
                 <button className="text-xs text-gray-500 underline hover:text-black transition ml-1">
                   Learn more
@@ -360,13 +484,22 @@ export default function ProductPage() {
           {activeTab === "Product Details" && (
             <div className="max-w-2xl text-gray-600 leading-relaxed text-sm space-y-4">
               <p>
-                Step into a realm of unparalleled off-duty style with these grey acid wash joggers that effortlessly marry fashion with comfort. Crafted for those committed to style even on their days off, these joggers feature a chic drawstring waist and a wide leg cut.
+                {data.product?.description}
               </p>
-              <p>
-                The distinctive acid wash adds a touch of urban edge, making these joggers a versatile choice for leisurely pursuits and relaxed outings. Elevate your casual wardrobe with the perfect blend of fashion-forward design and comfort-driven details.
-              </p>
+              {/* <p>
+                The distinctive acid wash adds a touch of urban edge, making
+                these joggers a versatile choice for leisurely pursuits and
+                relaxed outings. Elevate your casual wardrobe with the perfect
+                blend of fashion-forward design and comfort-driven details.
+              </p> */}
               <ul className="space-y-1 list-none">
-                {["Wide leg silhouette", "Chic drawstring waist", "Acid wash finish", "Relaxed fit", "95% Cotton, 5% Elastane"].map((d) => (
+                {[
+                  "Wide leg silhouette",
+                  "Chic drawstring waist",
+                  "Acid wash finish",
+                  "Relaxed fit",
+                  "95% Cotton, 5% Elastane",
+                ].map((d) => (
                   <li key={d} className="flex items-center gap-2 text-gray-700">
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 inline-block" />
                     {d}
@@ -384,8 +517,13 @@ export default function ProductPage() {
                 ["Iron low heat", "Avoid direct contact with print"],
                 ["Do not bleach", "Preserve the acid wash finish"],
               ].map(([title, desc]) => (
-                <div key={title} className="flex items-start gap-4 py-3 border-b border-gray-100">
-                  <span className="font-semibold text-gray-800 w-40 shrink-0">{title}</span>
+                <div
+                  key={title}
+                  className="flex items-start gap-4 py-3 border-b border-gray-100"
+                >
+                  <span className="font-semibold text-gray-800 w-40 shrink-0">
+                    {title}
+                  </span>
                   <span>{desc}</span>
                 </div>
               ))}
@@ -398,13 +536,17 @@ export default function ProductPage() {
                 <span className="text-5xl font-bold text-gray-900">4.5</span>
                 <div>
                   <StarRating rating={4.5} size="lg" />
-                  <p className="text-sm text-gray-400 mt-1">Based on 212 reviews</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Based on 212 reviews
+                  </p>
                 </div>
               </div>
               {reviews.map((r) => (
                 <div key={r.name} className="border-b border-gray-100 pb-5">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-gray-800 text-sm">{r.name}</span>
+                    <span className="font-semibold text-gray-800 text-sm">
+                      {r.name}
+                    </span>
                     <StarRating rating={r.rating} />
                   </div>
                   <p className="text-sm text-gray-500">{r.comment}</p>
@@ -416,4 +558,4 @@ export default function ProductPage() {
       </div>
     </div>
   );
-} 
+}

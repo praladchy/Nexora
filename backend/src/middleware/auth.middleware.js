@@ -20,20 +20,31 @@ export const authMiddleware =  (req, res, next) => {
     });
   }
 };
-export const roleMiddleware =  (roles=[]) => {
+export const roleMiddleware = (roles = []) => {
   return (req, res, next) => {
     try {
-      if (!req.user.role||!roles.includes(req.user.role)) {
-        return res.status(403).json({
-          message: "Forbidden,unauthorized role",
+      // console.log("User role:", req.user?.role);
+      // console.log("Allowed roles:", roles);
+
+      if (!req.user || !req.user.role) {
+        return res.status(401).json({
           success: false,
+          message: "Unauthorized. User not authenticated.",
         });
       }
+
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden. Unauthorized role.",
+        });
+      }
+
       next();
     } catch (error) {
       return res.status(500).json({
-        message: "Server error ,not able to verify role",
         success: false,
+        message: "Server error. Unable to verify role.",
         error: error.message,
       });
     }

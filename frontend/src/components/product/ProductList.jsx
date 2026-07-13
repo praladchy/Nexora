@@ -39,13 +39,13 @@ const ProductList = () => {
               {/* Product Image */}
               <div className="h-32 sm:h-40 md:h-44 flex items-center justify-center overflow-hidden">
                 <NavLink
-                  to={`/product/productDetails/${products._id}`}
+                  to={`/product/productdetails/${products._id}`}
                   className="w-full h-full flex items-center justify-center"
                 >
                   <img
                     src={products?.images?.[0]?.url}
                     alt={products?.name}
-                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </NavLink>
               </div>

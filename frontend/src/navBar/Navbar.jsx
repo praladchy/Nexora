@@ -6,10 +6,14 @@ import UserProfile from "./UserProfile";
 import { useState } from "react";
 import CategorySlider from "../components/CategorySlider/CategorySlider";
 import SubcategorySlider from "../components/CategorySlider/SubcategorySlider";
-export default function Navbar({onClick}) {
+import { useGetCartQuery } from "../redux/cart.slice";
+
+export default function Navbar({ onClick }) {
   const user = useSelector((state) => state.auth.user);
-   const cart=useSelector((state)=>state)
-  const cartItems = cart.auth.cart?.length || 0;
+
+  const { data } = useGetCartQuery();
+
+  const cartItems = data?.cart?.length || 0;
   console.log("cartItems", cartItems);
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);

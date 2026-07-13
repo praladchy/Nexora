@@ -19,7 +19,7 @@ const dispatch=useDispatch()
   const [createOrder] = useCreateOrderMutation();
 
   const cartData = data?.cart;
-console.log("Cart Data:", cartData);
+console.log("Cart Datadfghjklbv:", cartData);
 dispatch(setCart({cart:cartData}))
   // Sync API cart → local UI state
   useEffect(() => {
