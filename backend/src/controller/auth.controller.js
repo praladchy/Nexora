@@ -4,7 +4,7 @@ import { sendEmail } from "../utils/emailVerification.js";
 import { sendOtpSms } from "../utils/phoneVerification.js";
 import { generateOTP } from "../utils/otp.js";
 import jwt from "jsonwebtoken";
-import { generateAccessToken, generaterefreshToken } from "../utils/jwttoken.js";
+import { generateAccessToken, generaterefreshToken } from "../utils/jwtToken.js";
  
 
 export const registerUser = async (req, res) => {
