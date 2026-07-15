@@ -82,7 +82,7 @@ function App() {
 
 export default App;
 
-// routesConfig.js
+// routesConfig.jsx
 
 // Private routes
 export const privateRoutes = [

@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import authReducer from "../Redux/userData.slice.js"
+import authReducer from "../Redux/userData.slice.jsx"
 import { shopSlice } from "./Shop.apiSlice.jsx";
-import { authApi } from "./auth.slice.js";
+import { authApi } from "./auth.slice.jsx";
 import { productApi } from "./Product.apiSlice.jsx";
-import { vendorSlice } from "./vendor.apiSlice.js";
+import { vendorSlice } from "./vendor.apiSlice.jsx";
 import { permissionApi } from "./permission.apislice.jsx";
 import { categorySlice } from "./category.apiSlice.jsx";
 export const Store = configureStore({
