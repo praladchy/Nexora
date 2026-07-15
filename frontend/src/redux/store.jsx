@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import authReducer from "./userData.slice.js";
-import { authApi } from "./auth.slice.js";
-import { productApi } from "./product.slice.js";
-import { cartApi } from "./cart.slice.js";
-import { whishlistApi } from "./whishList.js";
-import { orderApi } from "./order.slice.js";
+import authReducer from "./userData.slice.jsx";
+import { authApi } from "./auth.slice.jsx";
+import { productApi } from "./product.slice.jsx";
+import { cartApi } from "./cart.slice.jsx";
+import { whishlistApi } from "./whishList.jsx";
+import { orderApi } from "./order.slice.jsx";
 import { persistedReducer } from "./persist.config.jsx";
 import persistStore from "redux-persist/es/persistStore";
 export const store = configureStore({
