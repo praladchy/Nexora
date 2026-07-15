@@ -69,9 +69,9 @@ export default function ProductPage() {
   const dragDelta = useRef(0);
   const [createCart ] = useCreateCartMutation();
   const { id } = useParams();
-  console.log("product details", id);
+  // console.log("product details", id);
   const { data ,isLoading } = useGetproductQuery(id);
-  console.log("product details data", data);
+  // console.log("product details data", data);
   const goTo = (index) => {
     setActiveImage(Math.max(0, Math.min(data.product?.images.length - 1, index)));
   };
@@ -138,8 +138,9 @@ if (isLoading) {
                       : "border-transparent opacity-50 hover:opacity-80 hover:border-gray-300"
                   }`}
                 >
+
                   <img
-                    src={img}
+                    src={img.url}
                     alt={`View ${i + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -176,7 +177,7 @@ if (isLoading) {
                       style={{ width: `calc(100% / ${data.product?.images.length})` }}
                     >
                       <img
-                        src={img}
+                        src={img.url}
                         alt={`Product view ${i + 1}`}
                         className="w-full h-full object-cover object-center pointer-events-none"
                         draggable={false}

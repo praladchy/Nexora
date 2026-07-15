@@ -19,7 +19,7 @@ export default function Navbar({ onClick }) {
   const [profileOpen, setProfileOpen] = useState(false);
   console.log("navbar", user);
   return (
-    <header className="bg-[#131921] text-white relative">
+    <header className="bg-[#131921] text-white  fixed top-0 left-0 right-0 z-50">
       {/* Top Bar */}
       <div className="flex items-center gap-1 px-3 py-2 min-h-[60px]">
         {/* Logo */}

@@ -30,29 +30,29 @@ function App() {
   }, [isSuccess, data, dispatch]);
 
   const user = useSelector((state) => state.auth.user);
- 
+
   console.log("mnbvcxz", user);
   if (isLoading) return <h1>Loading...</h1>;
 
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Layout />}/>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
 
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-otp/:userId" element={<Verification />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/product/cart" element={<ShoppingCartPage />} />
-          <Route path="/categorySlider" element={<SubcategorySlider />} />
-          <Route path="/product/productdetails/:id" element={<ProductDetails/>} />
-          {/* <Route path="" element={} /> */}
-          {/* <Route path="" element={} /> */}
-          {/* <Route path="" element={} /> */}
-          {/* <Route path="" element={} /> */}
-      </Routes>
-    </>
+        <Route path="products" element={<ProductList />} />
+        <Route path="category/products" element={<ProductList />} />
+
+
+        <Route path="product/productdetails/:id" element={<ProductDetails />} />
+
+        <Route path="product/cart" element={<ShoppingCartPage />} />
+      </Route>
+
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-otp/:userId" element={<Verification />} />
+    </Routes>
   );
 }
 

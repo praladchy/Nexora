@@ -2,7 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import { useNavigate } from "react-router-dom";
 // Categories data
 const categories = [
   { id: 1, name: "1", img: "https://i.imgur.com/2DhmtJ4.png" },
@@ -43,6 +43,7 @@ const pairCategories = (data) => {
 const pairedCategories = pairCategories(categories);
 
 export default function CategorySlider() {
+  const navigate = useNavigate();
   const NextArrow = ({ onClick }) => (
     <button
       onClick={onClick}
@@ -67,7 +68,7 @@ export default function CategorySlider() {
     speed: 500,
     slidesToShow: 9,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 3000,
     pauseOnHover: true,
     nextArrow: <NextArrow />,
@@ -98,7 +99,8 @@ export default function CategorySlider() {
               {pair.map((item) => (
                 <div
                   key={item.id}
-                  className="w-28 py-3  rounded-xl shadow-md bg-white flex flex-col items-center justify-center text-center"
+                  className="w-28 py-3 mx-auto  rounded-xl shadow-md bg-white flex flex-col items-center justify-center text-center pointer"
+                  onClick={()=>{navigate("/category/products")}}
                 >
                   <div className="w-20 h-20 bg-gray-100 overflow-hidden rounded-lg">
                     <img

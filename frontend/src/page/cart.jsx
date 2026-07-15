@@ -189,8 +189,8 @@ dispatch(setCart({cart:cartData}))
                 <div className="col-span-5 flex gap-4 items-center">
                   <img
                     src={
-                      item.product?.images?.[0] ||
-                      "https://via.placeholder.com/100"
+                      item.product?.images?.[0]?.url
+                      
                     }
                     alt={item.product?.name}
                     className="w-20 h-24 object-cover rounded-lg border"
