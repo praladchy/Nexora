@@ -320,7 +320,7 @@ export const verifyOtp = async (req, res) => {
         success: false,
       });
        
-    if (!user.otpExpireAt || user.otpExpireAt > new Date()) {
+    if (!user.otpExpireAt || user.otpExpireAt < new Date()) {
       return res.status(400).json({
         message: "OTP has expired", 
         success: false,
