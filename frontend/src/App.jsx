@@ -15,7 +15,7 @@ import HeroSectionSlider from "./components/CategorySlider/HeroSectionSlider";
 import SubcategorySlider from "./components/CategorySlider/SubcategorySlider";
 import Layout from "./page/layout";
 import ProductDetails from "./components/product/ProductDetails";
-import VerifyForgatePassword from "../../AdminDashboard/src/pages/VerifyForgatePass";
+import VerifyForgatePassword from "./page/verifyForgatePassword";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
