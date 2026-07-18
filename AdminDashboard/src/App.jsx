@@ -7,7 +7,7 @@ import AddProduct from "./pages/product/AddProduct";
 import MarketPlace from "./pages/MarketPlace";
 import ProductManag from "./pages/product/list.product.jsx";
 import VendorDashboard from "./pages/VendorDashboard";
-import Verification from "./pages/verification";
+import Verification from "./pages/Verification";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import PermissionCreate from "./pages/permission/create.permission";
