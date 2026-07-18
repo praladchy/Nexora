@@ -19,8 +19,29 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+    adminRegister: builder.mutation({
+      query: (data) => ({
+        url: "auth/admin/register",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    forgatePassword: builder.mutation({
+      query: (data) => ({
+        url: `auth/user/forgot-password/${data.userId}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    sendOtp: builder.mutation({
+      query: (data) => ({
+        url: "auth/user/send-otp",
+        method: "POST",
+        body: data,
+      }),
+    }),
     
-    
+   
     verification: builder.mutation({
       query: (data) => ({
         url: "auth/user/verify-otp",
@@ -30,7 +51,7 @@ export const authApi = createApi({
     }),
     reSendOtp: builder.mutation({
       query: (data) => ({
-        url: "user/resend-otp",
+        url: "auth/user/resend-otp",
         method: "POST",
         body: data,
       }),
@@ -53,15 +74,18 @@ export const authApi = createApi({
         method: "GET",
       }),
       providesTags: ["authApi"],
-    })
+    }),
   }),
 });
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useForgatePasswordMutation,
+  useAdminRegisterMutation,
   useVerificationMutation,
   useReSendOtpMutation,
-  useRefreshTokenQuery,  
+  useRefreshTokenQuery,
   useLogoutMutation,
   useGetUserQuery,
+  useSendOtpMutation,
 } = authApi;

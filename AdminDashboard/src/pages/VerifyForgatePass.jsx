@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useReSendOtpMutation, useVerificationMutation } from "../redux/auth.slice";
- 
-const Verification = () => {
+import {
+  useVerificationMutation,
+  useReSendOtpMutation,
+} from "../components/Redux/auth.slice";
+const VerifyForgatePassword = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [verifyOtp] = useVerificationMutation();
   const [resendOtp] = useReSendOtpMutation();
@@ -29,7 +31,7 @@ const Verification = () => {
 
     try {
       const res = await verifyOtp({ userId, otp: finalOtp }).unwrap();
-      navigate("/login");
+      navigate(`/forgot-password/${userId}`);
       setOtp(["", "", "", ""]);
       alert(res.message);
       // localStorage.setItem("accessToken", res.accessToken);
@@ -40,7 +42,6 @@ const Verification = () => {
   const handleResend = async () => {
     try {
       const res = await resendOtp({ userId }).unwrap();
-      console.log("Resend OTP response:", res);
       alert(res.message);
     } catch (error) {
       alert("Failed to resend OTP");
@@ -86,4 +87,4 @@ const Verification = () => {
   );
 };
 
-export default Verification;
+export default VerifyForgatePassword;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForgatePasswordMutation } from "../redux/auth.slice";
+import { useForgatePasswordMutation } from "../components/Redux/auth.slice";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ForgotPassword = () => {

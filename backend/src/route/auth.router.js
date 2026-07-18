@@ -18,7 +18,7 @@ router.post("/user/verify-otp", verifyOtp);
 router.post("/user/send-otp",sendOtp);
 
 router.post("/user/resend-otp",reSendOtp);
-router.post("/user/forgot-password", forgotPassword);
+router.post("/user/forgot-password/:userId", forgotPassword);
 router.post("/user/logout",authMiddleware,logout)
 router.get("/refresh",refresh);
 export const authRouter = router;   

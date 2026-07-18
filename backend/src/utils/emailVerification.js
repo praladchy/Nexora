@@ -1,7 +1,7 @@
 import { transporter } from "../config/email.config.js";
 
 export const sendEmail = async ({ email ,otp }) => {
-  console.log("mail",email,otp);
+  console.log("mail asdvfg",email,otp);
 
   
   return transporter.sendMail({

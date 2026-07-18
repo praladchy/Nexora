@@ -15,6 +15,7 @@ import HeroSectionSlider from "./components/CategorySlider/HeroSectionSlider";
 import SubcategorySlider from "./components/CategorySlider/SubcategorySlider";
 import Layout from "./page/layout";
 import ProductDetails from "./components/product/ProductDetails";
+import VerifyForgatePassword from "../../AdminDashboard/src/pages/VerifyForgatePass";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -42,15 +43,14 @@ function App() {
         <Route path="products" element={<ProductList />} />
         <Route path="category/products" element={<ProductList />} />
 
-
         <Route path="product/productdetails/:id" element={<ProductDetails />} />
 
         <Route path="product/cart" element={<ShoppingCartPage />} />
       </Route>
-
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/forgot-password/:userId" element={<ForgotPassword />} />
+      <Route path="/verifyotp/:userId" element={<VerifyForgatePassword />} />
       <Route path="/verify-otp/:userId" element={<Verification />} />
     </Routes>
   );

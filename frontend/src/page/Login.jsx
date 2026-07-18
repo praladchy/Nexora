@@ -1,8 +1,8 @@
 import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useLoginMutation } from "../redux/auth.slice";
+import { useLoginMutation, useReSendOtpMutation, useSendOtpMutation } from "../redux/auth.slice";
 import { setCredentials } from "../redux/userData.slice";
 
 const Login = () => {
@@ -11,6 +11,7 @@ const Login = () => {
     password: "",
   });
   const [Login] = useLoginMutation();
+  const [forgateEmail, { isLoading }] = useSendOtpMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange = (e) => {
@@ -26,10 +27,12 @@ const Login = () => {
       console.log("Login response:", res);
       alert(res.message);
 
-      dispatch(setCredentials({
-          safeuser: res.safeuser, 
+      dispatch(
+        setCredentials({
+          safeuser: res.safeuser,
           accessToken: res.accessToken,
-        }));
+        }),
+      );
 
       // localStorage.setItem("accessToken", JSON.stringify(res.accessToken));
 
@@ -38,6 +41,19 @@ const Login = () => {
     } catch (error) {
       alert(error?.data?.message);
       console.error("Login failed:", error);
+    }
+  };
+  const handleOnclick = async (e) => {
+    try {
+      e.preventDefault();
+      const data = { identifier: formData.email };
+      const res = await forgateEmail(data).unwrap();
+      console.log(res.userId);
+
+      navigate(`/verifyotp/${res.userId}`);
+      
+    } catch (error) {
+      console.log("error occurs when forgate password", error);
     }
   };
   return (
@@ -64,9 +80,12 @@ const Login = () => {
             className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
           <div className="text-right">
-            <a href="#" className="text-sm text-blue-600 hover:underline">
+            <div
+              className="text-sm text-blue-600 hover:underline"
+              onClick={(e) => handleOnclick(e)}
+            >
               Forgot Password?
-            </a>
+            </div>
           </div>
           <button
             type="submit"
@@ -75,6 +94,15 @@ const Login = () => {
             Login
           </button>
         </form>
+
+        <div className="mt-3">
+          <NavLink
+            to="/signup"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Don't have an account? Register
+          </NavLink>
+        </div>
       </div>
     </div>
   );

@@ -24,7 +24,8 @@ import OwnerAssign from "./pages/shop/OwnerAssign.shop.jsx";
 import ShopList from "./pages/shop/shop.list.jsx";
 import CreateAdmin from "./pages/vendor/createAdmin.vendor.jsx";
 import CreateCategory from "./pages/category/create.category.jsx";
-
+import ForgotPassword from "./pages/forgatePassword.jsx";
+import VerifyForgatePassword from "./pages/VerifyForgatePass.jsx";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -122,6 +123,10 @@ export const privateRoutes = [
 export const publicRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
+  { path: "/forgot-password/:userId", element: <ForgotPassword /> },
+  
   { path: "/verify-otp/:userId", element: <Verification /> },
+  { path: "/verifyotp/:userId", element: <VerifyForgatePassword /> },
+
   { path: "*", element: <h1>404 Not Found</h1> },
 ];

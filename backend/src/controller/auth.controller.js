@@ -167,15 +167,17 @@ export const login = async (req, res) => {
   }
 };
 export const forgotPassword = async (req, res) => {
-  const { email, phone, password, confirmPassword } = req.body;
-
+  const {  password, confirmPassword } = req.body;
+  console.log("forgot password request body:", req.body);
+  
+  const {userId}=req.params;
   try {
-    if (!email || !phone || !password || !confirmPassword)
+    if (!password || !confirmPassword)
       return res.status(400).json({
         message: "All fields are required",
         success: false,
       });
-    const user = await User.findOne({ $or: [{ email }, { phone }] });
+    const user = await User.findById(userId).select("+password");
     if (!user)
       return res.status(400).json({
         message: "User not found",
@@ -196,7 +198,8 @@ export const forgotPassword = async (req, res) => {
         message: "Password must be at least 6 characters long",
         success: false,
       });
-    user.password = password;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
     await user.save();
     res.status(200).json({
       message: "Password reset successfully",
@@ -226,39 +229,40 @@ export const logout = (req, res) => {
   }
 };
 export const sendOtp = async (req, res) => {
-  const { email: email, phone: phone, verifyBy } = req.body;
-
+  const { identifier, verifyBy } = req.body;
+console.log("Send OTP Request:", req.body);
   try {
-    if (!email || !phone)
+    if (!identifier)
       return res.status(400).json({
         message: "Email or phone is required",
         success: false,
       });
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ $or: [{ email: identifier }, { phone: identifier }] });
 
     if (!user)
       return res.status(400).json({
         message: "User not found",
         success: false,
       });
-    if (user.isVerified === true)
+    if (user.isVerified !== true)
       return res.status(400).json({
-        message: "User is already verified",
+        message: "User is not verify",
         success: false,
       });
-    const otp = Math.floor(10000 + Math.random() * 90000).toString();
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    console.log("Generated OTP:", otp);
     if (verifyBy === "phone") {
-      sendOtpSms(phone, otp);
+      sendOtpSms({ phone: user.phone, otp });
     } else {
-      sendEmail({ email, otp });
+      sendEmail({ email: user.email, otp }); 
     }
     user.otp = otp;
-    user.isVerified = false;
     user.otpExpireAt = new Date();
     await user.save();
     res.status(200).json({
       message: "Otp sent to your email successfully",
       success: true,
+      userId: user._id,
     });
   } catch (error) {
     res.status(500).json({
@@ -270,7 +274,7 @@ export const sendOtp = async (req, res) => {
 };
 export const reSendOtp = async (req, res) => {
   const { userId } = req.body;
-  console.log(userId);
+  console.log("xcvbmnbvcvbnm",userId);
   try {
     const user = await User.findById(userId);
 
@@ -279,9 +283,9 @@ export const reSendOtp = async (req, res) => {
         message: "User not found",
         success: false,
       });
-    if (user.isVerified === true)
+    if (user.isVerified !== true)
       return res.status(400).json({
-        message: "User is already verified",
+        message: "User is not verified",
         success: false,
       });
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
@@ -291,7 +295,6 @@ export const reSendOtp = async (req, res) => {
       sendEmail({ email: user.email, otp });
     }
     user.otp = otp;
-    user.isVerified = false;
     user.otpExpireAt = new Date();
     await user.save();
     res.status(200).json({
@@ -308,6 +311,7 @@ export const reSendOtp = async (req, res) => {
 };
 export const verifyOtp = async (req, res) => {
   const { userId, otp } = req.body;
+  console.log("Verify OTP Request:", req.body);
   try {
     const user = await User.findById(userId);
     if (!user)
@@ -315,9 +319,10 @@ export const verifyOtp = async (req, res) => {
         message: "User not found",
         success: false,
       });
-    if (!user.otpExpireAt || user.otpExpireAt < new Date()) {
+       
+    if (!user.otpExpireAt || user.otpExpireAt > new Date()) {
       return res.status(400).json({
-        message: "OTP has expired",
+        message: "OTP has expired", 
         success: false,
       });
     }
