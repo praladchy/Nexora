@@ -17,7 +17,7 @@ export const transporter = nodemailer.createTransport({
 
  host: process.env.BREVO_HOST,
   port: Number(process.env.BREVO_PORT),
-  secure: false, // Use false with port 587
+  secure: true, // Use false with port 587
   auth: {
     user: process.env.BREVO_LOGIN,
     pass: process.env.BREVO_SMTP_KEY,
