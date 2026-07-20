@@ -25,6 +25,7 @@ const brevo = new BrevoClient({
   // maxRetries: 3,
 });
 export const sendEmail = async ({ email, otp }) => {
+  console.log("mail asdvfg", process.env.BREVO_API_KEY, email, otp);
   try {
     const result = await brevo.transactionalEmails.sendTransacEmail({
       subject: "Hello from Nexora!, Your OTP Code",
