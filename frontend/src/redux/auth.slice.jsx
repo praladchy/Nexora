@@ -7,21 +7,21 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data) => ({
-        url: "auth/user/login",
+        url: "/auth/user/login",
         method: "POST",
         body: data,
       }),
     }),
     register: builder.mutation({
       query: (data) => ({
-        url: "auth/user/register",
+        url: "/auth/user/register",
         method: "POST",
         body: data,
       }),
     }),
     adminRegister: builder.mutation({
       query: (data) => ({
-        url: "auth/admin/register",
+        url: "/auth/admin/register",
         method: "POST",
         body: data,
       }),
@@ -35,7 +35,7 @@ export const authApi = createApi({
     }),
     sendOtp: builder.mutation({
       query: (data) => ({
-        url: "auth/user/send-otp",
+        url: "/auth/user/send-otp",
         method: "POST",
         body: data,
       }),
@@ -44,33 +44,33 @@ export const authApi = createApi({
    
     verification: builder.mutation({
       query: (data) => ({
-        url: "auth/user/verify-otp",
+        url: "/auth/user/verify-otp",
         method: "POST",
         body: data,
       }),
     }),
     reSendOtp: builder.mutation({
       query: (data) => ({
-        url: "auth/user/resend-otp",
+        url: "/auth/user/resend-otp",
         method: "POST",
         body: data,
       }),
     }),
     refreshToken: builder.query({
       query: () => ({
-        url: "auth/refresh",
+        url: "/auth/refresh",
         method: "GET",
       }),
     }),
     logout: builder.mutation({
       query: () => ({
-        url: "auth/user/logout",
+        url: "/auth/user/logout",
         method: "POST",
       }),
     }),
     getUser: builder.query({
       query: () => ({
-        url: "auth/user/gets",
+        url: "/auth/user/gets",
         method: "GET",
       }),
       providesTags: ["authApi"],

@@ -2,9 +2,11 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const baseQuery = fetchBaseQuery({
-  // baseUrl: "http://localhost:5000/api/",
+  // baseUrl: "http://localhost:5000/api",
   
-  baseUrl: "https://nexaura11.onrender.com/api",
+  // baseUrl: "https://nexaura11.onrender.com/api",
+  baseUrl: "  nexora-production-83ec.up.railway.app/api",
+
 
   credentials: "include", // for refresh cookie
   prepareHeaders: (headers, { getState }) => {
