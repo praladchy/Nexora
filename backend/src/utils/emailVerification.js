@@ -20,7 +20,7 @@
 import { BrevoClient } from "@getbrevo/brevo";
 
 const brevo = new BrevoClient({
-  apiKey: "your-api-key",
+  apiKey: process.env.BREVO_API_KEY,
   // timeoutInSeconds: 30,
   // maxRetries: 3,
 });
