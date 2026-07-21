@@ -140,8 +140,8 @@ export const login = async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      sameSite: "lax", // for localhost
-      secure: false,
+      secure: true, // true in production
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -217,7 +217,9 @@ export const forgotPassword = async (req, res) => {
 };
 export const logout = (req, res) => {
   try {
-    res.clearCookie("refreshToken", { httpOnly: true, sameSite: "lax" });
+    res.clearCookie("refreshToken", {  httpOnly: true,
+  secure: true,          // true in production
+  sameSite: "None" });
 
     return res.status(200).json({
       success: true,
