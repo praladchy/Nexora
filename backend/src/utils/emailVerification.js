@@ -3,6 +3,8 @@ import { transporter } from "../config/email.config.js";
 export const sendEmail = async ({ email ,otp }) => {
   console.log("mail asdvfg",email,otp);
 const mailTransporter = await transporter();
+
+console.log(mailTransporter.options.auth);
   return mailTransporter.sendMail({
     from: process.env.MAIL_FROM,
     to:email,

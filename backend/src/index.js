@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 8000;
 app.use(
   cors({
     // origin: ["http://localhost:5173", "http://localhost:5174"],
-    origin: ["https://nexora11.vercel.app", "https://nexora-39iv.vercel.app"],
+    origin: ["https://nexora11.vercel.app", "https://nexora-39iv.vercel.app","http://localhost:5173", "http://localhost:5174"],
 
 
     credentials: true,
