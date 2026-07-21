@@ -4,8 +4,10 @@ import { sendEmail } from "../utils/emailVerification.js";
 import { sendOtpSms } from "../utils/phoneVerification.js";
 import { generateOTP } from "../utils/otp.js";
 import jwt from "jsonwebtoken";
-import { generateAccessToken, generaterefreshToken } from "../utils/jwtToken.js";
- 
+import {
+  generateAccessToken,
+  generaterefreshToken,
+} from "../utils/jwtToken.js";
 
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, phone, password, verifyBy } = req.body;
@@ -167,10 +169,10 @@ export const login = async (req, res) => {
   }
 };
 export const forgotPassword = async (req, res) => {
-  const {  password, confirmPassword } = req.body;
+  const { password, confirmPassword } = req.body;
   console.log("forgot password request body:", req.body);
-  
-  const {userId}=req.params;
+
+  const { userId } = req.params;
   try {
     if (!password || !confirmPassword)
       return res.status(400).json({
@@ -230,14 +232,16 @@ export const logout = (req, res) => {
 };
 export const sendOtp = async (req, res) => {
   const { identifier, verifyBy } = req.body;
-console.log("Send OTP Request:", req.body);
+  console.log("Send OTP Request:", req.body);
   try {
     if (!identifier)
       return res.status(400).json({
         message: "Email or phone is required",
         success: false,
       });
-    const user = await User.findOne({ $or: [{ email: identifier }, { phone: identifier }] });
+    const user = await User.findOne({
+      $or: [{ email: identifier }, { phone: identifier }],
+    });
 
     if (!user)
       return res.status(400).json({
@@ -254,10 +258,11 @@ console.log("Send OTP Request:", req.body);
     if (verifyBy === "phone") {
       sendOtpSms({ phone: user.phone, otp });
     } else {
-      sendEmail({ email: user.email, otp }); 
+      sendEmail({ email: user.email, otp });
     }
     user.otp = otp;
-    user.otpExpireAt = new Date();
+    user.otpExpireAt = new Date(new Date().getTime() + 5 * 60 * 1000);
+
     await user.save();
     res.status(200).json({
       message: "Otp sent to your email successfully",
@@ -274,7 +279,7 @@ console.log("Send OTP Request:", req.body);
 };
 export const reSendOtp = async (req, res) => {
   const { userId } = req.body;
-  console.log("xcvbmnbvcvbnm",userId);
+  console.log("xcvbmnbvcvbnm", userId);
   try {
     const user = await User.findById(userId);
 
@@ -295,7 +300,8 @@ export const reSendOtp = async (req, res) => {
       sendEmail({ email: user.email, otp });
     }
     user.otp = otp;
-    user.otpExpireAt = new Date();
+    user.otpExpireAt = new Date(new Date().getTime() + 5 * 60 * 1000);
+
     await user.save();
     res.status(200).json({
       message: "Otp sent to your email successfully",
@@ -319,10 +325,15 @@ export const verifyOtp = async (req, res) => {
         message: "User not found",
         success: false,
       });
-       
+    console.log(
+      "User OTP Expiry:",
+      user.otpExpireAt,
+      "Current Time:",
+      new Date(),
+    );
     if (!user.otpExpireAt || user.otpExpireAt < new Date()) {
       return res.status(400).json({
-        message: "OTP has expired", 
+        message: "OTP has expired",
         success: false,
       });
     }
@@ -346,7 +357,7 @@ export const verifyOtp = async (req, res) => {
     //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     // });
     await user.save();
-    res.status(200).json({ 
+    res.status(200).json({
       message: "User verified successfully",
       success: true,
       // accessToken,
