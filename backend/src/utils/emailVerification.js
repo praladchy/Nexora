@@ -1,11 +1,10 @@
 import { transporter } from "../config/email.config.js";
-
-export const sendEmail = async ({ email ,otp }) => {
-  console.log("mail asdvfg",email,otp);
+export const sendEmail = async ({ email, otp }) => {
+  console.log("mail asdvfg", email, otp);
 
   return transporter.sendMail({
     from: process.env.MAIL_FROM,
-    to:email,
+    to: email,
     subject: "Your OTP Code",
 
     html: `
@@ -44,8 +43,6 @@ export const sendEmail = async ({ email ,otp }) => {
 //     console.error("Error sending email:", error);
 //   }
 // };
-
-
 
 // import { Resend } from "resend";
 // import dotenv from "dotenv";
