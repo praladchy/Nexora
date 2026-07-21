@@ -1,24 +1,30 @@
 import dotenv from "dotenv";
 dotenv.config();
+import { google } from "googleapis";
 import nodemailer from "nodemailer";
-console.log("dfghlkjnm", process.env.GMAIL_USER, process.env.BREVO_SMTP_KEY);
 
-export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // MUST be false for 587
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASS, // App Password only
-  },
-//  host: "smtp-relay.brevo.com",
-//   port: 587,
-//   secure: false, // STARTTLS on 587
-//   auth: {
-//     user: process.env.BREVO_USER,       // your Brevo login email
-//     pass: process.env.BREVO_SMTP_KEY,   // SMTP key (Brevo dashboard → SMTP & API → SMTP Key, NOT your account password)
-//   },
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
 
-
-
+oauth2Client.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
 });
+
+const accessToken = await oauth2Client.getAccessToken();
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    type: "OAuth2",
+    user: process.env.GMAIL_USER,
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+    accessToken: accessToken.token,
+  },
+});
+
+export default transporter;
