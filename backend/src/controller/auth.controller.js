@@ -375,7 +375,6 @@ export const verifyOtp = async (req, res) => {
 export const refresh = async (req, res) => {
   try {
     const token = req.cookies.refreshToken;
-    console.log("Refresh Token:", token);
     if (!token) return res.status(401).json({ message: "Unauthorized" });
 
     const user = await User.findOne({ refreshToken: token }).populate(
