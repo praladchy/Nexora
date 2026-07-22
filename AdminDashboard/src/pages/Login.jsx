@@ -103,6 +103,8 @@ const Login = () => {
           >
             Don't have an account? Register
           </NavLink>
+          <p>login id:praladchy028@gmail.com</p>
+          <p>password:2082ptr</p>
         </div>
       </div>
     </div>
