@@ -4,7 +4,7 @@ import { authMiddleware, checkPermission, roleMiddleware } from "../middleware/a
 import { getUsers } from "../controller/admin/user.controller.js";
 const router=express.Router()
 
-router.post("/create",authMiddleware,roleMiddleware(["superAdmin","admin","user"]),vendorRegistration)
+router.post("/create",authMiddleware,roleMiddleware(["superAdmin","admin","user"]),checkPermission("vendor.create"),vendorRegistration)
 router.post("user/create",authMiddleware,roleMiddleware(["user"]),vendorRegistration)
 
 router.post("/create/emailOtpSend",authMiddleware,roleMiddleware(["superAdmin","user","vendor"]),sendEmailOtp)
@@ -14,7 +14,7 @@ router.post("/create/phoneOtpVerify",authMiddleware,roleMiddleware(["superAdmin"
 
 
 
-router.post("/admin/create",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),vendorAdminRegistration)
+router.post("/admin/create",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),checkPermission("vendor.create"),vendorAdminRegistration)
 router.get("/admin/vendorAdmins",authMiddleware,roleMiddleware(["superAdmin","admin","vendor"]),getVendorAdmins)
 
 

@@ -186,37 +186,56 @@ export const assignPermissionUserById = async (req, res) => {
 
 
 export const removePermissionUserById = async (req, res) => {
-    const { id, userId } = req.params;
+  const { id, userId } = req.params;
 
   try {
     const permission = await Permission.findById(id);
-    console.log("kj",permission)
-    if (!permission && !permission.status)
+
+    if (!permission || !permission.status) {
       return res.status(404).json({
-        message: "permission not found",
+        message: "Permission not found",
         success: false,
       });
-   const user = await User.findByIdAndUpdate(
-  userId,
-  { $pull: { permissions: permission._id } },
-  { new: true }
-);
-if (!user)
+    }
+
+    const existingUser = await User.findById(userId);
+
+    if (!existingUser) {
       return res.status(404).json({
-        message: "user not found",
+        message: "User not found",
         success: false,
       });
-      
-    res.status(200).json({
-      message: "permission removed successfully",
+    }
+
+    // Prevent modifying Super Admin
+    if (existingUser.role === "superAdmin") {
+      return res.status(403).json({
+        message: "Super Admin permissions cannot be modified.",
+        success: false,
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          permissions: permission._id,
+        },
+      },
+      { new: true }
+    ).populate("permissions");
+
+    return res.status(200).json({
+      message: "Permission removed successfully",
       success: true,
-      user,
+      user: updatedUser,
       permission,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "server error,to remove permission",
+    return res.status(500).json({
+      message: "Server error while removing permission.",
       success: false,
+      error: error.message,
     });
   }
 };
