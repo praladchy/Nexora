@@ -11,6 +11,7 @@ import {
   Shield,   UserCheck, UserX, Edit2, Trash2
 } from "lucide-react";
 import {  } from "lucide-react";
+import { useSelector } from "react-redux";
 const iconStyle = "w-5 h-5";
 
 const Sidebar = () => {
@@ -19,11 +20,40 @@ const Sidebar = () => {
   const [productOpen, setProductOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
+
+  const user = useSelector((state) => state.auth.user);
+
+  const permissions =
+    user?.permissions?.map((item) => item.name || item) || [];
+
+  const mainMenus = mainMenu.filter(
+    (item) => !item.permission || permissions.includes(item.permission)
+  );
+
+  const productMenus = productMenu.filter((item) =>
+    permissions.includes(item.permission)
+  );
+
+  const vendorMenus = vendorMenu.filter((item) =>
+    permissions.includes(item.permission)
+  );
+
+  const shopMenus = shopMenu.filter((item) =>
+    permissions.includes(item.permission)
+  );
+
+  const categoryManagements = categoryManagement.filter((item) =>
+    permissions.includes(item.permission)
+  );
+
+  const permissionMenus = permissionMenu.filter((item) =>
+    permissions.includes(item.permission)
+  );
   return (
     <aside className="w-64 bg-white border-r min-h-screen px-4 py-6">
       <nav className="space-y-1">
         {/* Main Menu */}
-        {mainMenu.map((item, index) => (
+        {mainMenus.map((item, index) => (
           <NavLink key={index} to={item.link}>
             {({ isActive }) => (
               <div
@@ -63,7 +93,7 @@ const Sidebar = () => {
 
           {shopOpen && (
             <div className="ml-4 space-y-1">
-              {shopMenu.map((item, index) => (
+              {shopMenus.map((item, index) => (
                 <NavLink
                   key={index}
                   to={item.link}
@@ -104,7 +134,7 @@ const Sidebar = () => {
 
           {vendorOpen && (
             <div className="ml-4 space-y-1">
-              {vendorMenu.map((item, index) => (
+              {vendorMenus.map((item, index) => (
                 <NavLink
                   key={index}
                   to={item.link}
@@ -144,7 +174,7 @@ const Sidebar = () => {
 
           {productOpen && (
             <div className="ml-4 space-y-1">
-              {productMenu.map((item, index) => (
+              {productMenus.map((item, index) => (
                 <NavLink
                   key={index}
                   to={item.link}
@@ -184,7 +214,7 @@ const Sidebar = () => {
 
           {categoryOpen && (
             <div className="ml-4 space-y-1">
-              {categoryManagement.map((item, index) => (
+              {categoryManagements.map((item, index) => (
                 <NavLink
                   key={index}
                   to={item.link}
@@ -228,7 +258,7 @@ const Sidebar = () => {
 
   {permissionOpen && (
     <div className="ml-8 space-y-1">
-      {permissionMenu.map((item, index) => (
+      {permissionMenus.map((item, index) => (
         <NavLink
           key={index}
           to={item.link}
@@ -258,18 +288,22 @@ export const productMenu = [
   {
     link: "/product/create",
     text: "Add Product",
+    permission: "product.create",
   },
   {
     link: "/product/list",
     text: "Product List",
+    permission: "product.list",
   },
   {
     link: "/product/by-shop",
     text: "Products By Shop",
+    permission: "product.list",
   },
   {
     link: "/product/by-category",
     text: "Products By Category",
+    permission: "product.list",
   },
 ];
 export const mainMenu = [
@@ -288,40 +322,50 @@ export const vendorMenu = [
   {
     link: "/createVendor",
     text: "Create Vendor",
+    permission: "vendor.create",
   },
   {
     link: "/vendor/user/create",
     text: "Create Vendor User",
+    permission: "vendor.create",
+
   },
   {
     link: "/vendor/createAdmin",
     text: "Create Vendor Admin",
+    permission: "vendor.create",
   },
   {
     link: "/vendor/list",
     text: "Vendor List",
+    permission: "vendor.list",
   },
 ];
 export const shopMenu = [
   {
     link: "/shop/create",
     text: "Add Shop",
+    permission: "shop.create",
   },
   {
     link: "/shop/report",
     text: "Shop report",
+    permission: "shop.report",
   },
   {
     link: "/shop/list",
     text: "Shop List",
+    permission: "shop.list",
   },
    {
     link: "/shop/assignOwner",
     text: "AssignUser",
+    permission: "user.assign_permission",
   },
    {
     link: "/shop/assignAdmin",
     text: "AssignAdmin",
+    permission: "user.assign_permission",
   },
 ];
 
@@ -329,11 +373,13 @@ const categoryManagement = [
   {
     link: "/category/create",
     text: "Create Category",
+    permission: "category.create",
     icon: <PlusSquare className="w-4 h-4" />,
   },
   {
     link: "/category/list",
     text: "Category List",
+    permission: "category.list",
     icon: <List className="w-4 h-4" />,
   },
 ];
@@ -343,31 +389,37 @@ const permissionMenu = [
   {
     text: "Create Permission",
     link: "/permission/create",
+    permission: "permission.create",
     icon: <PlusSquare className="w-4 h-4" />,
   },
   {
     text: "Permission List",
     link: "/permissions",
+    permission: "permission.list",
     icon: <List className="w-4 h-4" />,
   },
   {
     text: "Assign Permission",
     link: "/permission/assign",
+    permission: "user.assign_permission",
     icon: <UserCheck className="w-4 h-4" />,
   },
   {
     text: "Remove Permission",
     link: "/permission/remove",
+    permission: "user.remove_permission",
     icon: <UserX className="w-4 h-4" />,
   },
   {
     text: "Update Permission",
     link: "/permission/update",
+    permission: "permission.update",
     icon: <Edit2 className="w-4 h-4" />,
   },
   {
     text: "Delete Permission",
     link: "/permission/delete",
+    permission: "permission.delete",
     icon: <Trash2 className="w-4 h-4" />,
   },
 ];

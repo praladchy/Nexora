@@ -28,6 +28,7 @@ import CreateAdmin from "./pages/vendor/createAdmin.vendor.jsx";
 import CreateCategory from "./pages/category/create.category.jsx";
 import ForgotPassword from "./pages/forgatePassword.jsx";
 import VerifyForgatePassword from "./pages/VerifyForgatePass.jsx";
+import { PrivateRoutes } from "./utils/privateRoute.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ function App() {
         setCredentials({
           safeuser: data.safeuser,
           accessToken: data.accessToken,
-        })
+        }),
       );
     }
   }, [isSuccess, data, dispatch]);
@@ -58,10 +59,10 @@ function App() {
         <Route element={<Navbar />}>
           {privateRoutes.map((route, idx) =>
             route.index ? (
-              <Route key={idx} index element={route.element} />
+              <Route key={idx} index element={<PrivateRoutes element={route.element} permission={route.permission}/>} />
             ) : (
-              <Route key={idx} path={route.path} element={route.element} />
-            )
+              <Route key={idx} path={route.path} element={<PrivateRoutes element={route.element} permission={route.permission}/>} />
+            ),
           )}
         </Route>
       )}
@@ -85,11 +86,7 @@ function App() {
       <Route
         path="*"
         element={
-          user ? (
-            <Navigate to="/" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          user ? <Navigate to="/" replace /> : <Navigate to="/login" replace />
         }
       />
     </Routes>
@@ -103,22 +100,75 @@ export default App;
 export const privateRoutes = [
   { index: true, element: <VendorDashboard /> },
 
-  { path: "/product/create", element: <AddProduct /> },
-  { path: "/product/list", element: <ProductManag /> },
-  { path: "/marketplace", element: <MarketPlace /> },
-  { path: "/shop/create", element: <CreateShop /> },
-  { path: "/permission/create", element: <PermissionCreate /> },
-  { path: "/createAdmin", element: <AdminCreate /> },
-  { path: "/createVendor", element: <CreateVendor /> },
-  { path: "/shop/Report", element: <ShopReport /> },
-  { path: "/category/create", element: <CreateCategory /> },
-  { path: "/category/list", element: <ListCategory /> },
-  { path: "/permissions", element: <PermissionList /> },
-  { path: "/permission/assign", element: <AssignPermission /> },
-  { path: "/shop/assignOwner", element: <OwnerAssign /> },
-  { path: "/shop/assignAdmin", element: <AdminAssign /> },
-  { path: "/shop/list", element: <ShopList /> },
-  { path: "/vendor/createAdmin", element: <CreateAdmin /> },
+  {
+    path: "/product/create",
+    element: <AddProduct />,
+    permission: "product.create",
+  },
+  {
+    path: "/product/list",
+    element: <ProductManag />,
+    permission: "product.list",
+  },
+  {
+    path: "/marketplace",
+    element: <MarketPlace />,
+    permission: "marketplace.view",
+  },
+  { path: "/shop/create", element: <CreateShop />, permission: "shop.create" },
+  {
+    path: "/permission/create",
+    element: <PermissionCreate />,
+    permission: "permission.create",
+  },
+  {
+    path: "/createAdmin",
+    element: <AdminCreate />,
+    permission: "admin.create",
+  },
+  {
+    path: "/createVendor",
+    element: <CreateVendor />,
+    permission: "vendor.create",
+  },
+  { path: "/shop/Report", element: <ShopReport />, permission: "shop.report" },
+
+  {
+    path: "/category/create",
+    element: <CreateCategory />,
+    permission: "category.create",
+  },
+  {
+    path: "/category/list",
+    element: <ListCategory />,
+    permission: "category.list",
+  },
+  {
+    path: "/permissions",
+    element: <PermissionList />,
+    permission: "permission.list",
+  },
+  {
+    path: "/permission/assign",
+    element: <AssignPermission />,
+    permission: "user.assign_permission",
+  },
+  {
+    path: "/shop/assignOwner",
+    element: <OwnerAssign />,
+    permission: "user.assign_permission",
+  },
+  {
+    path: "/shop/assignAdmin",
+    element: <AdminAssign />,
+    permission: "user.assign_permission",
+  },
+  { path: "/shop/list", element: <ShopList />, permission: "shop.list" },
+  {
+    path: "/vendor/createAdmin",
+    element: <CreateAdmin />,
+    permission: "vendor.create",
+  },
 ];
 
 export const publicRoutes = [
