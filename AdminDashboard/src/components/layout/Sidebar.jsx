@@ -295,16 +295,16 @@ export const productMenu = [
     text: "Product List",
     permission: "product.list",
   },
-  {
-    link: "/product/by-shop",
-    text: "Products By Shop",
-    permission: "product.list",
-  },
-  {
-    link: "/product/by-category",
-    text: "Products By Category",
-    permission: "product.list",
-  },
+  // {
+  //   link: "/product/by-shop",
+  //   text: "Products By Shop",
+  //   permission: "product.list",
+  // },
+  // {
+  //   link: "/product/by-category",
+  //   text: "Products By Category",
+  //   permission: "product.list",
+  // },
 ];
 export const mainMenu = [
   {
@@ -404,22 +404,22 @@ const permissionMenu = [
     permission: "user.assign_permission",
     icon: <UserCheck className="w-4 h-4" />,
   },
-  {
-    text: "Remove Permission",
-    link: "/permission/remove",
-    permission: "user.remove_permission",
-    icon: <UserX className="w-4 h-4" />,
-  },
-  {
-    text: "Update Permission",
-    link: "/permission/update",
-    permission: "permission.update",
-    icon: <Edit2 className="w-4 h-4" />,
-  },
-  {
-    text: "Delete Permission",
-    link: "/permission/delete",
-    permission: "permission.delete",
-    icon: <Trash2 className="w-4 h-4" />,
-  },
+  // {
+  //   text: "Remove Permission",
+  //   link: "/permission/remove",
+  //   permission: "user.remove_permission",
+  //   icon: <UserX className="w-4 h-4" />,
+  // },
+  // {
+  //   text: "Update Permission",
+  //   link: "/permission/update",
+  //   permission: "permission.update",
+  //   icon: <Edit2 className="w-4 h-4" />,
+  // },
+  // {
+  //   text: "Delete Permission",
+  //   link: "/permission/delete",
+  //   permission: "permission.delete",
+  //   icon: <Trash2 className="w-4 h-4" />,
+  // },
 ];

@@ -30,6 +30,7 @@ import ForgotPassword from "./pages/forgatePassword.jsx";
 import VerifyForgatePassword from "./pages/VerifyForgatePass.jsx";
 import { PrivateRoutes } from "./utils/privateRoute.jsx";
 import VendorList from "./pages/vendor/VendorList.jsx";
+import ProductList from "./pages/product/list.product.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -175,6 +176,17 @@ export const privateRoutes = [
     element: <VendorList />,
     permission: "vendor.list",
   },
+  {
+    path: "/product/list",
+    element: <ProductList />,
+    permission: "product.list",
+  },
+  {
+    path: "/category/list",
+    element: <ListCategory />,
+    permission: "category.list",
+  },
+
 ];
 
 export const publicRoutes = [
