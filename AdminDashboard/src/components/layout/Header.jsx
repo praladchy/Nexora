@@ -41,7 +41,7 @@ const Header = () => {
     >
       {/* Left Section: Branding */}
       <div className="flex items-center shrink-0">
-        <h1 className="text-xl font-bold text-purple-500">XYZ Vendor</h1>
+        <h1 className="text-xl font-bold text-purple-500">Dashboard</h1>
       </div>
 
       {/* Middle Section: Search Bar */}

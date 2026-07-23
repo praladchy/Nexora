@@ -324,15 +324,15 @@ export const vendorMenu = [
     text: "Create Vendor",
     permission: "vendor.create",
   },
-  {
-    link: "/vendor/user/create",
-    text: "Create Vendor User",
-    permission: "vendor.create",
+  // {
+  //   link: "/vendor/user/create",
+  //   text: "Create Vendor User",
+  //   permission: "vendor.create",
 
-  },
+  // },
   {
     link: "/vendor/createAdmin",
-    text: "Create Vendor Admin",
+    text: "Create Admin",
     permission: "vendor.create",
   },
   {

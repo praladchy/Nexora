@@ -29,6 +29,7 @@ import CreateCategory from "./pages/category/create.category.jsx";
 import ForgotPassword from "./pages/forgatePassword.jsx";
 import VerifyForgatePassword from "./pages/VerifyForgatePass.jsx";
 import { PrivateRoutes } from "./utils/privateRoute.jsx";
+import VendorList from "./pages/vendor/VendorList.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -168,6 +169,11 @@ export const privateRoutes = [
     path: "/vendor/createAdmin",
     element: <CreateAdmin />,
     permission: "vendor.create",
+  },
+  {
+    path: "/vendor/list",
+    element: <VendorList />,
+    permission: "vendor.list",
   },
 ];
 
