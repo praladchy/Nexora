@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema(
         quantity: {
           type: Number,
           required: true,
-        },
+        }, 
         
         discount: {
           type: Number,
@@ -97,10 +97,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    isPaid: {
-      type: Boolean,
-      default: false,
-    },
+     
 
     paidAt: Date,
   },

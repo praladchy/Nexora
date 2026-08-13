@@ -114,6 +114,7 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // approved by super admin
     },
+     
 
     
   },
@@ -123,4 +124,4 @@ const productSchema = new mongoose.Schema(
 );
  
 
-export default   mongoose.model("Product", productSchema);
+export default mongoose.model("Product", productSchema);

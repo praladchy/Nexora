@@ -8,7 +8,7 @@ import {
   generateAccessToken,
   generaterefreshToken,
 } from "../utils/jwtToken.js";
-
+ 
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, phone, password, verifyBy } = req.body;
   try {

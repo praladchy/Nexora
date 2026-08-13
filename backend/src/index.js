@@ -17,6 +17,7 @@ import { vendorRouter } from "./route/vendor.router.js";
 import whishListRouter from "./route/whishList.router.js";
 import cartRouter from "./route/cart.router.js";
 import orderRouter from "./route/order.router.js";
+import { serviceRouter } from "./route/service.router.js";
 const PORT = process.env.PORT || 8000;
 
 app.use(
@@ -40,6 +41,7 @@ app.use("/api/vendor",vendorRouter);
 app.use("/api/whishList",whishListRouter);
 app.use("/api/cart",cartRouter);
 app.use("/api/order",orderRouter);
+app.use("/api/service",serviceRouter)
 
 
 connectDb().then(() => {
