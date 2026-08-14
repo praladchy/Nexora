@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useGetproductsQuery } from "../../redux/product.slice";
 import { useCreateCartMutation } from "../../redux/cart.slice";
 
-const ProductList = () => {
+const ProductList = () => { 
   const { data } = useGetproductsQuery();
 
   const [createCart, { isLoading }] = useCreateCartMutation();

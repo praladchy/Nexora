@@ -16,7 +16,7 @@ const categories = [
   { id: 1, name: "Electronics", img: "https://i.imgur.com/2DhmtJ4.png" },
   { id: 2, name: "Fashion", img: "https://i.imgur.com/W3m4aSI.png" },
   { id: 3, name: "Home", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 4, name: "Sports", img: "https://i.imgur.com/B2yRnLF.png" },
+  { id: 4, name: "Sports", img: "https://i.imgur.com/B2yRnLF.png" },  
   { id: 5, name: "Electronics", img: "https://i.imgur.com/2DhmtJ4.png" },
   { id: 6, name: "Fashion", img: "https://i.imgur.com/W3m4aSI.png" },
   { id: 7, name: "Home", img: "https://i.imgur.com/6Zp2V1F.png" },
@@ -100,7 +100,9 @@ export default function CategorySlider() {
                 <div
                   key={item.id}
                   className="w-28 py-3 mx-auto  rounded-xl shadow-md bg-white flex flex-col items-center justify-center text-center pointer"
-                  onClick={()=>{navigate("/category/products")}}
+                  onClick={() => {
+                    navigate(`/category/products/${item.id}`);
+                  }}
                 >
                   <div className="w-20 h-20 bg-gray-100 overflow-hidden rounded-lg">
                     <img
