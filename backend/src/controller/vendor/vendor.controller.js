@@ -112,12 +112,14 @@ export const vendorAdminRegistration = async (req, res) => {
   export const getVendorAdmins = async (req, res) => {
   try {
     const ownerId = new mongoose.Types.ObjectId(req.user.userId);
+   
     const vendorAdmins = await User.find({
       createdBy: ownerId,
       role: "vendorAdmin",
     })
       .populate("createdBy", "firstName email")
       .select("-password");
+       console.log("ghjk;.,mn",vendorAdmins)
     if (!vendorAdmins.length) {
       return res.status(404).json({
         message: "No vendor admins found",

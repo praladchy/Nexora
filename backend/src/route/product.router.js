@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/createproduct",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.create"), upload.array("images",5),createProduct);
 // router.post("/createproduct",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.create"),createProduct);
 
-router.get("/",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),getProducts);
+router.get("/",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","user"]),getProducts);
  
 // router.get("/getProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","user"]),checkPermission("product.view"), getProductById);
 router.get("/getProducts/:id",authMiddleware,roleMiddleware(["user"]), getProductById);
