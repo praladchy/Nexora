@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../navBar/Navbar";
-import Footer from "./Footer";
 import SubcategorySlider from "../components/CategorySlider/SubcategorySlider";
+import Footer from "../components/Footer";
 
 const Layout = () => {
   const [open, setOpen] = useState(false);

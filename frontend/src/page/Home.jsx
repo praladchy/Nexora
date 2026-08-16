@@ -5,6 +5,10 @@ import CategorySlider from "../components/CategorySlider/CategorySlider";
 import HeroSectionSlider from "../components/CategorySlider/HeroSectionSlider";
 import SubcategorySlider from "../components/CategorySlider/SubcategorySlider";
 import ProductList from "../components/product/ProductList";
+import FeaturedServices from "../components/feature";
+import PopularCategories from "../components/Category";
+import PromoBanners from "../components/PromoBanners";
+import CompanyLogoStrip from "../components/PatnerLogo";
 
 const Home = () => {
   // const {user}=useSelector((state)=>state.user.data)
@@ -15,9 +19,12 @@ const Home = () => {
     <>
       {/* <Navbar/>  */}
       <HeroSectionSlider />
-
+      <FeaturedServices />
+      <PopularCategories/>
+      <PromoBanners/>
       <CategorySlider />
       <ProductList />
+      <CompanyLogoStrip/>
     </>
     // <div>
     //   {selector? (

@@ -27,7 +27,10 @@ export default function Navbar({ onClick }) {
           href="#"
           className="flex flex-col items-center px-2 py-1 border border-transparent hover:border-white rounded cursor-pointer"
         >
-          <img src={logo} alt="logo" className="w-20 object-contain" />
+          <img src={logo} alt="logo" className="w-20 object-contain" 
+           onClick={() => {
+                    navigate(`/`);
+                  }} />
         </a>
 
         {/* Deliver To */}

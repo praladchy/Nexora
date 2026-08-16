@@ -19,9 +19,12 @@ const categorySchema = new mongoose.Schema(
       type: String,
     },
 
-    image: {
-      type: String, // cloudinary / s3 url
-    },
+    image: [
+      {
+        url: String,
+        public_id: String,
+      },
+    ],
 
     parent: {
       type: mongoose.Schema.Types.ObjectId,
@@ -38,7 +41,10 @@ const categorySchema = new mongoose.Schema(
         value => Shop specific category
       */
     },
-
+    isParent: {
+      type: Boolean,
+      default: false,
+    },
     isGlobal: {
       type: Boolean,
       default: false,
@@ -53,9 +59,9 @@ const categorySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    updatedAt:{
+    updatedAt: {
       type: Date,
-    }
+    },
   },
   { timestamps: true },
 );

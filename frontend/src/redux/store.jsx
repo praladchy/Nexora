@@ -8,6 +8,7 @@ import { whishlistApi } from "./whishList.jsx";
 import { orderApi } from "./order.slice.jsx";
 import { persistedReducer } from "./persist.config.jsx";
 import persistStore from "redux-persist/es/persistStore";
+import { categorySlice } from "./category.apiSlice.jsx";
 export const store = configureStore({
   reducer: {
         auth: persistedReducer,
@@ -18,9 +19,10 @@ export const store = configureStore({
     [cartApi.reducerPath]:cartApi.reducer,
     [whishlistApi.reducerPath]:whishlistApi.reducer,
     [orderApi.reducerPath]:orderApi.reducer,
+    [categorySlice.reducerPath]:categorySlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat( authApi.middleware, productApi.middleware ,cartApi.middleware, whishlistApi.middleware,orderApi.middleware), /*this is used to add middleware for api slice and this is used to fetch data from api and store in redux store and this is used to update data in redux store when data fetch from api */
+    getDefaultMiddleware().concat( authApi.middleware, productApi.middleware ,cartApi.middleware, whishlistApi.middleware,orderApi.middleware,categorySlice.middleware), /*this is used to add middleware for api slice and this is used to fetch data from api and store in redux store and this is used to update data in redux store when data fetch from api */
 
   /*this middleware is used to store temporary data in the redux store when the data fetch from the api fetch only update data from api not all data fetch */
 });

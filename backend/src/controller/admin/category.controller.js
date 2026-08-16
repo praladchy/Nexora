@@ -1,7 +1,10 @@
 import { generateSlug } from "../../utils/slug.js";
 import Category from "../../models/category.model.js";
+import { uploadToCloudinary } from "../../utils/uploadCloudinary.js";
 export const createCategory = async (req, res) => {
-  const { name, description, parent, shop, isGlobal, isActive } = req.body;
+  const { name, description, shop, isGlobal, isActive,isParent } = req.body;
+  console.log("sdfghjkmnb",isParent);
+  const parent = req.body.parent || null;
   const { createdBy } = req.user;
   try {
     if (!name)
@@ -19,11 +22,26 @@ export const createCategory = async (req, res) => {
         message: "Category with the same name already exists in this shop",
         success: false,
       });
+
+    let uploadedImages = [];
+    console.log(uploadedImages);
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const cloudinaryResult = await uploadToCloudinary(file.path);
+
+        uploadedImages.push({
+          url: cloudinaryResult.secure_url,
+          public_id: cloudinaryResult.public_id,
+        });
+      }
+    }
     const newCategory = new Category({
       name,
       slug,
       description,
+      image: uploadedImages,
       parent,
+      isParent,
       isGlobal,
       isActive,
       createdBy,
@@ -45,7 +63,25 @@ export const createCategory = async (req, res) => {
 };
 export const getCategory = async (req, res) => {
   try {
-    const category = await Category.find();
+    const category = await Category.find({isParent: false});
+    res.status(200).json({
+      message: "Categories retrieved successfully",
+      success: true,
+      category,
+    }); 
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error, categories are not retrieved",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const getParentCategory = async (req, res) => {
+  try {
+    const category = await Category.find({isParent: true});
+    console.log("bvcxcvb ", category);
     res.status(200).json({
       message: "Categories retrieved successfully",
       success: true,

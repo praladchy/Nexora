@@ -3,36 +3,19 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
+import { useGetCategoryQuery } from "../../redux/category.apiSlice";
 // Categories data
-const categories = [
-  { id: 1, name: "1", img: "https://i.imgur.com/2DhmtJ4.png" },
-  { id: 2, name: "Fashion2", img: "https://i.imgur.com/W3m4aSI.png" },
-  { id: 3, name: "Home3", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 4, name: "Sports4", img: "https://i.imgur.com/B2yRnLF.png" },
-  { id: 5, name: "Electronics5", img: "https://i.imgur.com/2DhmtJ4.png" },
-  { id: 6, name: "Fashion6", img: "https://i.imgur.com/W3m4aSI.png" },
-  { id: 7, name: "Home7", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 8, name: "Sports8", img: "https://i.imgur.com/B2yRnLF.png" },
-  { id: 1, name: "Electronics", img: "https://i.imgur.com/2DhmtJ4.png" },
-  { id: 2, name: "Fashion", img: "https://i.imgur.com/W3m4aSI.png" },
-  { id: 3, name: "Home", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 4, name: "Sports", img: "https://i.imgur.com/B2yRnLF.png" },  
-  { id: 5, name: "Electronics", img: "https://i.imgur.com/2DhmtJ4.png" },
-  { id: 6, name: "Fashion", img: "https://i.imgur.com/W3m4aSI.png" },
-  { id: 7, name: "Home", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 8, name: "Sports", img: "https://i.imgur.com/B2yRnLF.png" },
-  { id: 1, name: "Electronics", img: "https://i.imgur.com/2DhmtJ4.png" },
-  { id: 2, name: "Fashion", img: "https://i.imgur.com/W3m4aSI.png" },
-  { id: 3, name: "Home", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 4, name: "Sports", img: "https://i.imgur.com/B2yRnLF.png" },
-  { id: 5, name: "Electronics", img: "https://i.imgur.com/2DhmtJ4.png" },
-  { id: 6, name: "Fashion", img: "https://i.imgur.com/W3m4aSI.png" },
-  { id: 7, name: "Home", img: "https://i.imgur.com/6Zp2V1F.png" },
-  { id: 8, name: "Sports", img: "https://i.imgur.com/B2yRnLF.png" },
-];
+ 
 
 // Utility: group items in pairs (id 1 → top, id 2 → bottom)
-const pairCategories = (data) => {
+ 
+ 
+
+export default function CategorySlider() {
+  const {data:categories} = useGetCategoryQuery();
+  const cate = categories?.category||[];
+
+  const pairCategories = (data) => {
   const pairs = [];
   for (let i = 0; i < data.length; i += 2) {
     pairs.push(data.slice(i, i + 2));
@@ -40,16 +23,13 @@ const pairCategories = (data) => {
   return pairs;
 };
 
-const pairedCategories = pairCategories(categories);
-
-export default function CategorySlider() {
+const pairedCategories = pairCategories(cate);
   const navigate = useNavigate();
   const NextArrow = ({ onClick }) => (
     <button
       onClick={onClick}
       className="absolute -top-5 right-0 z-10 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800"
-    >
-      ›
+    > ›
     </button>
   );
 
@@ -62,11 +42,11 @@ export default function CategorySlider() {
     </button>
   );
   const settings = {
-    dots: true,
+    dots:false,
     arrows: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 9,
+    slidesToShow: 6,
     slidesToScroll: 1,
     autoplay: false,
     autoplaySpeed: 3000,
@@ -77,41 +57,52 @@ export default function CategorySlider() {
     responsive: [
       {
         breakpoint: 1024,
-        settings: { slidesToShow: 10 },
+        settings: { slidesToShow: 5 },
       },
       {
         breakpoint: 768,
-        settings: { slidesToShow: 6 },
+        settings: { slidesToShow: 4 },
       },
       {
         breakpoint: 480,
-        settings: { slidesToShow: 4 },
+        settings: { slidesToShow: 2 },
       },
     ],
   };
 
   return (
-    <div className="w-full overflow-hidden px-2 py-5">
+    <div className="mx-auto max-w-7xl px-4 py-10">
       <Slider {...settings}>
         {pairedCategories.map((pair, index) => (
           <div key={index} className="px-3 py-4">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-8">
               {pair.map((item) => (
                 <div
-                  key={item.id}
-                  className="w-28 py-3 mx-auto  rounded-xl shadow-md bg-white flex flex-col items-center justify-center text-center pointer"
+                  key={item._id}
+                   className={`group cursor-pointer rounded-lg border bg-white p-4 text-center transition-all duration-200 hover:shadow-lg ${item.active
+                ? "border-2 border-[#00B207] shadow-md"
+                : "border-gray-200 hover:border-[#00B207]"
+            }`}
                   onClick={() => {
-                    navigate(`/category/products/${item.id}`);
+                    navigate(`/category/products/${item._id}`);
                   }}
                 >
-                  <div className="w-20 h-20 bg-gray-100 overflow-hidden rounded-lg">
+                  <div className="flex h-36 items-center justify-center overflow-hidden rounded-md">
                     <img
-                      src={item.img}
+                      src={item.image[0]?.url}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      className="h-28 w-28 object-contain transition duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <p className="text-sm mt-3">{item.name}</p>
+                  <h3
+              className={`mt-4 text-lg font-semibold ${
+                item.active
+                  ? "text-[#2C742F]"
+                  : "text-gray-900 group-hover:text-[#2C742F]"
+              }`}
+            >
+              {item.name}
+            </h3>
                 </div>
               ))}
             </div>
