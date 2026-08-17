@@ -59,7 +59,7 @@ export default function Footer() {
             {/* Brand */}
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2">
-                <h3 className="text-4xl font-bold">Ecobazar</h3>
+                 <img src="/logo.png" alt="logo" className="w-[224px]" />
               </div>
 
               <p className="mt-6 max-w-md text-gray-400">
@@ -69,13 +69,13 @@ export default function Footer() {
 
               <div className="mt-8 flex flex-wrap items-center gap-4 text-sm">
                 <span className="border-b border-[#00B207] pb-1 font-semibold">
-                  (219) 555-0114
-                </span>
+                  +9779804719547
+               </span>
 
                 <span className="text-gray-500">or</span>
 
                 <span className="border-b border-[#00B207] pb-1 font-semibold">
-                  Proxy@gmail.com
+                  Praladchy028@gmail.com
                 </span>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function Footer() {
           <div className="mt-12 border-t border-gray-800 pt-8">
             <div className="flex flex-col items-center justify-between gap-5 lg:flex-row">
               <p className="text-sm text-gray-500">
-                Ecobazar eCommerce © 2021. All Rights Reserved
+                Nexora eCommerce © 2026. All Rights Reserved
               </p>
 
               <div className="flex flex-wrap items-center gap-3">
