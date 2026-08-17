@@ -71,7 +71,7 @@ export default function ProductPage() {
   const { id } = useParams();
   // console.log("product details", id);
   const { data ,isLoading } = useGetproductQuery(id);
-  // console.log("product details data", data);
+  console.log("product details data", data);
   const goTo = (index) => {
     setActiveImage(Math.max(0, Math.min(data.product?.images.length - 1, index)));
   };
@@ -274,7 +274,7 @@ if (isLoading) {
 
             {/* Price */}
             <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-gray-900">$215.00</span>
+              <span className="text-3xl font-bold text-gray-900">Rs. {data.product?.price}</span>
               <span className="text-xl text-gray-400 line-through">
                 $290.00
               </span>

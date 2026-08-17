@@ -1,13 +1,14 @@
 import React from "react";
 import { Heart, ShoppingCart } from "lucide-react";
-import { NavLink} from "react-router-dom";
-import { useGetproductsQuery } from "../../redux/product.slice";
+import { NavLink, useParams } from "react-router-dom";
+import { useGetproductsByCategoryQuery} from "../../redux/product.slice";
 import { useCreateCartMutation } from "../../redux/cart.slice";
 
-const ProductList = () => {
-   
-  const { data } = useGetproductsQuery();
-
+const ProductCategoryList = () => {
+  const {id:categoryId}=useParams()
+  console.log("dfghjkjhg",categoryId);
+  const { data } = useGetproductsByCategoryQuery(categoryId);
+console.log("qwertyuio",data)
   const [createCart, { isLoading }] = useCreateCartMutation();
   const handleAddToCart = async (productId, shopId) => {
     try {
@@ -79,4 +80,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default ProductCategoryList;

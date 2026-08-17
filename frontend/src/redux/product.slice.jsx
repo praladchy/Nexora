@@ -1,6 +1,6 @@
 // productApi.js
 
-import { createApi  } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 
 import { baseQueryWithInterceptor } from "./baseQueryInterceptor";
 
@@ -11,8 +11,6 @@ export const productApi = createApi({
   // baseUrl: "http://localhost:5000/api/",
 
   endpoints: (builder) => ({
-    
-
     getproducts: builder.query({
       query: () => ({
         url: `/product`,
@@ -29,19 +27,18 @@ export const productApi = createApi({
     }),
     getproductsByShop: builder.query({
       query: (shopId) => ({
-        url: `/product/getProducts/${shopId}`,
+        url: `/product/shopProducts/${shopId}`,
         method: "GET",
       }),
       providesTags: ["product"],
     }),
     getproductsByCategory: builder.query({
       query: (categoryId) => ({
-        url: `/product/getProducts/${categoryId}`,
+        url: `/product/categoryProducts/${categoryId}`,
         method: "GET",
       }),
       providesTags: ["product"],
     }),
-    
   }),
 });
 

@@ -8,7 +8,8 @@ import {
   generateAccessToken,
   generaterefreshToken,
 } from "../utils/jwtToken.js";
- 
+import admin from "../config/googleFirebase.config.js";
+
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, phone, password, verifyBy } = req.body;
   try {
@@ -217,9 +218,11 @@ export const forgotPassword = async (req, res) => {
 };
 export const logout = (req, res) => {
   try {
-    res.clearCookie("refreshToken", {  httpOnly: true,
-  secure: true,          // true in production
-  sameSite: "None" });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true, // true in production
+      sameSite: "None",
+    });
 
     return res.status(200).json({
       success: true,
@@ -399,5 +402,56 @@ export const refresh = async (req, res) => {
     res.json({ accessToken: newAccessToken, safeuser });
   } catch (err) {
     return res.status(403).json({ message: "Forbidden" });
+  }
+};
+export const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    const decoded = await admin.auth().verifyIdToken(idToken);
+
+    const { uid, email, name, picture } = decoded;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const names = name.trim().split(" ");
+
+      user = await User.create({
+        firstName: names[0] || "Google",
+        lastName: names.slice(1).join(" "),
+        email,
+        profile: picture,
+        isActive: true,
+        isVerified: true,
+        googleId: uid,
+      });
+    } else if (!user.googleId) {
+      user.googleId = uid;
+      user.profile = user.profile || picture;
+      user.isVerified = true;
+      await user.save();
+    }
+
+    const accessToken = await generateAccessToken(user);
+    const refreshToken = await generaterefreshToken(user);
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true, // true in production
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (err) {
+    res.status(401).json({
+      success: false,
+      message: err.message,
+    });
   }
 };

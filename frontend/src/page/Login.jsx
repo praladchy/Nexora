@@ -2,8 +2,16 @@ import React from "react";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useLoginMutation, useReSendOtpMutation, useSendOtpMutation } from "../redux/auth.slice";
+import { FcGoogle } from "react-icons/fc";
+import {
+  useGoogleLoginMutation,
+  useLoginMutation,
+  useReSendOtpMutation,
+  useSendOtpMutation,
+} from "../redux/auth.slice";
 import { setCredentials } from "../redux/userData.slice";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../config/GoogleLogin.config";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +20,7 @@ const Login = () => {
   });
   const [Login] = useLoginMutation();
   const [forgateEmail, { isLoading }] = useSendOtpMutation();
+  const [loginGoogle] = useGoogleLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange = (e) => {
@@ -51,63 +60,101 @@ const Login = () => {
       console.log(res.userId);
 
       navigate(`/verifyotp/${res.userId}`);
-      
     } catch (error) {
       console.log("error occurs when forgate password", error);
     }
   };
-  return (<>
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Welcome Back
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            type="text"
-            placeholder="Email or Phone"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-          <div className="text-right">
-            <div
-              className="text-sm text-blue-600 hover:underline"
-              onClick={(e) => handleOnclick(e)}
-            >
-              Forgot Password?
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-          >
-            Login
-          </button>
-        </form>
 
-        <div className="mt-3">
-          <NavLink
-            to="/signup"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Don't have an account? Register
-          </NavLink>
-           <p>login id:nexora1209@gmail.com</p>
-          <p>password:1234567890</p>
+  const googleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+
+      const idToken = await result.user.getIdToken();
+      const res = await loginGoogle({idToken}).unwrap();
+      // const res = await axios.post(
+      //   "http://localhost:5000/api/auth/google",
+      //   { idToken },
+      //   { withCredentials: true },
+      // );
+      dispatch(
+        setCredentials({
+          safeuser: res.user,
+          accessToken: res.accessToken,
+        }),
+      );
+
+      navigate("/");
+      console.log("dfghjkl", res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return (
+    <>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            Welcome Back
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              type="text"
+              placeholder="Email or Phone"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <div className="text-right">
+              <div
+                className="text-sm text-blue-600 hover:underline"
+                onClick={(e) => handleOnclick(e)}
+              >
+                Forgot Password?
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            >
+              Login
+            </button>
+or
+            <button
+              type="button"
+              onClick={googleLogin}
+              className="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-50 transition"
+            >
+              <FcGoogle size={22} />
+              Continue with Google
+            </button>
+          </form>
+
+          <div className="mt-3">
+            <NavLink
+              to="/signup"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Don't have an account? Register
+            </NavLink>
+            <p>login id:nexora1209@gmail.com</p>
+            <p>password:1234567890</p>
+          </div>
         </div>
       </div>
-    </div>
-    <div className="text-center font-semibold">PLZ !Enable third party for login cookies </div></>
+      <div className="text-center font-semibold">
+        PLZ !Enable third party for login cookies{" "}
+      </div>
+    </>
   );
 };
 

@@ -81,7 +81,6 @@ export const getCategory = async (req, res) => {
 export const getParentCategory = async (req, res) => {
   try {
     const category = await Category.find({isParent: true});
-    console.log("bvcxcvb ", category);
     res.status(200).json({
       message: "Categories retrieved successfully",
       success: true,

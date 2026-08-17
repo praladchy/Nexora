@@ -1,5 +1,5 @@
 import express from "express";
-import { forgotPassword, login, logout, refresh, registerUser, reSendOtp, sendOtp, superAdmin, verifyOtp } from "../controller/auth.controller.js";
+import { forgotPassword, googleLogin, login, logout, refresh, registerUser, reSendOtp, sendOtp, superAdmin, verifyOtp } from "../controller/auth.controller.js";
 import { createAdmin } from "../controller/superAdmin/admin.controller.js";
 import { authMiddleware, checkPermission, roleMiddleware } from "../middleware/auth.middleware.js";
 import { upload } from "../middleware/upload.multer.js";
@@ -14,6 +14,7 @@ router.post("/admin/register",authMiddleware,roleMiddleware(["superAdmin","admin
 router.get("/user/gets",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),getUsers)
 
 router.post("/user/login", login);
+router.post("/user/google-login",googleLogin);
 router.post("/user/verify-otp", verifyOtp);
 router.post("/user/send-otp",sendOtp);
 

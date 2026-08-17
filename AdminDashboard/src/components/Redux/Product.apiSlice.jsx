@@ -27,21 +27,21 @@ export const productApi = createApi({
     }),
     getproduct: builder.query({
       query: (id) => ({
-        url: `/product/getproducts/${id}`,
+        url: `/product/getproduct/${id}`,
         method: "GET",
       }),
       providesTags: ["product"],
     }),
     getproductsByShop: builder.query({
       query: (shopId) => ({
-        url: `/product/getProducts/${shopId}`,
+        url: `/product/shopProducts/${shopId}`,
         method: "GET",
       }),
       providesTags: ["product"],
     }),
     getproductsByCategory: builder.query({
       query: (categoryId) => ({
-        url: `/product/getProducts/${categoryId}`,
+        url: `/product/categoryProducts/${categoryId}`,
         method: "GET",
       }),
       providesTags: ["product"],
@@ -71,6 +71,6 @@ export const {
   useGetproductQuery,
   useGetproductsByShopQuery,
   useGetproductsByCategoryQuery,
-  useUpdateproductMutation,
+  useUpDateproductMutation,
   useDeleteproductMutation,
 } = productApi;

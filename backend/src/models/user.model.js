@@ -64,7 +64,6 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-
     permissions: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -107,6 +106,12 @@ const userSchema = new mongoose.Schema(
     },
 
     address: {
+      type: String,
+    },
+    googleId: {
+      type: String,
+    },
+    profile: {
       type: String,
     },
   },

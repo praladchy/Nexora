@@ -19,8 +19,8 @@ router.get("/",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","ven
 // router.get("/getProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","user"]),checkPermission("product.view"), getProductById);
 router.get("/getProducts/:id",authMiddleware,roleMiddleware(["user"]), getProductById);
 
-router.get("/shopProducts/:shopId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.list"), getProductsByShop);
-router.get("/categoryProducts/:categoryId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.list"), getProductsByCategory);
+router.get("/shopProducts/:shopId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","user"]),checkPermission("product.list"), getProductsByShop);
+router.get("/categoryProducts/:categoryId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","user"]), getProductsByCategory);
 router.patch("/updateProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.update"), upload.array("images",5),updateProduct);
 router.delete("/deleteProduct/:id",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("product.delete"), deleteProduct);
 export const productrouter=router;

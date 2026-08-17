@@ -166,8 +166,9 @@ export const getProductsByShop = async (req, res) => {
   }
 };
 export const getProductsByCategory = async (req, res) => {
-  const { categoryId } = req.query;
-
+  // const { categoryId } = req.query;
+  const { categoryId } = req.params;
+console.log("fghjkllvc",categoryId)
   try {
     const products = await Product.find({ category: categoryId })
       .populate("category")

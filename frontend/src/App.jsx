@@ -16,6 +16,8 @@ import SubcategorySlider from "./components/CategorySlider/SubcategorySlider";
 import Layout from "./page/layout";
 import ProductDetails from "./components/product/ProductDetails";
 import VerifyForgatePassword from "./page/verifyForgatePassword";
+import ProductCategoryList from "./components/product/ProductCategoryList";
+import CategoryProducts from "./page/category";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -41,8 +43,11 @@ function App() {
         <Route index element={<Home />} />
 
         <Route path="products" element={<ProductList />} />
-        <Route path="category/products/:id" element={<ProductList />} />
-
+        <Route path="category/products/:id" element={<ProductCategoryList />} />
+        <Route
+          path="/category/:id"
+          element={<CategoryProducts />}
+        />
         <Route path="product/productdetails/:id" element={<ProductDetails />} />
 
         <Route path="product/cart" element={<ShoppingCartPage />} />

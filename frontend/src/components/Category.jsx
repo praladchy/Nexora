@@ -33,7 +33,7 @@ export default function PopularCategories() {
                 : "border-gray-200 hover:border-[#00B207]"
             }`}
            onClick={() => {
-                    navigate(`/category/products/${category._id}`);
+                    navigate(`/category/${category._id}`);
                   }}>
             <div className="flex h-36 items-center justify-center overflow-hidden rounded-md">
               <img
