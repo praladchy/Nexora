@@ -26,3 +26,6 @@ Thumbs.db
 
 # VS Code (optional)
 .vscode/
+
+backend/src/service/googleLoginService.json
+*.json
