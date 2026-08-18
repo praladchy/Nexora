@@ -128,7 +128,7 @@ const Login = () => {
             >
               Login
             </button>
-or
+<p className="text-center">or</p>
             <button
               type="button"
               onClick={googleLogin}
