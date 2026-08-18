@@ -18,6 +18,8 @@ import ProductDetails from "./components/product/ProductDetails";
 import VerifyForgatePassword from "./page/verifyForgatePassword";
 import ProductCategoryList from "./components/product/ProductCategoryList";
 import CategoryProducts from "./page/category";
+import MyOrders from "./page/Order";
+import OrderDetails from "./components/Order/orderDetails";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -45,9 +47,12 @@ function App() {
         <Route path="products" element={<ProductList />} />
         <Route path="category/products/:id" element={<ProductCategoryList />} />
         <Route
-          path="/category/:id"
+          path="category/:id"
           element={<CategoryProducts />}
         />
+        <Route path="orders" element={<MyOrders />} />
+        <Route path="order/detail/:id" element={<OrderDetails />} />
+
         <Route path="product/productdetails/:id" element={<ProductDetails />} />
 
         <Route path="product/cart" element={<ShoppingCartPage />} />

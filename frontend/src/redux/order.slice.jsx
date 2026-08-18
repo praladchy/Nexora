@@ -9,12 +9,12 @@ export const orderApi = createApi({
   endpoints: (builder) => ({
     createOrder: builder.mutation({
       query: (orderData) => ({
-        url: `/order/createOrder`,  
+        url: `/order/createOrder`,
         method: "POST",
         body: orderData,
-  }),
-  invalidatesTags: ["cart", "order"],
-}),
+      }),
+      invalidatesTags: ["cart", "order"],
+    }),
     getOrdersForUser: builder.query({
       query: () => ({
         url: `/order/getOrdersForUser`,
@@ -29,23 +29,35 @@ export const orderApi = createApi({
       }),
       providesTags: ["order"],
     }),
-
+    getOrdersById: builder.query({
+      query:(id)=>({
+        url:`/order/getOrder/${id}`,
+        method:"GET"
+      })
+    }),
     updateOrder: builder.mutation({
       query: ({ orderId, updateData }) => ({
         url: `/order/updateOrder/${orderId}`,
         method: "PATCH",
         body: updateData,
       }),
-      invalidatesTags: ["cart","order"],
+      invalidatesTags: ["cart", "order"],
     }),
     deleteOrder: builder.mutation({
       query: (orderId) => ({
-        url: `/order/updateOrder/${orderId}`,    
+        url: `/order/updateOrder/${orderId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["order"],
     }),
-  }),   
+  }),
 });
 
-export const { useCreateOrderMutation, useGetOrdersForUserQuery, useGetOrdersQuery, useUpdateOrderMutation, useDeleteOrderMutation } = orderApi;
+export const {
+  useCreateOrderMutation,
+  useGetOrdersForUserQuery,
+  useGetOrdersQuery,
+  useUpdateOrderMutation,
+  useGetOrdersByIdQuery,
+  useDeleteOrderMutation,
+} = orderApi;

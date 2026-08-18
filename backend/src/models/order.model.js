@@ -18,15 +18,15 @@ const orderSchema = new mongoose.Schema(
 
         shop: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Shop", 
+          ref: "Shop",
           required: true,
         },
 
         quantity: {
           type: Number,
           required: true,
-        }, 
-        
+        },
+
         discount: {
           type: Number,
           default: 0,
@@ -63,7 +63,7 @@ const orderSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["COD", "Khalti", "Esewa", "Stripe","cash"],
+      enum: ["COD", "Khalti", "Esewa", "Stripe", "cash"],
       required: true,
     },
 
@@ -72,7 +72,18 @@ const orderSchema = new mongoose.Schema(
       enum: ["Pending", "Paid", "Failed", "Refunded"],
       default: "Pending",
     },
-
+    status: {
+      type: String,
+      enum: [
+        "Pending",
+        "Confirmed",
+        "Packed",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+      ],
+      default: "Pending", 
+    },
     itemsPrice: {
       type: Number,
       required: true,
@@ -97,11 +108,9 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-     
-
     paidAt: Date,
   },
   { timestamps: true },
 );
 
-export const Order= mongoose.model("Order", orderSchema);
+export const Order = mongoose.model("Order", orderSchema);

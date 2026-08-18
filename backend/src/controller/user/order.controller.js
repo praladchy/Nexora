@@ -38,7 +38,7 @@ export const createOrder = async (req, res) => {
       paymentMethod = "cash", // cash, khalti, esewa
       isPOS = false,
       deliveryCharge = 0,
-      discount = null, // { type: "percent", value: 10 }
+      // { type: "percent", value: 10 }
     } = req.body;
     // console.log("selectedItems", selectedItems);
     const user = await User.findById(userId);
@@ -49,6 +49,7 @@ export const createOrder = async (req, res) => {
 
     let subtotal = 0;
     let totalCommission = 0;
+    let totalDiscount = 0;
     let orderItems = [];
 
     for (const item of selectedItems) {
@@ -56,37 +57,37 @@ export const createOrder = async (req, res) => {
         _id: item.product._id,
         shop: item.shop,
       }).populate("category");
-      // console.log("dfghjkllgf",item, item.product._id, item.shop, product);
       if (!product) continue;
 
       const price = product.price;
       const quantity = item.quantity;
-
+      const discount = product.discount;
+      console.log("dfghjk", discount);
       const itemTotal = price * quantity;
-
+      const discountAmount = itemTotal * (discount / 100);
       // discount per item (optional logic)
-      const discountAmount = applyDiscount(itemTotal, discount);
-
+      console.log("discountAmount", discountAmount);
       const finalItemPrice = itemTotal - discountAmount;
 
       // commission
       const commissionRate = getCommissionRate(product);
+
+      console.log("commissionRate", commissionRate);
       const commission = (finalItemPrice * commissionRate) / 100;
 
       subtotal += finalItemPrice;
       totalCommission += commission;
-
+      totalDiscount += discountAmount;
       orderItems.push({
         product: product._id,
         name: product.name,
         price,
         quantity,
         discount: discountAmount,
-        finalPrice: finalItemPrice,
-        commission,
+        finalPrice: subtotal,
+        commission: totalCommission,
         shop: product.shop,
       });
-      console.log("orderItemsdfghj", orderItems);
       // reduce stock (POS + online both)
       product.stock -= quantity;
       await product.save();
@@ -94,7 +95,7 @@ export const createOrder = async (req, res) => {
 
     // VAT (Nepal 13%)
     const tax = subtotal * 0.13;
-
+    console.log("tax osok", tax);
     // payment gateway fee (only if online)
     let gatewayFee = 0;
     if (!isPOS && paymentMethod !== "cash") {
@@ -109,28 +110,27 @@ export const createOrder = async (req, res) => {
       user,
       orderItems: orderItems,
       itemsPrice: subtotal,
-      tax,
-      deliveryCharge,
+      taxPrice: tax,
+      shippingPrice: deliveryCharge,
       gatewayFee,
       totalAmount,
       commission: totalCommission,
       vendorEarning,
       paymentMethod,
       isPOS,
-      status: isPOS ? "completed" : "pending",
+      status: isPOS ? "completed" : "Pending",
     });
     const cart = await Cart.findOne({ user: userId });
-    console.log("cart fghjk", cart);
 
     if (cart) {
-      const orderItem =  orderItems.map((item) => item.product.toString());
+      const orderItem = orderItems.map((item) => item.product.toString());
       console.log("orderItems", orderItems);
       cart.items = cart.items.filter(
-        (item) =>! orderItem.includes(item.product.toString()),
+        (item) => !orderItem.includes(item.product.toString()),
       );
       console.log("cart.items", cart.items);
     }
-      await cart.save();
+    await cart.save();
 
     res.status(201).json({
       success: true,
@@ -148,10 +148,12 @@ export const createOrder = async (req, res) => {
 
 export const getOrdersForUser = async (req, res) => {
   const { userId } = req.user;
+  console.log("userId", userId);
   try {
     const orders = await Order.find({ user: userId })
-      .populate("items.product")
-      .populate("shop");
+      .populate("orderItems.product")
+      .populate("orderItems.shop");
+
     if (!orders)
       return res
         .status(404)
@@ -186,7 +188,24 @@ export const getOrders = async (req, res) => {
     });
   }
 };
-
+export const getOrderById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await Order.findById(id)
+      .populate("orderItems.product")
+      .populate("orderItems.shop");
+    if (!order)
+      res.status(404).json({
+        message: "order not found",
+        success: false,
+      });
+    res.status(200).json({
+      message: "order fetched successfully",
+      success: true,
+      order,
+    });
+  } catch (error) {}
+};
 export const updateOrder = async (req, res) => {
   conole.log("update order called");
   //   const {userId}=req.user

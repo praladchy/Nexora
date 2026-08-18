@@ -79,7 +79,7 @@ export default function Navbar({ onClick }) {
           </div>
           {profileOpen && <UserProfile />}
           {/* Returns */}
-          <div className="flex flex-col px-2 py-1 border border-transparent hover:border-white rounded cursor-pointer">
+          <div className="flex flex-col px-2 py-1 border border-transparent hover:border-white rounded cursor-pointer" onClick={() => navigate("/orders")}>
             <span className="text-[11px] text-gray-300">Returns</span>
             <span className="text-[13px] font-bold">& Orders</span>
           </div>
