@@ -19,7 +19,7 @@ import VerifyForgatePassword from "./page/verifyForgatePassword";
 import ProductCategoryList from "./components/product/ProductCategoryList";
 import CategoryProducts from "./page/category";
 import MyOrders from "./page/Order";
-import OrderDetails from "./components/Order/orderDetails";
+import OrderDetails from "./components/Order/OrderDetails";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
