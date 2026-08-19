@@ -77,7 +77,7 @@ export default function Navbar({ onClick }) {
               Account & Lists <ChevronDown size={12} />
             </span>
           </div>
-          {profileOpen && <UserProfile />}
+          {profileOpen && <UserProfile onClose={() => setProfileOpen(false)} />}
           {/* Returns */}
           <div className="flex flex-col px-2 py-1 border border-transparent hover:border-white rounded cursor-pointer" onClick={() => navigate("/orders")}>
             <span className="text-[11px] text-gray-300">Returns</span>

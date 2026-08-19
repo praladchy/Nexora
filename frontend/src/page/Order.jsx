@@ -9,7 +9,10 @@ import {
   XCircle,
   ChevronRight,
 } from "lucide-react";
-import { useGetOrdersForUserQuery } from "../redux/order.slice";
+import {
+  useDeleteOrderMutation,
+  useGetOrdersForUserQuery,
+} from "../redux/order.slice";
 import { useNavigate } from "react-router-dom";
 
 const TABS = [
@@ -42,9 +45,23 @@ const StatusIcon = ({ status }) => {
   }
 };
 
-function OrderActions({id,status }) {
-  console.log("liuyj",id)
+function OrderActions({ id, status }) {
   const navigate = useNavigate();
+  const [deleteOrder, { isLoading }] = useDeleteOrderMutation();
+
+  const handleOnClick = async () => {
+    const confirm = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirm) return;
+
+    try {
+      const res = await deleteOrder(id).unwrap();
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const base =
     "px-4 py-[9px] rounded-[6px] text-[13px] font-semibold transition whitespace-nowrap";
@@ -53,8 +70,10 @@ function OrderActions({id,status }) {
     return (
       <button
         className={`${base} border border-[#dcdde0] text-[#333] hover:bg-[#f7f7f8]`}
+        onClick={handleOnClick}
+        disabled={isLoading}
       >
-        Cancel Order
+        {isLoading ? "Cancelling..." : "Cancel Order"}
       </button>
     );
   }
@@ -62,7 +81,8 @@ function OrderActions({id,status }) {
   return (
     <button
       className={`${base} border border-[#dcdde0] text-[#333] hover:bg-[#f7f7f8]`}
-    onClick={()=>navigate(`/order/detail/${id}`)}>
+      onClick={() => navigate(`/order/detail/${id}`)}
+    >
       View Details
     </button>
   );
@@ -71,45 +91,36 @@ function OrderActions({id,status }) {
 export default function Orders() {
   const [activeTab, setActiveTab] = useState("all");
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   const { data, isLoading } = useGetOrdersForUserQuery();
-
   const orders = data?.orders || [];
 
   const filteredOrders = orders.filter((order) => {
     const matchesTab =
       activeTab === "all" ||
       order.status.toLowerCase() === activeTab.toLowerCase();
+
     const matchesSearch =
       order._id.toLowerCase().includes(search.toLowerCase()) ||
       order.orderItems.some(
         (item) =>
-          item.product?.name
-            ?.toLowerCase()
-            .includes(search.toLowerCase()) ||
-          item.shop?.name
-            ?.toLowerCase()
-            .includes(search.toLowerCase())
+          item.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
+          item.shop?.name?.toLowerCase().includes(search.toLowerCase())
       );
 
     return matchesTab && matchesSearch;
   });
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        Loading...
-      </div>
-    );
+    return <div className="flex justify-center py-20">Loading...</div>;
   }
 
   return (
     <div className="min-h-screen bg-[#f5f5f7]">
       <div className="bg-white border-b border-[#ececee]">
         <div className="max-w-5xl mx-auto px-4 py-5">
-          <h1 className="text-[22px] font-bold">
-            My Orders
-          </h1>
+          <h1 className="text-[22px] font-bold">My Orders</h1>
 
           <div className="relative mt-4 max-w-md">
             <Search
@@ -155,7 +166,6 @@ export default function Orders() {
             <div className="flex flex-wrap justify-between items-center gap-3 px-5 py-3 border-b">
               <div className="flex items-center gap-2">
                 <Store size={16} />
-
                 <span className="font-semibold">
                   {order.orderItems[0]?.shop?.name}
                 </span>
@@ -180,7 +190,8 @@ export default function Orders() {
               {order.orderItems.map((item) => (
                 <div
                   key={item._id}
-                  className="flex items-center gap-4 px-5 py-4"
+                  className="flex items-center gap-4 px-5 py-4 cursor-pointer"
+                  onClick={() => navigate(`/order/detail/${order._id}`)}
                 >
                   <img
                     src={
@@ -206,9 +217,7 @@ export default function Orders() {
                       Rs. {item.price.toLocaleString()}
                     </p>
 
-                    <p className="text-sm text-gray-500">
-                      x{item.quantity}
-                    </p>
+                    <p className="text-sm text-gray-500">x{item.quantity}</p>
                   </div>
                 </div>
               ))}
@@ -225,17 +234,13 @@ export default function Orders() {
 
                 <p>
                   Order Date:{" "}
-                  {new Date(order.createdAt).toLocaleDateString(
-                    "en-GB"
-                  )}
+                  {new Date(order.createdAt).toLocaleDateString("en-GB")}
                 </p>
               </div>
 
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">
-                    Order Total
-                  </p>
+                  <p className="text-sm text-gray-500">Order Total</p>
 
                   <p className="text-lg font-bold text-[#f85606]">
                     Rs. {order.totalAmount.toLocaleString()}
@@ -250,13 +255,8 @@ export default function Orders() {
 
         {filteredOrders.length === 0 && (
           <div className="bg-white rounded-lg border py-20 text-center">
-            <p className="font-semibold">
-              No orders found
-            </p>
-
-            <p className="text-gray-500 mt-1">
-              Try a different search.
-            </p>
+            <p className="font-semibold">No orders found</p>
+            <p className="text-gray-500 mt-1">Try a different search.</p>
           </div>
         )}
 

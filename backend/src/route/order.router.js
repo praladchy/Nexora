@@ -8,6 +8,5 @@ orderRouter.get("/getOrder/:id",authMiddleware,getOrderById)
 // orderRouter.patch("/updateOrderStatus/:id",authMiddleware,updateOrderStatus)
 orderRouter.get("/getOrders",authMiddleware,getOrders)
 orderRouter.patch("/updateOrder/:id",authMiddleware,updateOrder)
-orderRouter.patch("/updateOrder/:id",authMiddleware,deleteOrder)
-
+orderRouter.patch("/deleteOrder/:orderId",authMiddleware,deleteOrder)
 export default orderRouter

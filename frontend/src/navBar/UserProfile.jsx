@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/userData.slice";
 import { useNavigate } from "react-router-dom";
 
-export default function UserProfile() {
+export default function UserProfile({ onClose }) {
   const [logOut, { isLoading }] = useLogoutMutation();
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   console.log(user);
   const dispatch = useDispatch();
-  const handleLogout = async () => {
+  const handleLogout = async ({ onClose }) => {
     // Implement logout logic here (e.g., clear auth tokens, redirect to login page)
     const res = await logOut().unwrap();
     dispatch(logout());
@@ -21,10 +21,9 @@ export default function UserProfile() {
     isLoading && <p>Logging out...</p>;
   }
 
-  const handleLogin=()=>{
+  const handleLogin = () => {
     navigate("/login");
-
-  }
+  };
   return (
     <div className="absolute top-16 flex items-center justify-center bg-gray-100 p-6 z-10">
       {/* Simple Profile Menu (NO dropdown, NO arrays, NO state) */}
@@ -51,7 +50,13 @@ export default function UserProfile() {
             Manage My Account
           </button>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
+          <button
+            className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
+            onClick={() => {
+              onClose();
+              navigate("/orders");
+            }}
+          >
             <Package size={18} />
             My Orders
           </button>
@@ -72,12 +77,22 @@ export default function UserProfile() {
           </button>
 
           {user ? (
-            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
+            >
               <LogOut size={18} />
               Logout
             </button>
           ) : (
-            <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700" onClick={handleLogin}> <LogOut size={18} />Login</button>
+            <button
+              className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
+              onClick={handleLogin}
+            >
+              {" "}
+              <LogOut size={18} />
+              Login
+            </button>
           )}
         </div>
       </div>

@@ -42,8 +42,7 @@ app.use("/api/whishList",whishListRouter);
 app.use("/api/cart",cartRouter);
 app.use("/api/order",orderRouter);
 app.use("/api/service",serviceRouter)
-
-
+// app.use("/api/location",locationRouter)
 connectDb().then(() => {
   superAdmin();
   app.listen(PORT, () => {

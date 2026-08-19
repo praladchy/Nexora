@@ -78,6 +78,7 @@ export const createOrder = async (req, res) => {
       subtotal += finalItemPrice;
       totalCommission += commission;
       totalDiscount += discountAmount;
+      console.log("cvbnm,", totalDiscount);
       orderItems.push({
         product: product._id,
         name: product.name,
@@ -117,6 +118,7 @@ export const createOrder = async (req, res) => {
       commission: totalCommission,
       vendorEarning,
       paymentMethod,
+      totalDiscount,
       isPOS,
       status: isPOS ? "completed" : "Pending",
     });
@@ -190,10 +192,12 @@ export const getOrders = async (req, res) => {
 };
 export const getOrderById = async (req, res) => {
   const { id } = req.params;
+  console.log("id", id);
   try {
     const order = await Order.findById(id)
       .populate("orderItems.product")
       .populate("orderItems.shop");
+    console.log("order", order);
     if (!order)
       res.status(404).json({
         message: "order not found",
@@ -222,22 +226,36 @@ export const updateOrder = async (req, res) => {
 };
 
 export const deleteOrder = async (req, res) => {
-  const { userId } = req.user;
+  const { orderId } = req.params;
+  console.log("orderId xcvbnm,", orderId);
   try {
-    const order = await Order.findById(userId);
+    const order = await Order.findById(orderId);
     if (!order) {
       return res
         .status(404)
         .json({ message: "Order not found", success: false });
     }
-    order.orderItems = order.orderItems.filter(
-      (item) => orderItems.product.toString() !== productId,
-    );
-    if (order.orderItems.length === 0)
-      return await Order.findByIdAndDelete(userId);
+    if (order.status !== "Pending") {
+      return res
+        .status(404)
+        .json({ message: "Order can't be deleted", success: false });
+    }
+    // order.orderItems = order.orderItems.filter(
+    //   (item) => orderItems.product.toString() !== orderId,
+    // );
+    // if (order.orderItems.length === 0)
+    //   return await Order.findByIdAndDelete(orderId);
+
+    // await Order.findByIdAndDelete(orderId);
+    order.status = "Cancelled";
+    await order.save();
+    res.status(200).json({
+      message: "Order deleted successfully",
+      success: true,
+    });
   } catch (error) {
     res.status(500).json({
-      message: `failed to delete oerder,`,
+      message: `failed to delete order,`,
       data: error.message,
       success: false,
     });
