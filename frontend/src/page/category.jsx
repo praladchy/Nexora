@@ -1,11 +1,14 @@
 import React from 'react'
-import CategorySlider from '../components/CategorySlider/CategorySlider'
 import ProductList from '../components/product/ProductList'
+import CategoryByParentId from '../components/CategorySlider/CategoryByParentId'
+import { useParams } from 'react-router-dom';
 
 const CategoryProducts = () => {
+  const {id}=useParams();
+  console.log("dfghjk",id)
   return (
     <>
-    <CategorySlider/>
+    <CategoryByParentId id={id}/>
     <ProductList/>
     </>
   )

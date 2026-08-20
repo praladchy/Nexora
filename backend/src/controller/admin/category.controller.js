@@ -2,8 +2,8 @@ import { generateSlug } from "../../utils/slug.js";
 import Category from "../../models/category.model.js";
 import { uploadToCloudinary } from "../../utils/uploadCloudinary.js";
 export const createCategory = async (req, res) => {
-  const { name, description, shop, isGlobal, isActive,isParent } = req.body;
-  console.log("sdfghjkmnb",isParent);
+  const { name, description, shop, isGlobal, isActive, isParent } = req.body;
+  console.log("sdfghjkmnb", isParent);
   const parent = req.body.parent || null;
   const { createdBy } = req.user;
   try {
@@ -63,12 +63,12 @@ export const createCategory = async (req, res) => {
 };
 export const getCategory = async (req, res) => {
   try {
-    const category = await Category.find({isParent: false});
+    const category = await Category.find({ isParent: false });
     res.status(200).json({
       message: "Categories retrieved successfully",
       success: true,
       category,
-    }); 
+    });
   } catch (error) {
     res.status(500).json({
       message: "Internal server error, categories are not retrieved",
@@ -80,7 +80,7 @@ export const getCategory = async (req, res) => {
 
 export const getParentCategory = async (req, res) => {
   try {
-    const category = await Category.find({isParent: true});
+    const category = await Category.find({ isParent: true });
     res.status(200).json({
       message: "Categories retrieved successfully",
       success: true,
@@ -93,6 +93,25 @@ export const getParentCategory = async (req, res) => {
       error: error.message,
     });
   }
+};
+export const getCategoryByParentId = async (req, res) => {
+  const { parentId } = req.params;
+  console.log("parentId", parentId);
+  try {
+    const category = await Category.find({ parent: parentId });
+    console.log("sdfghjkoiuyg", category);
+    if (category.isParent === true) {
+      res.status(404).json({
+        message: "Category not found",
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "Categories retrieved successfully",
+      success: true,
+      category,
+    });
+  } catch (error) {}
 };
 export const getCategoryByShop = async (req, res) => {
   const { shop } = req.query;

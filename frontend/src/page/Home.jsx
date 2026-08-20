@@ -6,7 +6,7 @@ import HeroSectionSlider from "../components/CategorySlider/HeroSectionSlider";
 import SubcategorySlider from "../components/CategorySlider/SubcategorySlider";
 import ProductList from "../components/product/ProductList";
 import FeaturedServices from "../components/Feature";
-import PopularCategories from "../components/Category";
+import PopularCategories from "../components/PopularCategories";
 import PromoBanners from "../components/PromoBanners";
 import CompanyLogoStrip from "../components/PatnerLogo";
 

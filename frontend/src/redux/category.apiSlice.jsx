@@ -31,6 +31,12 @@ export const categorySlice = createApi({
       }),
       providesTags: ["category"],
     }),
+    getCategoryByParentId:builder.query({
+      query:(parentId)=>({
+        url:`/category/getCategoryByParentId/${parentId}`,
+        method:"GET"
+      })
+    }),
     getCategoryByShop: builder.query({
       query: () => ({
         url: `/category/shop/${shopId}`,
@@ -65,6 +71,7 @@ export const categorySlice = createApi({
 export const {
   useGetCategoryQuery,
   useGetParentCategoryQuery,
+  useGetCategoryByParentIdQuery,
   useGetCategoryByShopQuery,
   useGetCategoryBySlugQuery,
   useCreateCategoryMutation,

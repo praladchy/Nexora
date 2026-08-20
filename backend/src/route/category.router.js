@@ -3,6 +3,7 @@ import {
   createCategory,
   deleteCategory,
   getCategory,
+  getCategoryByParentId,
   getCategoryByShop,
   getCategoryBySlug,
   getParentCategory,
@@ -26,15 +27,21 @@ router.post(
 router.get(
   "/getCategory",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","user"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user"]),
   getCategory,
 );
 
 router.get(
   "/getParentCategory",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","user"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user"]),
   getParentCategory,
+);
+router.get(
+  "/getCategoryByParentId/:parentId",
+  authMiddleware,
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user"]),
+  getCategoryByParentId,
 );
 
 router.get(
