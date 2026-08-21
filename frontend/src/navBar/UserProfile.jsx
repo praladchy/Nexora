@@ -45,10 +45,10 @@ export default function UserProfile({ onClose }) {
 
         {/* Menu (STATIC - NO ARRAY) */}
         <div>
-          <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
+          {/* <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
             <User size={18} />
             Manage My Account
-          </button>
+          </button> */}
 
           <button
             className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
@@ -61,7 +61,7 @@ export default function UserProfile({ onClose }) {
             My Orders
           </button>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
+          {/* <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
             <Heart size={18} />
             Wishlist
           </button>
@@ -74,7 +74,7 @@ export default function UserProfile({ onClose }) {
           <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
             <RotateCcw size={18} />
             Returns & Cancellations
-          </button>
+          </button> */}
 
           {user ? (
             <button

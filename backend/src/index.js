@@ -7,7 +7,6 @@ import cookieParser from "cookie-parser";
 
 import { connectDb } from "./config/db.config.js";
 import { authRouter } from "./route/auth.router.js";
-import { authMiddleware } from "./middleware/auth.middleware.js";
 import { shoprouter } from "./route/shop.router.js";
 import { categoryrouter } from "./route/category.router.js";
 import { productrouter } from "./route/product.router.js";
