@@ -3,12 +3,15 @@ import {
   useAssignAdminMutation,
   useRemoveAdminMutation,
   useGetShopsActiveQuery,
+  useGetShopAdminsQuery,
 } from "../../components/Redux/Shop.apiSlice";
-import { useGetVendorAdminsQuery } from "../../components/Redux/vendor.apiSlice";
+// import { useGetVendorAdminsQuery } from "../../components/Redux/vendor.apiSlice";
 
 const AssignAdmin = () => {
+  // const { data: adminsData, isLoading: adminsLoading } =
+  //   useGetVendorAdminsQuery();
   const { data: adminsData, isLoading: adminsLoading } =
-    useGetVendorAdminsQuery();
+    useGetShopAdminsQuery();
   const { data: shopsData, isLoading: shopsLoading } =
     useGetShopsActiveQuery();
 
@@ -18,7 +21,7 @@ const AssignAdmin = () => {
   // ✅ normalize admins
   const admins = useMemo(() => {
     return (
-      adminsData?.vendorAdmins?.map((a) => ({
+      adminsData?.shopAdmins?.map((a) => ({
         ...a,
         _id: String(a._id),
         shops: (a.shops || []).map((s) =>

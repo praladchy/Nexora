@@ -203,7 +203,7 @@ export default function CategoryGrid() {
   const rows = chunkArray(categories, 2);
 
   return (
-    <div className="max-w-md mx-auto px-4 py-6 font-sans absolute top-20">
+    <div className="max-w-md mx-auto px-4 py-6 font-sans absolute md:top-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-semibold text-gray-800">

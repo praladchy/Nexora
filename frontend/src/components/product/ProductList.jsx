@@ -3,12 +3,17 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { NavLink} from "react-router-dom";
 import { useGetproductsQuery } from "../../redux/product.slice";
 import { useCreateCartMutation } from "../../redux/cart.slice";
+import { useAddToWhishListMutation, useRemoveFromWhishListMutation } from "../../redux/whishList";
 
 const ProductList = () => {
    
   const { data } = useGetproductsQuery();
 
   const [createCart, { isLoading }] = useCreateCartMutation();
+
+
+  const [wishList]=useAddToWhishListMutation()
+  const [removeWishlist]=useRemoveFromWhishListMutation()
   const handleAddToCart = async (productId, shopId) => {
     try {
       const res = await createCart({
@@ -23,7 +28,10 @@ const ProductList = () => {
       console.error("Error adding to cart:", error);
     }
   };
-
+const handleWishList=async(id)=>{
+const res=await wishList(id)
+console.log(res)
+}
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <h6 className="text-3xl font-semibold mb-4">Products</h6>
@@ -33,7 +41,7 @@ const ProductList = () => {
             <div className="border rounded-xl p-3 h-full relative bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
               {/* Wishlist */}
               <button className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition z-10">
-                <Heart size={18} />
+                <Heart size={18} onClick={()=>handleWishList(products._id)}/>
               </button>
 
               {/* Product Image */}

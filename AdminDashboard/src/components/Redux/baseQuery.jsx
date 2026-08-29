@@ -2,7 +2,8 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const baseQuery = fetchBaseQuery({
-  baseUrl: "https://nexaura11.onrender.com/api/",
+  baseUrl:import.meta.env.VITE_BACKEND_URL,
+  
   // baseUrl: "http://localhost:5000/api/",
   // baseUrl: "  nexora-production-83ec.up.railway.app/api",
 

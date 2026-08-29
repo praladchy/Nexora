@@ -31,6 +31,7 @@ import VerifyForgatePassword from "./pages/VerifyForgatePass.jsx";
 import { PrivateRoutes } from "./utils/privateRoute.jsx";
 import VendorList from "./pages/vendor/VendorList.jsx";
 import ProductList from "./pages/product/list.product.jsx";
+import CreateShopAdmin from "./pages/shop/createAdmin.shop.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -160,6 +161,20 @@ export const privateRoutes = [
     element: <OwnerAssign />,
     permission: "user.assign_permission",
   },
+
+
+
+ {
+    path: "/shop/createAdmin",
+    element: <CreateShopAdmin />,
+    permission: "create.shopAdmin",
+  },
+
+   
+
+
+
+
   {
     path: "/shop/assignAdmin",
     element: <AdminAssign />,

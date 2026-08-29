@@ -49,7 +49,7 @@ export const getPermissions = async (req, res) => {
 };
 export const getActivePermissions = async (req, res) => {
   try {
-    const permissions = await Permission.find({status:true});
+    const permissions = await Permission.find({ status: true });
     if (!permissions.length)
       return res.status(404).json({
         message: "permissions not found",
@@ -121,12 +121,16 @@ export const assignPermissionUserById = async (req, res) => {
         message: "user not found",
         success: false,
       });
-     if (user.permissions.some(p => p._id.toString() === permission._id.toString())) {
-  return res.status(400).json({
-    message: "permission already assigned to user",
-    success: false,
-  });
-}
+    if (
+      user.permissions.some(
+        (p) => p._id.toString() === permission._id.toString(),
+      )
+    ) {
+      return res.status(400).json({
+        message: "permission already assigned to user",
+        success: false,
+      });
+    }
 
     user.permissions.push(permission._id);
     await user.save();
@@ -184,7 +188,6 @@ export const assignPermissionUserById = async (req, res) => {
 //   }
 // };
 
-
 export const removePermissionUserById = async (req, res) => {
   const { id, userId } = req.params;
 
@@ -222,7 +225,7 @@ export const removePermissionUserById = async (req, res) => {
           permissions: permission._id,
         },
       },
-      { new: true }
+      { new: true },
     ).populate("permissions");
 
     return res.status(200).json({
@@ -259,7 +262,7 @@ export const removePermissionUserById = async (req, res) => {
 //         message: "user not found",
 //         success: false,
 //       });
-      
+
 //     res.status(200).json({
 //       message: "permission removed successfully",
 //       success: true,
@@ -274,14 +277,17 @@ export const removePermissionUserById = async (req, res) => {
 //   }
 // };
 export const updatePermission = async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
   try {
-    const permission = await Permission.findByIdAndUpdate(id, req.body, { new: true });
-    if (!permission)      return res.status(404).json({
+    const permission = await Permission.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!permission)
+      return res.status(404).json({
         message: "permission not found",
         success: false,
       });
-    res.status(200).json({ 
+    res.status(200).json({
       message: "permission updated successfully",
       success: true,
       permission,
@@ -294,7 +300,7 @@ export const updatePermission = async (req, res) => {
   }
 };
 export const deletePermission = async (req, res) => {
-    const {id}=req.params
+  const { id } = req.params;
 
   try {
     const permission = await Permission.findById(id);
@@ -303,8 +309,8 @@ export const deletePermission = async (req, res) => {
         message: "permission not found",
         success: false,
       });
-      permission.status=false;
-      await permission.save();
+    permission.status = false;
+    await permission.save();
     res.status(200).json({
       message: "permission deleted successfully",
       success: true,

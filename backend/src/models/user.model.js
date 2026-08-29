@@ -58,6 +58,7 @@ const userSchema = new mongoose.Schema(
         "vendor",
         "vendorAdmin",
         "owner",
+        "shopAdmin",
         "user",
         "deliveryMan",
       ],

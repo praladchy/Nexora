@@ -3,6 +3,8 @@ import { User } from "../../models/user.model.js";
 import fs from "fs";
 import Shop from "../../models/shop.model.js";
 import cloudinary from "../../config/cloudinary.js";
+import mongoose from "mongoose";
+import otp from "../../models/otpVerification.model.js";
 
 export const createShop = async (req, res) => {
   try {
@@ -68,6 +70,84 @@ export const createShop = async (req, res) => {
     }
   }
 };
+
+export const shopAdminRegistration = async (req, res) => {
+  const ownerId = new mongoose.Types.ObjectId(req.user.userId);
+  const { email, phone } = req.body;
+  try {
+    if (!ownerId || !email || !phone)
+      return res
+        .status(400)
+        .json({ message: "All fields are required", success: false });
+    const user = await User.findOne({ email }).populate("createdBy");
+
+    if (!user)
+      return res.status(400).json({
+        message: "User not exist,plz register first",
+        success: false,
+      });
+    if (user.role === "shopAdmin") {
+      return res.status(400).json({
+        message: "User is already a shop admin",
+        success: false,
+      });
+    }
+
+    const otpRecord = await otp.findOne({ email });
+    console.log("otpRecord", otpRecord);
+    if (!otpRecord || !otpRecord.emailVerified) {
+      return res.status(400).json({
+        message: "Please verify email and phone first",
+        success: false,
+      });
+    }
+    user.role = "shopAdmin";
+    user.createdBy = ownerId;
+    await user.save();
+    res.status(200).json({
+      message: "Admin registered successfully,please wait for approval",
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error,Admin is not registered",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+  export const getshopAdmins = async (req, res) => {
+  try {
+    const ownerId = new mongoose.Types.ObjectId(req.user.userId);
+   
+    const shopAdmins = await User.find({
+      createdBy: ownerId,
+      role: "shopAdmin",
+    })
+      .populate("createdBy", "firstName email")
+      .select("-password");
+       console.log("ghjkmncccsq",shopAdmins)
+    if (!shopAdmins.length) {
+      return res.status(404).json({
+        message: "No shop admins found",
+        success: false,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      shopAdmins,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+
 export const getShops = async (req, res) => {
   try {
     const shops = await Shop.find().populate("owner").populate("admins");
@@ -199,7 +279,7 @@ export const assignOwner = async (req, res) => {
       },
       {
         $addToSet: { shops: shopId },
-        role:"owner"
+        role: "owner",
       },
     );
 
@@ -249,7 +329,7 @@ export const removeOwner = async (req, res) => {
         success: false,
       });
     }
-    await User.findByIdAndUpdate(userId, { $pull: { shops: shop._id }});
+    await User.findByIdAndUpdate(userId, { $pull: { shops: shop._id } });
     // await Shop.findByIdAndUpdate(shopId,{$pull:{owner:user._id}});
 
     // user.shops = user.shops.filter((p) => p.toString() !== shop._id.toString());
@@ -278,7 +358,9 @@ export const assignAdmin = async (req, res) => {
         message: "User not found",
         success: false,
       });
-    if (!user.isActive || !user.isVerified)
+    if (!user.isVerified)
+      // if (!user.isActive || !user.isVerified)
+
       return res.status(400).json({
         message: "user is not active or verified",
         success: false,
@@ -321,48 +403,79 @@ export const assignAdmin = async (req, res) => {
 export const removeAdmin = async (req, res) => {
   try {
     const { userId, shopId } = req.params;
+
     const user = await User.findById(userId);
-    if (!user)
+
+    if (!user) {
       return res.status(400).json({
         message: "User not found",
         success: false,
       });
-    if (!user.isActive || !user.isVerified)
+    }
+
+    if (!user.isVerified) {
       return res.status(400).json({
-        message: "user is not active or verified",
+        message: "User is not verified",
         success: false,
       });
-    const shop = await Shop.findById(shopId).populate("admins");
-    if (!shop)
+    }
+
+    const shop = await Shop.findById(shopId);
+
+    if (!shop) {
       return res.status(400).json({
         message: "Shop is not registered",
-        sucess: false,
-      });
-    if (!user.shops.some((p) => p.toString() === shop._id.toString())) {
-      return res.status(400).json({
-        message: "user is not assigned this shop",
         success: false,
       });
     }
-    if (!shop.admins.some((p) => p.toString() === user._id.toString())) {
-      res.status(400).json({
-        message: "this user is not assign the shop",
-        success: false,
-      });
-    }
-    user.shops = user.shops.filter((p) => p.toString() !== shop._id.toString());
-    await user.save();
-    shop.admins = shop.admins.filter(
-      (p) => p.toString() !== user._id.toString(),
+
+    // Check user has this shop
+    const userHasShop = user.shops.some(
+      (shop) => shop.toString() === shopId.toString()
     );
+
+    if (!userHasShop) {
+      return res.status(400).json({
+        message: "User is not assigned to this shop",
+        success: false,
+      });
+    }
+
+    // Check user is admin of this shop
+    const isAdmin = shop.admins.some(
+      (adminId) => adminId.toString() === user._id.toString()
+    );
+
+    if (!isAdmin) {
+      return res.status(400).json({
+        message: "This user is not assigned as an admin of this shop",
+        success: false,
+      });
+    }
+
+    // Remove shop from user's shops
+    user.shops = user.shops.filter(
+      (shopId) => shopId.toString() !== shop._id.toString()
+    );
+
+    // Remove user from shop admins
+    shop.admins = shop.admins.filter(
+      (adminId) => adminId.toString() !== user._id.toString()
+    );
+
+    await user.save();
     await shop.save();
-    res.status(200).json({
-      message: "User is remove from shop successfully",
+
+    return res.status(200).json({
+      message: "User removed from shop successfully",
       success: true,
     });
+
   } catch (error) {
-    res.status(500).json({
-      message: "Internal server error,user is  remove to shop",
+    console.error("removeAdmin error:", error);
+
+    return res.status(500).json({
+      message: "Internal server error while removing user from shop",
       success: false,
       error: error.message,
     });

@@ -3,7 +3,7 @@ import { authMiddleware } from "../middleware/auth.middleware.js"
 import express from "express"
 
 const whishListRouter=express.Router()
-whishListRouter.post("/addToWhishList",authMiddleware,addWhishList)
+whishListRouter.post("/addToWhishList/:productId",authMiddleware,addWhishList)
 whishListRouter.get("/getWhishList",authMiddleware,getWhishList)
 whishListRouter.delete("/removeFromWhishList/:itemId",authMiddleware,removeWhishList)
 export default  whishListRouter

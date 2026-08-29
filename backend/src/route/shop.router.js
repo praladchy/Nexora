@@ -5,18 +5,22 @@ import {
   createShop,
   deleteShop,
   getActiveShops,
+  getshopAdmins,
   getShopById,
   getShops,
   removeAdmin,
   removeOwner,
+  shopAdminRegistration,
   updateShop,
 } from "../controller/admin/shop.controller.js";
 import { authMiddleware, checkPermission, roleMiddleware } from "../middleware/auth.middleware.js";
 import { upload } from "../middleware/upload.multer.js";
 const router = express.Router();
 router.post("/createShop",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("shop.create"),upload.array("images",5), createShop);
+router.post("/registerShopAdmin",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("create.shopAdmin"),upload.array("images",5), shopAdminRegistration);
 
 router.get("/getShops",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("shop.list"), getShops);
+router.get("/getshopAdmins",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","shopAdmin"]),checkPermission("shop.adminList"), getshopAdmins);
 router.get("/getActiveShops",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("shop.list"), getActiveShops);
 
 router.get("/getShop/:shopId",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("shop.view"), getShopById);

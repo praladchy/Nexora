@@ -122,12 +122,12 @@ if (isLoading) {
       {/* Navbar */}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 pb-20">
+      <div className="max-w-6xl mx-auto px-6 pb-20 pt-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left: Images */}
-          <div className="flex gap-4">
+          <div className="md:flex gap-4">
             {/* Thumbnails */}
-            <div className="flex flex-col gap-3">
+            <div className="flex md:flex-col gap-3">
               {data.product?.images.map((img, i) => (
                 <button
                   key={i}

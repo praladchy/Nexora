@@ -11,6 +11,7 @@ export default function AssignPermissionList() {
   const { data: permissionData } = useGetPermissionQuery();
   const { data: user } = useGetUserQuery();
   const users = user?.users;
+  console.log("users", users);
   const [assignPermission] = useAssignPermissionMutation();
   const [removePermission] = useRemovePermissionMutation();
 

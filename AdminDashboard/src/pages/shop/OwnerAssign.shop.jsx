@@ -1,13 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
 import {
   useAssignOwnerMutation,
+  useGetShopAdminsQuery,
   useGetShopsActiveQuery,
   useRemoveOwnerMutation,
 } from "../../components/Redux/Shop.apiSlice";
 import { useGetVendorAdminsQuery } from "../../components/Redux/vendor.apiSlice";
 
 const OwnerAssign = () => {
-  const { data: ownersData, isLoading: ownersLoading } = useGetVendorAdminsQuery();
+  // const { data: ownersData, isLoading: ownersLoading } = useGetVendorAdminsQuery();
+  const { data: ownersData, isLoading: ownersLoading } = useGetShopAdminsQuery();
+
+  console.log("ownersData daadsasw", ownersData);
   const { data: shopsData, isLoading: shopsLoading } = useGetShopsActiveQuery();
 
   const [assignOwner] = useAssignOwnerMutation();
@@ -15,7 +19,7 @@ const OwnerAssign = () => {
 
   const owners = useMemo(() => {  
     return (
-      ownersData?.vendorAdmins?.map((o) => ({
+      ownersData?.shopAdmins?.map((o) => ({
         ...o,
         _id: String(o._id),
         shops: (o.shops || []).map((s) =>
@@ -98,7 +102,7 @@ const OwnerAssign = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Assign Shops to Admins</h1>
+      <h1 className="text-2xl font-bold mb-4">Assign Owners to Shops</h1>
 
       <div className="overflow-auto border rounded shadow-sm">
         <table className="w-full text-sm">

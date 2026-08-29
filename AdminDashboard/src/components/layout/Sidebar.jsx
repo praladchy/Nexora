@@ -8,9 +8,13 @@ import {
   Building2,
   Package,
   FolderTree,
-  Shield,   UserCheck, UserX, Edit2, Trash2
+  Shield,
+  UserCheck,
+  UserX,
+  Edit2,
+  Trash2,
 } from "lucide-react";
-import {  } from "lucide-react";
+import {} from "lucide-react";
 import { useSelector } from "react-redux";
 const iconStyle = "w-5 h-5";
 
@@ -23,31 +27,30 @@ const Sidebar = () => {
 
   const user = useSelector((state) => state.auth.user);
 
-  const permissions =
-    user?.permissions?.map((item) => item.name || item) || [];
+  const permissions = user?.permissions?.map((item) => item.name || item) || [];
 
   const mainMenus = mainMenu.filter(
-    (item) => !item.permission || permissions.includes(item.permission)
+    (item) => !item.permission || permissions.includes(item.permission),
   );
 
   const productMenus = productMenu.filter((item) =>
-    permissions.includes(item.permission)
+    permissions.includes(item.permission),
   );
 
   const vendorMenus = vendorMenu.filter((item) =>
-    permissions.includes(item.permission)
+    permissions.includes(item.permission),
   );
 
   const shopMenus = shopMenu.filter((item) =>
-    permissions.includes(item.permission)
+    permissions.includes(item.permission),
   );
 
   const categoryManagements = categoryManagement.filter((item) =>
-    permissions.includes(item.permission)
+    permissions.includes(item.permission),
   );
 
   const permissionMenus = permissionMenu.filter((item) =>
-    permissions.includes(item.permission)
+    permissions.includes(item.permission),
   );
   return (
     <aside className="w-64 bg-white border-r min-h-screen px-4 py-6">
@@ -200,7 +203,9 @@ const Sidebar = () => {
           >
             <div className="flex items-center gap-3">
               <FolderTree className="w-5 h-5" />
-              <span className="text-sm font-medium whitespace-nowrap">Category Management</span>
+              <span className="text-sm font-medium whitespace-nowrap">
+                Category Management
+              </span>
             </div>
 
             <span
@@ -234,49 +239,48 @@ const Sidebar = () => {
           )}
         </div>
 
-
         <div className="space-y-1">
-  <button
-    onClick={() => setPermissionOpen(!permissionOpen)}
-    className="w-full flex items-center justify-between px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-  >
-    <div className="flex items-center gap-3">
-      <Shield className="w-5 h-5" />
-      <span className="text-sm font-medium whitespace-nowrap">
-        Permissions Management
-      </span>
-    </div>
+          <button
+            onClick={() => setPermissionOpen(!permissionOpen)}
+            className="w-full flex items-center justify-between px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+          >
+            <div className="flex items-center gap-3">
+              <Shield className="w-5 h-5" />
+              <span className="text-sm font-medium whitespace-nowrap">
+                Permissions Management
+              </span>
+            </div>
 
-    <span
-      className={`transition-transform duration-300 ${
-        permissionOpen ? "rotate-180" : ""
-      }`}
-    >
-      ▾
-    </span>
-  </button>
+            <span
+              className={`transition-transform duration-300 ${
+                permissionOpen ? "rotate-180" : ""
+              }`}
+            >
+              ▾
+            </span>
+          </button>
 
-  {permissionOpen && (
-    <div className="ml-8 space-y-1">
-      {permissionMenus.map((item, index) => (
-        <NavLink
-          key={index}
-          to={item.link}
-          className={({ isActive }) =>
-            `flex items-center gap-2 px-4 py-2 text-sm rounded-lg ${
-              isActive
-                ? "bg-purple-100 text-purple-600"
-                : "text-gray-600 hover:bg-gray-100"
-            }`
-          }
-        >
-          {item.icon}
-          {item.text}
-        </NavLink>
-      ))}
-    </div>
-  )}
-</div>
+          {permissionOpen && (
+            <div className="ml-8 space-y-1">
+              {permissionMenus.map((item, index) => (
+                <NavLink
+                  key={index}
+                  to={item.link}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-4 py-2 text-sm rounded-lg ${
+                      isActive
+                        ? "bg-purple-100 text-purple-600"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`
+                  }
+                >
+                  {item.icon}
+                  {item.text}
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
     </aside>
   );
@@ -312,10 +316,6 @@ export const mainMenu = [
     text: "Vendor Dashboard",
     icon: <LayoutDashboard className={iconStyle} />,
   },
-   
-  
-  
-   
 ];
 
 export const vendorMenu = [
@@ -348,6 +348,11 @@ export const shopMenu = [
     permission: "shop.create",
   },
   {
+    link: "/shop/createAdmin",
+    text: "create Admin",
+    permission: "create.shopAdmin",
+  },
+  {
     link: "/shop/report",
     text: "Shop report",
     permission: "shop.report",
@@ -357,12 +362,12 @@ export const shopMenu = [
     text: "Shop List",
     permission: "shop.list",
   },
-   {
+  {
     link: "/shop/assignOwner",
     text: "AssignUser",
     permission: "user.assign_permission",
   },
-   {
+  {
     link: "/shop/assignAdmin",
     text: "AssignAdmin",
     permission: "user.assign_permission",
@@ -383,7 +388,6 @@ const categoryManagement = [
     icon: <List className="w-4 h-4" />,
   },
 ];
-
 
 const permissionMenu = [
   {

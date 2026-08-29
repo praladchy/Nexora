@@ -30,9 +30,11 @@ export const getUsers = async (req, res) => {
         { role: "vendorAdmin" },
         { role: "admin" },
         { role: "vendor" },
+        { role: "owner" },
+        { role: "shopAdmin" },
         { role: "superAdmin" },
       ],
-    }) ;
+    });
 
     if (!users || !users.length === 0)
       return res.status(404).json({

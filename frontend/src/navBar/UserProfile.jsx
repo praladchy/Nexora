@@ -1,100 +1,364 @@
-import { User, Package, Heart, Star, RotateCcw, LogOut } from "lucide-react";
+import {
+  User,
+  Package,
+  Heart,
+  Star,
+  RotateCcw,
+  LogOut,
+  MapPin,
+  Settings,
+  X,
+} from "lucide-react";
+
 import { useLogoutMutation } from "../redux/auth.slice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logout } from "../redux/userData.slice";
 import { useNavigate } from "react-router-dom";
 
-export default function UserProfile({ onClose }) {
+export default function UserProfile({ user, onClose }) {
   const [logOut, { isLoading }] = useLogoutMutation();
-  const user = useSelector((state) => state.auth.user);
+
   const navigate = useNavigate();
-  console.log(user);
   const dispatch = useDispatch();
-  const handleLogout = async ({ onClose }) => {
-    // Implement logout logic here (e.g., clear auth tokens, redirect to login page)
-    const res = await logOut().unwrap();
-    dispatch(logout());
-    console.log(res);
-    alert(res.data.message);
+
+  // ==========================================
+  // LOGOUT
+  // ==========================================
+
+  const handleLogout = async () => {
+    try {
+      const res = await logOut().unwrap();
+
+      console.log("Logout response:", res);
+
+      // Clear redux user data
+      dispatch(logout());
+
+      // Close profile
+      onClose();
+
+      // Go to login
+      navigate("/login");
+
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
-  {
-    isLoading && <p>Logging out...</p>;
-  }
+
+  // ==========================================
+  // LOGIN
+  // ==========================================
 
   const handleLogin = () => {
+    onClose();
     navigate("/login");
   };
+
+  // ==========================================
+  // NAVIGATION
+  // ==========================================
+
+  const handleOrders = () => {
+    onClose();
+    navigate("/orders");
+  };
+
+  const handleProfile = () => {
+    onClose();
+    navigate("/profile");
+  };
+
+  const handleWishlist = () => {
+    onClose();
+    navigate("/wishlist");
+  };
+
+  const handleAddress = () => {
+    onClose();
+    navigate("/addresses");
+  };
+
+  const handleSettings = () => {
+    onClose();
+    navigate("/settings");
+  };
+
   return (
-    <div className="absolute top-16 flex items-center justify-center bg-gray-100 p-6 z-10">
-      {/* Simple Profile Menu (NO dropdown, NO arrays, NO state) */}
-      <div className="w-72 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        {/* Profile Header */}
-        <div className="bg-orange-500 p-5 text-white flex items-center gap-3">
-          <img
-            src="https://i.pravatar.cc/150"
-            alt="profile"
-            className="w-12 h-12 rounded-full border-2 border-white"
-          />
-          <div>
-            <h2 className="font-bold text-lg">
-              {user?.firstName} {user?.lastName}
+    <div className="w-full bg-white text-gray-700">
+
+      {/* ==========================================
+          PROFILE HEADER
+      =========================================== */}
+
+      <div className="bg-orange-500 p-5 text-white">
+
+        <div className="flex items-center gap-3">
+
+          {/* Avatar */}
+
+          <div
+            className="
+              w-12
+              h-12
+              rounded-full
+              bg-white
+              flex
+              items-center
+              justify-center
+              shrink-0
+            "
+          >
+            <User
+              size={25}
+              className="text-orange-500"
+            />
+          </div>
+
+          {/* User Information */}
+
+          <div className="min-w-0">
+
+            <h2 className="font-bold text-lg truncate">
+              {user?.firstName || "User"}{" "}
+              {user?.lastName || ""}
             </h2>
-            <p className="text-sm text-orange-100">{user?.email}</p>
+
+            <p className="text-sm text-orange-100 truncate">
+              {user?.email || "Welcome"}
+            </p>
+
           </div>
         </div>
 
-        {/* Menu (STATIC - NO ARRAY) */}
-        <div>
-          {/* <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
-            <User size={18} />
-            Manage My Account
-          </button> */}
+        {/* View Profile */}
 
+        {user && (
           <button
-            className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
-            onClick={() => {
-              onClose();
-              navigate("/orders");
-            }}
+            type="button"
+            onClick={handleProfile}
+            className="
+              mt-4
+              w-full
+              bg-white
+              text-orange-600
+              py-2
+              rounded-lg
+              text-sm
+              font-semibold
+              hover:bg-orange-50
+              transition
+            "
           >
-            <Package size={18} />
+            View Profile
+          </button>
+        )}
+      </div>
+
+      {/* ==========================================
+          MENU
+      =========================================== */}
+
+      <div className="py-2">
+
+        {/* My Orders */}
+
+        <button
+          type="button"
+          onClick={handleOrders}
+          className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-3
+            hover:bg-orange-50
+            transition
+            text-left
+          "
+        >
+          <Package size={18} />
+
+          <span className="flex-1">
             My Orders
-          </button>
+          </span>
+        </button>
 
-          {/* <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
-            <Heart size={18} />
+        {/* Wishlist */}
+
+        <button
+          type="button"
+          onClick={handleWishlist}
+          className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-3
+            hover:bg-orange-50
+            transition
+            text-left
+          "
+        >
+          <Heart size={18} />
+
+          <span className="flex-1">
             Wishlist
-          </button>
+          </span>
+        </button>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
-            <Star size={18} />
+        {/* Address */}
+
+        <button
+          type="button"
+          onClick={handleAddress}
+          className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-3
+            hover:bg-orange-50
+            transition
+            text-left
+          "
+        >
+          <MapPin size={18} />
+
+          <span className="flex-1">
+            My Addresses
+          </span>
+        </button>
+
+        {/* Reviews */}
+
+        <button
+          type="button"
+          className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-3
+            hover:bg-orange-50
+            transition
+            text-left
+          "
+        >
+          <Star size={18} />
+
+          <span className="flex-1">
             My Reviews
-          </button>
+          </span>
+        </button>
 
-          <button className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700">
-            <RotateCcw size={18} />
+        {/* Returns */}
+
+        <button
+          type="button"
+          className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-3
+            hover:bg-orange-50
+            transition
+            text-left
+          "
+        >
+          <RotateCcw size={18} />
+
+          <span className="flex-1">
             Returns & Cancellations
-          </button> */}
+          </span>
+        </button>
 
-          {user ? (
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          ) : (
-            <button
-              className="w-full flex items-center gap-3 px-5 py-3 hover:bg-orange-50 text-gray-700"
-              onClick={handleLogin}
-            >
-              {" "}
-              <LogOut size={18} />
+        {/* Settings */}
+
+        <button
+          type="button"
+          onClick={handleSettings}
+          className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-3
+            hover:bg-orange-50
+            transition
+            text-left
+          "
+        >
+          <Settings size={18} />
+
+          <span className="flex-1">
+            Settings
+          </span>
+        </button>
+      </div>
+
+      {/* ==========================================
+          LOGIN / LOGOUT
+      =========================================== */}
+
+      <div className="border-t border-gray-200 p-2">
+
+        {user ? (
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={handleLogout}
+            className="
+              w-full
+              flex
+              items-center
+              gap-3
+              px-5
+              py-3
+              rounded-lg
+              text-red-600
+              hover:bg-red-50
+              transition
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+            "
+          >
+            <LogOut size={18} />
+
+            <span>
+              {isLoading ? "Logging out..." : "Logout"}
+            </span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleLogin}
+            className="
+              w-full
+              flex
+              items-center
+              gap-3
+              px-5
+              py-3
+              rounded-lg
+              text-blue-600
+              hover:bg-blue-50
+              transition
+            "
+          >
+            <LogOut size={18} />
+
+            <span>
               Login
-            </button>
-          )}
-        </div>
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );

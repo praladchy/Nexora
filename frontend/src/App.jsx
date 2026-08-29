@@ -20,6 +20,7 @@ import ProductCategoryList from "./components/product/ProductCategoryList";
 import CategoryProducts from "./page/category";
 import MyOrders from "./page/Order";
 import OrderDetails from "./components/Order/OrderDetails";
+import { socket } from "./config/socketIo.config";
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -34,6 +35,17 @@ function App() {
     }
   }, [isSuccess, data, dispatch]);
 
+  useEffect(() => {
+    socket.on("connection", (data) => {
+      console.log(data);
+    });
+    socket.on("welcome", (data) => {
+      console.log(data);
+    });
+
+    return () => socket.off("connect");
+  }, []);
+
   const user = useSelector((state) => state.auth.user);
 
   console.log("mnbvcxz", user);
@@ -46,10 +58,7 @@ function App() {
 
         <Route path="products" element={<ProductList />} />
         <Route path="category/products/:id" element={<ProductCategoryList />} />
-        <Route
-          path="category/:id"
-          element={<CategoryProducts />}
-        />
+        <Route path="category/:id" element={<CategoryProducts />} />
         <Route path="orders" element={<MyOrders />} />
         <Route path="order/detail/:id" element={<OrderDetails />} />
 

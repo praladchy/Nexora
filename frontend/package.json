@@ -20,7 +20,8 @@
     "react-router-dom": "^6.26.2",
     "react-slick": "^0.31.0",
     "redux-persist": "^6.0.0",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",

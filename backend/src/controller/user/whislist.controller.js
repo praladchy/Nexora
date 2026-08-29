@@ -2,7 +2,7 @@ import { User } from "../../models/user.model.js";
 import  Product  from "../../models/product.model.js";
 import  WhishList  from "../../models/whishlist.model.js";
 export const addWhishList = async (req, res) => {
-  const { productId } = req.body;
+  const { productId } = req.params;
   const userId = req.user;
   try {
     const user = await User.findById( userId );
