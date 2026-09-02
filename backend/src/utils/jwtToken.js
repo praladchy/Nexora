@@ -7,6 +7,8 @@ export const generateAccessToken = async (user) => {
       phone: user.phone,
       role: user.role,
       permissions: user.permissions.map((p) => p.name),
+      shop: user.shop, 
+
     },
     process.env.JWT_SECRET,
     {
@@ -23,6 +25,7 @@ export const generaterefreshToken = async (user) => {
       phone: user.phone,
       role: user.role,
       permissions: user.permissions.map((p) => p.name),
+      shop: user.shop,
     },
     process.env.JWT_REFRESH_SECRET,
     {

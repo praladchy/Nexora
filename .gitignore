@@ -3,6 +3,9 @@
 backend/.env
 frontend/.env
 adminDashboard/.env
+testAdmin
+admin
+
 
 # Dependencies
 node_modules/

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import {
   useAssignOwnerMutation,
+  useGetShopAdminOwnerQuery,
   useGetShopAdminsQuery,
   useGetShopsActiveQuery,
   useRemoveOwnerMutation,
@@ -9,7 +10,7 @@ import { useGetVendorAdminsQuery } from "../../components/Redux/vendor.apiSlice"
 
 const OwnerAssign = () => {
   // const { data: ownersData, isLoading: ownersLoading } = useGetVendorAdminsQuery();
-  const { data: ownersData, isLoading: ownersLoading } = useGetShopAdminsQuery();
+  const { data: ownersData, isLoading: ownersLoading } = useGetShopAdminOwnerQuery();
 
   console.log("ownersData daadsasw", ownersData);
   const { data: shopsData, isLoading: shopsLoading } = useGetShopsActiveQuery();

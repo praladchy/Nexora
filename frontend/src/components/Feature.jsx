@@ -30,8 +30,8 @@ const features = [
 
 export default function FeaturedServices() {
   return (
-    <section className="w-full px-4 py-8">
-      <div className="mx-auto max-w-7xl rounded-2xl bg-[#F5F5F5] px-6 py-8">
+    <section className="w-full px-4 py-2 justify-center">
+      <div className="mx-auto  bg-[#F5F5F5] px-8 py-4">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((item, index) => {
             const Icon = item.icon;

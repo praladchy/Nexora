@@ -347,9 +347,14 @@ export const shopMenu = [
     text: "Add Shop",
     permission: "shop.create",
   },
-  {
+ 
+   {
     link: "/shop/createAdmin",
     text: "create Admin",
+    permission: "create.shopAdmin",
+  }, {
+    link: "/shop/createShopOwner",
+    text: "create Shop Owner",
     permission: "create.shopAdmin",
   },
   {

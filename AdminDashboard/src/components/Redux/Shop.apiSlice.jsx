@@ -92,9 +92,24 @@ export const shopSlice = createApi({
         body: data,
       }),
     }),
+
+    registerShopOwner: builder.mutation({
+      query: (data) => ({
+        url: "shop/registerShopOwner",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
     getShopAdmins: builder.query({
       query: () => ({
         url: "shop/getshopAdmins",
+        method: "GET",
+      }),
+    }),
+    getShopAdminOwner: builder.query({
+      query: () => ({
+        url: "shop/getshopAdminsOwner",
         method: "GET",
       }),
     }),
@@ -113,4 +128,6 @@ export const {
   useRemoveAdminMutation,
   useRegisterShopAdminMutation,
   useGetShopAdminsQuery,
+  useGetShopAdminOwnerQuery,
+  useRegisterShopOwnerMutation,
 } = shopSlice;

@@ -70,7 +70,52 @@ export const createShop = async (req, res) => {
     }
   }
 };
+export const shopOwnerRegistration = async (req, res) => {
+  const admin = new mongoose.Types.ObjectId(req.user.userId);
+  console.log("lkjfkdoeiioep", admin);
+  const { email, phone } = req.body;
+  try {
+    if (!admin || !email || !phone)
+      return res
+        .status(400)
+        .json({ message: "All fields are required", success: false });
+    const user = await User.findOne({ email }).populate("createdBy");
 
+    if (!user)
+      return res.status(400).json({
+        message: "User not exist,plz register first",
+        success: false,
+      });
+    if (user.role === "owner") {
+      return res.status(400).json({
+        message: "User is already a shop owner",
+        success: false,
+      });
+    }
+
+    const otpRecord = await otp.findOne({ email });
+    console.log("otpRecord", otpRecord);
+    if (!otpRecord || !otpRecord.emailVerified) {
+      return res.status(400).json({
+        message: "Please verify email and phone first",
+        success: false,
+      });
+    }
+    user.role = "owner";
+    user.createdBy = admin;
+    await user.save();
+    res.status(200).json({
+      message: "Owner registered successfully,please wait for approval",
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error,Owner is not registered",
+      success: false,
+      error: error.message,
+    });
+  }
+};
 export const shopAdminRegistration = async (req, res) => {
   const ownerId = new mongoose.Types.ObjectId(req.user.userId);
   const { email, phone } = req.body;
@@ -116,17 +161,17 @@ export const shopAdminRegistration = async (req, res) => {
     });
   }
 };
-  export const getshopAdmins = async (req, res) => {
+export const getshopAdminsByOwner = async (req, res) => {
   try {
     const ownerId = new mongoose.Types.ObjectId(req.user.userId);
-   
+
     const shopAdmins = await User.find({
       createdBy: ownerId,
-      role: "shopAdmin",
+      role: "owner",
     })
       .populate("createdBy", "firstName email")
       .select("-password");
-       console.log("ghjkmncccsq",shopAdmins)
+    console.log("ghjkmncccsq", shopAdmins);
     if (!shopAdmins.length) {
       return res.status(404).json({
         message: "No shop admins found",
@@ -146,8 +191,40 @@ export const shopAdminRegistration = async (req, res) => {
     });
   }
 };
+export const getshopAdmins = async (req, res) => {
+  try {
+    const ownerId = new mongoose.Types.ObjectId(req.user.userId);
 
+    const shopAdmins = await User.find({
+      $or: [
+        {
+          createdBy: ownerId,
+          role: "shopAdmin",
+        },
+      ],
+    })
+      .populate("createdBy", "firstName email")
+      .select("-password");
+    console.log("ghjkmncccsq", shopAdmins);
+    if (!shopAdmins.length) {
+      return res.status(404).json({
+        message: "No shop admins found",
+        success: false,
+      });
+    }
 
+    res.status(200).json({
+      success: true,
+      shopAdmins,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
 export const getShops = async (req, res) => {
   try {
     const shops = await Shop.find().populate("owner").populate("admins");
@@ -431,7 +508,7 @@ export const removeAdmin = async (req, res) => {
 
     // Check user has this shop
     const userHasShop = user.shops.some(
-      (shop) => shop.toString() === shopId.toString()
+      (shop) => shop.toString() === shopId.toString(),
     );
 
     if (!userHasShop) {
@@ -443,7 +520,7 @@ export const removeAdmin = async (req, res) => {
 
     // Check user is admin of this shop
     const isAdmin = shop.admins.some(
-      (adminId) => adminId.toString() === user._id.toString()
+      (adminId) => adminId.toString() === user._id.toString(),
     );
 
     if (!isAdmin) {
@@ -455,12 +532,12 @@ export const removeAdmin = async (req, res) => {
 
     // Remove shop from user's shops
     user.shops = user.shops.filter(
-      (shopId) => shopId.toString() !== shop._id.toString()
+      (shopId) => shopId.toString() !== shop._id.toString(),
     );
 
     // Remove user from shop admins
     shop.admins = shop.admins.filter(
-      (adminId) => adminId.toString() !== user._id.toString()
+      (adminId) => adminId.toString() !== user._id.toString(),
     );
 
     await user.save();
@@ -470,7 +547,6 @@ export const removeAdmin = async (req, res) => {
       message: "User removed from shop successfully",
       success: true,
     });
-
   } catch (error) {
     console.error("removeAdmin error:", error);
 

@@ -6,9 +6,9 @@ import {
   usePhoneVerificationOtpMutation,
   useVendorAdminCreateMutation,
 } from "../../components/Redux/vendor.apiSlice";
-import { useRegisterShopAdminMutation } from "../../components/Redux/Shop.apiSlice";
+import { useRegisterShopAdminMutation, useRegisterShopOwnerMutation } from "../../components/Redux/Shop.apiSlice";
 
-const CreateShopAdmin = () => {
+const CreateShopOwner = () => {
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
@@ -32,7 +32,7 @@ const CreateShopAdmin = () => {
   const [sendPhoneOtpApi] = usePhoneVerificationMutation();
   const [verifyPhoneOtpApi] = usePhoneVerificationOtpMutation();
 
-  const [createVendor, { isLoading }] = useRegisterShopAdminMutation();
+  const [createVendor, { isLoading }] = useRegisterShopOwnerMutation();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -105,7 +105,7 @@ const CreateShopAdmin = () => {
       const res = await createVendor(formData).unwrap();
 
       setMessage(res.message);
-
+// console.log("Vendor created successfully:", res);
       setFormData({
         email: "",
         phone: "",
@@ -127,7 +127,7 @@ const CreateShopAdmin = () => {
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create Shop Admin</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Create Shop Owner</h2>
 
       {message && (
         <p className="text-center text-sm text-blue-600 mb-4">{message}</p>
@@ -258,4 +258,6 @@ const CreateShopAdmin = () => {
   );
 };
 
-export default CreateShopAdmin;
+export default CreateShopOwner;
+
+ 

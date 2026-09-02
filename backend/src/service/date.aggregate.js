@@ -11,6 +11,9 @@ export const dateAggregate = async (req, res) => {
     const endToday = new Date(now);
     endToday.setHours(23, 59, 59, 999);
 
+    console.log("now:", now);
+    console.log("startToday:", startToday);
+    console.log("endToday:", endToday);
     // Last 1 Hour
     const startHour = new Date(now);
     startHour.setHours(startHour.getHours() - 1);
@@ -22,10 +25,11 @@ export const dateAggregate = async (req, res) => {
           orderInHours: [
             {
               $match: {
-                paymentStatus: "Paid",
+                paymentStatus: "Pending",
                 createdAt: {
                   $gte: startHour,
                   $lt: now,
+
                 },
               },
             },
@@ -51,7 +55,7 @@ export const dateAggregate = async (req, res) => {
           orderInToday: [
             {
               $match: {
-                paymentStatus: "Paid",
+                paymentStatus: "Pending",
                 createdAt: {
                   $gte: startToday,
                   $lte: endToday,
@@ -78,7 +82,7 @@ export const dateAggregate = async (req, res) => {
 
           // Daily Sales
           orderInDay: [
-            { $match: { paymentStatus: "Paid" } },
+            { $match: { paymentStatus: "Pending" } },
             { $unwind: "$orderItems" },
             {
               $group: {
@@ -109,7 +113,7 @@ export const dateAggregate = async (req, res) => {
 
           // Weekly Sales
           orderInWeek: [
-            { $match: { paymentStatus: "Paid" } },
+            { $match: { paymentStatus: "Pending", } },
             { $unwind: "$orderItems" },
             {
               $group: {
@@ -138,7 +142,7 @@ export const dateAggregate = async (req, res) => {
 
           // Monthly Sales
           orderInMonth: [
-            { $match: { paymentStatus: "Paid" } },
+            { $match: { paymentStatus: "Pending" } },
             { $unwind: "$orderItems" },
             {
               $group: {
@@ -167,7 +171,7 @@ export const dateAggregate = async (req, res) => {
 
           // Yearly Sales
           orderInYear: [
-            { $match: { paymentStatus: "Paid" } },
+            { $match: { paymentStatus: "Pending" } },
             { $unwind: "$orderItems" },
             {
               $group: {

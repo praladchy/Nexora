@@ -1,11 +1,24 @@
 import { Order } from "../models/order.model.js";
+import { User } from "../models/user.model.js";
 
 export const OrderAggregate = async (req, res) => {
+  const user = req.user.userId;
+  console.log("poiuy", user);
+  const userData = await User.findById(user).select("shops");
+  const shops = userData?.shops;
+  console.log("rtyui", shops);
+  // console.log("rtyui", userData);
   try {
-   const result = await Order.aggregate([
+    const result = await Order.aggregate([
       {
         $facet: {
           orderOverview: [
+            { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
             {
               $group: {
                 _id: null,
@@ -38,8 +51,16 @@ export const OrderAggregate = async (req, res) => {
           OrderStatus: [
             { $unwind: "$orderItems" },
             {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
               $group: {
-                _id: "$user",
+                _id: null,
+                totalPrice: {
+                  $sum: "$totalAmount",
+                },
                 totalOrderproducts: {
                   $sum: 1,
                 },
@@ -101,6 +122,12 @@ export const OrderAggregate = async (req, res) => {
             },
           ],
           paymentStatus: [
+            { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
             {
               $group: {
                 _id: "$paymentMethod",
@@ -123,8 +150,11 @@ export const OrderAggregate = async (req, res) => {
           ],
 
           productsOrderStats: [
+            { $unwind: "$orderItems" },
             {
-              $unwind: "$orderItems",
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
             },
 
             {
@@ -135,7 +165,7 @@ export const OrderAggregate = async (req, res) => {
                   $sum: "$orderItems.quantity",
                 },
 
-                revenue: {
+                totalSale: {
                   $sum: {
                     $multiply: ["$orderItems.price", "$orderItems.quantity"],
                   },
@@ -164,7 +194,7 @@ export const OrderAggregate = async (req, res) => {
 
                 totalQuantity: 1,
 
-                revenue: 1,
+                totalSale: 1,
               },
             },
 
@@ -173,23 +203,21 @@ export const OrderAggregate = async (req, res) => {
                 totalQuantity: -1,
               },
             },
-
-            
           ],
         },
       },
     ]);
 
     res.status(200).json({
-      data:result[0],
-      success:true,
-      message:"order aggregate is retrieved successfully"
-    })
+      data: result[0],
+      success: true,
+      message: "order aggregate is retrieved successfully",
+    });
   } catch (error) {
     res.status(500).json({
-      data:error.message,
-      success:false,
-      message:"order aggregate is not retrieved successfully"
-    })
+      data: error.message,
+      success: false,
+      message: "order aggregate is not retrieved successfully",
+    });
   }
 };

@@ -153,6 +153,7 @@ export const login = async (req, res) => {
       email: user.email,
       phone: user.phone,
       permissions: user.permissions,
+      shop:user.shops
     };
 
     res.status(200).json({

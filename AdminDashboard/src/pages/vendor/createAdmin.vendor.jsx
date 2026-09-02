@@ -126,7 +126,7 @@ const CreateAdmin = () => {
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create Vendor</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Create Vendor Admin</h2>
 
       {message && (
         <p className="text-center text-sm text-blue-600 mb-4">{message}</p>

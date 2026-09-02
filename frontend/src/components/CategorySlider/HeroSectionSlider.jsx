@@ -53,15 +53,15 @@ export default function HeroSectionSlider() {
   };
 
   return (
-    <div className=" w-full mx-auto overflow-hidden px-1 py-5">
+    <div className=" w-full mx-auto overflow-hidden  pt-5">
        
 
       <Slider {...settings}>
           <div   className="">
-            <div className=" pb-3  overflow-hidden shadow-md bg-white">
+            <div className=" overflow-hidden bg-white">
               
 
-              <div className="w-full mx-auto flex justify-between mb-5 ">
+              <div className="w-full mx-auto flex justify-between ">
                 {/* <div className="w-[30%]   pl-1 ">
                   <Slider {...settings}>
                     {images.map((item) => (
@@ -85,7 +85,7 @@ export default function HeroSectionSlider() {
                     <Slider {...settings}>
                       {images.map((item) => (
                         <div key={item.id} className="px-3">
-                          <div className="rounded-xl overflow-hidden shadow-md bg-white">
+                          <div className="rounded-xl overflow-hidden  bg-white">
                             <img
                               src={item.image}
                               alt={item.title}
@@ -100,7 +100,7 @@ export default function HeroSectionSlider() {
                     </Slider>
                   </div>
 
-                  <div className=" flex justify-between w-full   pt-1">
+                  {/* <div className=" flex justify-between w-full   pt-1">
                     <div className="  w-[50%]   pl-1   ">
                       <Slider {...settings}>
                         {images.map((item) => (
@@ -137,7 +137,7 @@ export default function HeroSectionSlider() {
                         ))}
                       </Slider>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

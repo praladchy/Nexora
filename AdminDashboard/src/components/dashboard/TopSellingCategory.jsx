@@ -1,4 +1,4 @@
-const TopSellingTable = () => {
+ const TopSellingCategoryTable = () => {
   const products = [
     {
       id: 1,
@@ -40,7 +40,7 @@ const TopSellingTable = () => {
   return (
     <div className="bg-white border p-4">
       <div className="flex justify-between mb-4">
-        <h3 className="font-semibold">Top-Selling Products</h3>
+        <h3 className="font-semibold">Top-Selling Category</h3>
 
         <button className="text-purple-600 text-sm">
           View All
@@ -88,4 +88,4 @@ const TopSellingTable = () => {
   );
 };
 
-export default TopSellingTable;
+export default TopSellingCategoryTable;

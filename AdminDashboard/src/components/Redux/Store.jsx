@@ -7,6 +7,7 @@ import { productApi } from "./Product.apiSlice.jsx";
 import { vendorSlice } from "./vendor.apiSlice.jsx";
 import { permissionApi } from "./permission.apislice.jsx";
 import { categorySlice } from "./category.apiSlice.jsx";
+import { serviceAggregateSlice } from "./AggregateService.apiSlice.jsx";
 export const Store = configureStore({
   reducer: {
     auth: authReducer,   /*this is name of reducer use any name you want only manditory name of slice name */
@@ -15,10 +16,11 @@ export const Store = configureStore({
     [productApi.reducerPath]: productApi.reducer,
     [vendorSlice.reducerPath]: vendorSlice.reducer,
     [permissionApi.reducerPath]:permissionApi.reducer,
-    [categorySlice.reducerPath]:categorySlice.reducer
+    [categorySlice.reducerPath]:categorySlice.reducer,
+    [serviceAggregateSlice.reducerPath]:serviceAggregateSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(shopSlice.middleware, productApi.middleware,authApi.middleware,vendorSlice.middleware,permissionApi.middleware,categorySlice.middleware),
+    getDefaultMiddleware().concat(shopSlice.middleware, productApi.middleware,authApi.middleware,vendorSlice.middleware,permissionApi.middleware,categorySlice.middleware,serviceAggregateSlice.middleware),
 
   /*this middleware is used to store temporary data in the redux store when the data fetch from the api fetch only update data from api not all data fetch */
 });

@@ -14,28 +14,28 @@ const router = express.Router();
 router.get(
   "/productAggregate",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   getProductAggregate,
 );
 
 router.get(
   "/orderAggregate",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   OrderAggregate,
 );
 
 router.get(
   "/categoryAggregate",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   categoryAggreate,
 );
 
 router.get(
   "/dateAggregate",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   dateAggregate,
 );
 

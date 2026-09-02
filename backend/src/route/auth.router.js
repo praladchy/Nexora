@@ -11,7 +11,7 @@ router.post("/user/register", registerUser);
 router.post("/admin/register",authMiddleware,roleMiddleware(["superAdmin","admin"]), upload.array("images",5),checkPermission("admin.create"), createAdmin); 
 // router.get("/user/activeusers/gets",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("user.list"),getAppUser)
 // router.get("/user/gets",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),checkPermission("user.list"),getUsers)
-router.get("/user/gets",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin"]),getUsers)
+router.get("/user/gets",authMiddleware,roleMiddleware(["superAdmin","admin","vendor","vendorAdmin","owner"]),getUsers)
 
 router.post("/user/login", login);
 router.post("/user/google-login",googleLogin);
