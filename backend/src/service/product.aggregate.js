@@ -1,11 +1,22 @@
 import Product from "../models/product.model.js";
+import { User } from "../models/user.model.js";
 
 export const getProductAggregate = async (req, res) => {
+  const user = req.user.userId;
+  console.log("poiuy", user);
+  const userData = await User.findById(user).select("shops");
+  const shops = userData?.shops;
+  console.log("rtyui", shops);
   try {
-  const data=  await Product.aggregate([
+    const data = await Product.aggregate([
       {
         $facet: {
           productOverview: [
+            {
+              $match: {
+                shop: { $in: shops },
+              },
+            },
             {
               $group: {
                 _id: null,
@@ -46,6 +57,11 @@ export const getProductAggregate = async (req, res) => {
 
           stockStats: [
             {
+              $match: {
+                shop: { $in: shops },
+              },
+            },
+            {
               $project: {
                 name: 1,
                 stock: 1,
@@ -75,29 +91,64 @@ export const getProductAggregate = async (req, res) => {
           ],
 
           CategoryStats: [
-             
             {
-              $group: {
-                _id: "$category",
-                totalNumberOfProductsInCategory: { $sum: 1 },
+              $match: {
+                shop: { $in: shops },
               },
             },
-            // {
-            //   $lookup: {
-            //     from: "categories",
-            //     localField: "_id",
-            //     foreignField: "_id",
-            //     as: "category",
-            //   },
-            // },
-            // { $unwind: "$category" },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "category",
+                foreignField: "_id",
+                as: "categoryData",
+              },
+            },
+            {
+              $unwind: "$categoryData",
+            },
+
+            {
+              $group: {
+                _id: "$categoryData._id",
+                name: { $first: "$categoryData.name" },
+                totalNumberOfProductsInCategory: { $sum: 1 },
+                totalActiveProductsInCategory: {
+                  $sum: {
+                    $cond: [{ $eq: ["$status", "active"] }, 1, 0],
+                  },
+                },
+                totalDraftProductInCategory: {
+                  $sum: {
+                    $cond: [{ $eq: ["$status", "draft"] }, 1, 0],
+                  },
+                },
+                totalInactiveProductInCategory: {
+                  $sum: {
+                    $cond: [{ $eq: ["$status", "inactive"] }, 1, 0],
+                  },
+                },
+                totalBlockedProductInCategory: {
+                  $sum: {
+                    $cond: [{ $eq: ["$status", "blocked"] }, 1, 0],
+                  },
+                },
+              },
+            },
           ],
-          ShopsStats:[{
-            $group:{
-              _id:"$shop",
-              totalNumberofProductsInShops:{$sum:1}
-            }
-          }]
+          ShopsStats: [
+            {
+              $match: {
+                shop: { $in: shops },
+              },
+            },
+            {
+              $group: {
+                _id: "$shop",
+                totalNumberofProductsInShops: { $sum: 1 },
+              },
+            },
+          ],
         },
       },
     ]);
@@ -105,7 +156,7 @@ export const getProductAggregate = async (req, res) => {
       data: data[0],
       success: true,
       message: "Product Aggreate Service",
-    })
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

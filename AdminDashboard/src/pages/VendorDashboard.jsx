@@ -36,7 +36,7 @@ const VendorDashboard = () => {
 
         {/* Two Equal Tables */}
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 min-h-screen bg-white rounded shadow">
+          <div className="flex-1  bg-white rounded shadow">
             <TopSellingCategoryTable />
           </div>
           {/* <div className="flex-1 min-h-screen bg-white rounded shadow">

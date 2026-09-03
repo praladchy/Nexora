@@ -1,6 +1,12 @@
 import { Order } from "../models/order.model.js";
+import { User } from "../models/user.model.js";
 
 export const dateAggregate = async (req, res) => {
+  const user = req.user.userId;
+  console.log("poiuy", user);
+  const userData = await User.findById(user).select("shops");
+  const shops = userData?.shops;
+  console.log("rtyui", shops);
   try {
     const now = new Date();
 
@@ -29,11 +35,22 @@ export const dateAggregate = async (req, res) => {
                 createdAt: {
                   $gte: startHour,
                   $lt: now,
-
                 },
               },
             },
             { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
+              $set: {
+                itemTotal: {
+                  $multiply: ["$orderItems.price", "$orderItems.quantity"],
+                },
+              },
+            },
             {
               $group: {
                 _id: "$_id",
@@ -64,6 +81,19 @@ export const dateAggregate = async (req, res) => {
             },
             { $unwind: "$orderItems" },
             {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
+              $set: {
+                itemTotal: {
+                  $multiply: ["$orderItems.price", "$orderItems.quantity"],
+                },
+              },
+            },
+
+            {
               $group: {
                 _id: "$_id",
                 totalAmount: { $first: "$totalAmount" },
@@ -82,8 +112,24 @@ export const dateAggregate = async (req, res) => {
 
           // Daily Sales
           orderInDay: [
-            { $match: { paymentStatus: "Pending" } },
+            {
+              $match: {
+                paymentStatus: "Pending",
+              },
+            },
             { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
+              $set: {
+                itemTotal: {
+                  $multiply: ["$orderItems.price", "$orderItems.quantity"],
+                },
+              },
+            },
             {
               $group: {
                 _id: {
@@ -113,8 +159,24 @@ export const dateAggregate = async (req, res) => {
 
           // Weekly Sales
           orderInWeek: [
-            { $match: { paymentStatus: "Pending", } },
+            {
+              $match: {
+                paymentStatus: "Pending",
+              },
+            },
             { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
+              $set: {
+                itemTotal: {
+                  $multiply: ["$orderItems.price", "$orderItems.quantity"],
+                },
+              },
+            },
             {
               $group: {
                 _id: {
@@ -142,8 +204,24 @@ export const dateAggregate = async (req, res) => {
 
           // Monthly Sales
           orderInMonth: [
-            { $match: { paymentStatus: "Pending" } },
+            {
+              $match: {
+                paymentStatus: "Pending",
+              },
+            },
             { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
+              $set: {
+                itemTotal: {
+                  $multiply: ["$orderItems.price", "$orderItems.quantity"],
+                },
+              },
+            },
             {
               $group: {
                 _id: {
@@ -171,8 +249,24 @@ export const dateAggregate = async (req, res) => {
 
           // Yearly Sales
           orderInYear: [
-            { $match: { paymentStatus: "Pending" } },
+            {
+              $match: {
+                paymentStatus: "Pending",
+              },
+            },
             { $unwind: "$orderItems" },
+            {
+              $match: {
+                "orderItems.shop": { $in: shops },
+              },
+            },
+            {
+              $set: {
+                itemTotal: {
+                  $multiply: ["$orderItems.price", "$orderItems.quantity"],
+                },
+              },
+            },
             {
               $group: {
                 _id: {
