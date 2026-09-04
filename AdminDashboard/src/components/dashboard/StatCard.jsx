@@ -9,13 +9,13 @@ const StatCard = ({ title, value, change, changeText, icon, colorClass, isTrendU
         
         <div className="flex items-center mt-2">
           {/* Simple Up/Down Arrow SVG */}
-          <span className={`flex items-center text-xs font-semibold ${isTrendUp ? 'text-purple-500' : 'text-red-500'}`}>
+          {/* <span className={`flex items-center text-xs font-semibold ${isTrendUp ? 'text-purple-500' : 'text-red-500'}`}>
             <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
               <path d={isTrendUp ? "M5 15l7-7 7 7" : "M19 5l-7 7-7-7"} stroke="currentColor" strokeWidth="2" fill="none" />
             </svg>
             {change}
           </span>
-          <span className="text-gray-400 text-xs ml-1">{changeText}</span>
+          <span className="text-gray-400 text-xs ml-1">{changeText}</span> */}
         </div>
       </div>
 

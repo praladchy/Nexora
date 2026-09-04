@@ -1,50 +1,31 @@
+import { useState } from "react";
+import { useGetProductAggregateQuery } from "../Redux/AggregateService.apiSlice";
+
 const TopSellingTable = () => {
-  const products = [
-    {
-      id: 1,
-      name: "Cotton Polo T-Shirt",
-      price: 200,
-      totalSale: 25,
-      revenue: 5000,
-    },
-    {
-      id: 2,
-      name: "Running Shoes",
-      price: 1500,
-      totalSale: 18,
-      revenue: 27000,
-    },
-    {
-      id: 3,
-      name: "Classic Denim Jacket",
-      price: 2200,
-      totalSale: 15,
-      revenue: 33000,
-    },
-    {
-      id: 4,
-      name: "Casual Sneakers",
-      price: 1200,
-      totalSale: 12,
-      revenue: 14400,
-    },
-    {
-      id: 5,
-      name: "Slim Fit Jeans",
-      price: 1800,
-      totalSale: 10,
-      revenue: 18000,
-    },
-  ];
+  const { data } = useGetProductAggregateQuery();
+
+  const productAggregateData = data?.data.stockStats || [];
+
+  const [showAll, setShowAll] = useState(false);
+
+  // Show 6 initially, otherwise show everything
+  const visibleProducts = showAll
+    ? productAggregateData
+    : productAggregateData.slice(0, 6);
 
   return (
     <div className="bg-white border p-4">
       <div className="flex justify-between mb-4">
         <h3 className="font-semibold">Top-Selling Products</h3>
 
-        <button className="text-purple-600 text-sm">
-          View All
-        </button>
+        {productAggregateData.length > 6 && (
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-purple-600 text-sm hover:underline"
+          >
+            {showAll ? "Show Less" : "View All"}
+          </button>
+        )}
       </div>
 
       <div className="overflow-x-auto">
@@ -52,14 +33,14 @@ const TopSellingTable = () => {
           <thead className="text-gray-500 border-b">
             <tr>
               <th className="text-left py-3">Product Name</th>
-              <th className="text-left py-3">Price</th>
-              <th className="text-left py-3">Total Sale</th>
-              <th className="text-left py-3">Revenue</th>
+              <th className="text-left py-3">Stock</th>
+              <th className="text-left py-3">Stock Limit</th>
+              <th className="text-left py-3">Status</th>
             </tr>
           </thead>
 
           <tbody>
-            {products.map((product) => (
+            {visibleProducts.map((product) => (
               <tr
                 key={product.id}
                 className="border-b last:border-b-0 hover:bg-gray-50"
@@ -69,15 +50,15 @@ const TopSellingTable = () => {
                 </td>
 
                 <td className="py-3 text-left">
-                  ৳{product.price.toLocaleString()}
+                  {product.stock}
                 </td>
 
                 <td className="py-3 text-left">
-                  {product.totalSale}
+                  {product.stockLimit}
                 </td>
 
                 <td className="py-3 text-left font-medium">
-                  ৳{product.revenue.toLocaleString()}
+                  {product.stockStatus}
                 </td>
               </tr>
             ))}

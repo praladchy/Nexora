@@ -66,6 +66,9 @@ export const getProductAggregate = async (req, res) => {
                 name: 1,
                 stock: 1,
                 stockLimit: 1,
+                price: 1,
+                category: 1,
+                isApproved: 1,
 
                 stockStatus: {
                   $switch: {

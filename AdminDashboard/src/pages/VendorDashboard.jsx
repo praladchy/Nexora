@@ -7,14 +7,7 @@ import { useGetCategoryAggregateQuery, useGetDataAggregateQuery, useGetOrderAggr
 import TopSellingCategoryTable from "../components/dashboard/TopSellingCategory";
 
 const VendorDashboard = () => {
-  const {data:productAggregateData}=useGetProductAggregateQuery();
-  const {data:orderaggregateData}=useGetOrderAggregateQuery();
-  const {data:categoryAggregateData}=useGetCategoryAggregateQuery();
-  const {data:DataAggregate}=useGetDataAggregateQuery();
-  console.log("poiuy",productAggregateData);
-  console.log("poiuyfd",orderaggregateData);
-  console.log("poiuysd",categoryAggregateData);
-  console.log("poiuyqw",DataAggregate);
+ 
   return (
     <>
       <div className=" p-4 space-y-4">
