@@ -105,7 +105,7 @@ const Login = () => {
           </NavLink>
           <p>superadmin:praladchy028@gmail.com</p>
           <p>password:2082ptr</p>
-          <p>admin:praladchy28@gmail.com</p>
+          <p>admin:lovable6028@gmail.com</p>
           <p>password:1234567890</p>
         </div>
       </div>
