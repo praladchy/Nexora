@@ -31,6 +31,7 @@ app.use(
     origin: [
       "https://nexora11.vercel.app",
       "https://nexora-39iv.vercel.app",
+      "https://nexora-pralad1.vercel.app/",
       "http://localhost:5173",
       "http://localhost:5174",
     ],
