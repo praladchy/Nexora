@@ -1,0 +1,21 @@
+// baseQuery.js
+import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+export const baseQuery = fetchBaseQuery({
+  baseUrl:import.meta.env.VITE_BACKEND_URL,
+  
+  // baseUrl: "http://localhost:5000/api/",
+  // baseUrl: "  nexora-production-83ec.up.railway.app/api",
+
+
+  credentials: "include", // for refresh cookie
+  prepareHeaders: (headers, { getState }) => {
+
+    const token = getState().auth.accessToken;
+
+    if (token) {
+      headers.set("authorization", `Bearer ${token}`);
+    }
+    return headers;
+  },
+});

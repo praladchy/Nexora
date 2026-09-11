@@ -103,9 +103,9 @@ const Login = () => {
           >
             Don't have an account? Register
           </NavLink>
-          
-          <p>admin:lovable6028@gmail.com</p>
-          <p>password:1234567890</p>
+ 
+          <p>superadmin:praladchy028@gmail.com</p>
+          <p>password:2082ptr</p>
         </div>
       </div>
     </div>
