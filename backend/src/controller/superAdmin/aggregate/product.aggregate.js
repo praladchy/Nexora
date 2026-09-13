@@ -108,29 +108,114 @@ export const getProductAggregateForSuperAdmin = async (req, res) => {
               },
             },
             {
-              $unwind: "$categoryData",
+              $unwind: {
+                path: "$categoryData",
+                preserveNullAndEmptyArrays: true,
+              },
             },
 
             {
+              $lookup: {
+                from: "shops",
+                localField: "categoryData.shop",
+                foreignField: "_id",
+                as: "shopData",
+              },
+            },
+
+            {
+              $unwind: {
+                path: "$shopData",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "categories",
+                localField: "categoryData.parent",
+                foreignField: "_id",
+                as: "parentData",
+              },
+            },
+
+            {
+              $unwind: {
+                path: "$parentData",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $unwind: {
+                path: "$parentData",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "products",
+                localField: "_id",
+                foreignField: "category",
+                as: "products",
+              },
+            },
+            {
               $group: {
                 _id: "$categoryData._id",
-                name: { $first: "$categoryData.name" },
-                totalNumberOfProductsInCategory: { $sum: 1 },
+
+                name: {
+                  $first: "$categoryData.name",
+                },
+
+                shop: {
+                  $first: "$shopData.name",
+                },
+
+                isParent: {
+                  $first: "$categoryData.isParent",
+                },
+
+                isGlobal: {
+                  $first: "$categoryData.isGlobal",
+                },
+
+                parent: {
+                  $first: "$parentData.name",
+                },
+
+                image: {
+                  $first: "$categoryData.image",
+                },
+
+                createdAt: {
+                  $first: "$categoryData.createdAt",
+                },
+
+                updatedAt: {
+                  $first: "$categoryData.updatedAt",
+                },
+
+                totalNumberOfProductsInCategory: {
+                  $sum: 1,
+                },
+
                 totalActiveProductsInCategory: {
                   $sum: {
                     $cond: [{ $eq: ["$status", "active"] }, 1, 0],
                   },
                 },
+
                 totalDraftProductInCategory: {
                   $sum: {
                     $cond: [{ $eq: ["$status", "draft"] }, 1, 0],
                   },
                 },
+
                 totalInactiveProductInCategory: {
                   $sum: {
                     $cond: [{ $eq: ["$status", "inactive"] }, 1, 0],
                   },
                 },
+
                 totalBlockedProductInCategory: {
                   $sum: {
                     $cond: [{ $eq: ["$status", "blocked"] }, 1, 0],

@@ -27,6 +27,7 @@ import {
 } from "../controller/superAdmin/aggregate/order.aggregate.js";
 
 import {
+  categoryAggregateForParentCategorySuperAdmin,
   categoryAggregateForSuperAdmin,
   categoryAggregateForSuperAdminForShop,
 } from "../controller/superAdmin/aggregate/category.aggerate.js";
@@ -88,6 +89,12 @@ router.get(
   authMiddleware,
   roleMiddleware(["superAdmin"]),
   categoryAggregateForSuperAdmin,
+);
+router.get(
+  `/categoryAggregateForParentCategorySuperAdmin/:categoryId`,
+  authMiddleware,
+  roleMiddleware(["superAdmin"]),
+  categoryAggregateForParentCategorySuperAdmin,
 );
 
 router.get(

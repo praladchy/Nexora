@@ -53,7 +53,7 @@ const categories = [
     emoji: "✨",
     bg: "bg-purple-50",
     badgeBg: "",
-    iconBg: "bg-purple-100",
+    iconBg: "bg-green-100",
     iconColor: "text-purple-600",
   },
   {

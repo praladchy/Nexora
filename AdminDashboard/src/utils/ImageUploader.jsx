@@ -118,7 +118,7 @@ const ProductImageDropzone = ({ images, setFieldValue }) => {
           {/* Inline "Add More" Square */}
           <div 
             {...getRootProps()} 
-            className="h-28 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors text-gray-400 hover:text-purple-500"
+            className="h-28 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors text-gray-400 hover:text-green-600"
           >
             <Plus size={20} />
             <span className="text-[10px] font-medium mt-1 uppercase tracking-wider">Add More</span>

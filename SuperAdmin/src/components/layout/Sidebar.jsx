@@ -63,7 +63,7 @@ const Sidebar = () => {
                 className={`flex items-center gap-3 px-4 py-2 rounded-lg
                 ${
                   isActive
-                    ? "bg-purple-100 text-purple-600"
+                    ? "bg-green-100 text-purple-600"
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
               >
@@ -103,7 +103,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `block px-4 py-2 text-sm rounded-lg ${
                       isActive
-                        ? "bg-purple-100 text-purple-600"
+                        ? "bg-green-100 text-purple-600"
                         : "text-gray-600 hover:bg-gray-100"
                     }`
                   }
@@ -144,7 +144,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `block px-4 py-2 text-sm rounded-lg ${
                       isActive
-                        ? "bg-purple-100 text-purple-600"
+                        ? "bg-green-100 text-purple-600"
                         : "text-gray-600 hover:bg-gray-100"
                     }`
                   }
@@ -184,7 +184,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `block px-4 py-2 text-sm rounded-lg ${
                       isActive
-                        ? "bg-purple-100 text-purple-600"
+                        ? "bg-green-100 text-purple-600"
                         : "text-gray-600 hover:bg-gray-100"
                     }`
                   }
@@ -226,7 +226,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-2 px-4 py-2 text-sm rounded-lg ${
                       isActive
-                        ? "bg-purple-100 text-purple-600"
+                        ? "bg-green-100 text-purple-600"
                         : "text-gray-600 hover:bg-gray-100"
                     }`
                   }
@@ -269,7 +269,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-2 px-4 py-2 text-sm rounded-lg ${
                       isActive
-                        ? "bg-purple-100 text-purple-600"
+                        ? "bg-green-100 text-purple-600"
                         : "text-gray-600 hover:bg-gray-100"
                     }`
                   }

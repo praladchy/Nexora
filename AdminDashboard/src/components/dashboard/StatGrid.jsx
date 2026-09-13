@@ -51,7 +51,7 @@ const StatGrid = () => {
             {/* <p className="text-green-500 text-xs mt-2">↑ 15% from last week</p> */}
           </div>
 
-          <div className="p-3 rounded-full bg-purple-100 text-purple-600 text-xl">
+          <div className="p-3 rounded-full bg-green-100 text-purple-600 text-xl">
             📊
           </div>
         </div>
@@ -67,7 +67,7 @@ const StatGrid = () => {
             {/* <p className="text-green-500 text-xs mt-2">↑ 15% from last week</p> */}
           </div>
 
-          <div className="p-3 rounded-full bg-purple-100 text-purple-600 text-xl">
+          <div className="p-3 rounded-full bg-green-100 text-purple-600 text-xl">
             📊
           </div>
         </div>
@@ -82,7 +82,7 @@ const StatGrid = () => {
             {/* <p className="text-green-500 text-xs mt-2">↑ 15% from last week</p> */}
           </div>
 
-          <div className="p-3 rounded-full bg-purple-100 text-purple-600 text-xl">
+          <div className="p-3 rounded-full bg-green-100 text-purple-600 text-xl">
             📊
           </div>
         </div>
@@ -99,7 +99,7 @@ const StatGrid = () => {
             {/* <p className="text-green-500 text-xs mt-2">↑ 15% from last week</p> */}
           </div>
 
-          <div className="p-3 rounded-full bg-purple-100 text-purple-600 text-xl">
+          <div className="p-3 rounded-full bg-green-100 text-purple-600 text-xl">
             📊
           </div>
         </div>
@@ -114,7 +114,7 @@ const StatGrid = () => {
             </h3>
           </div>
 
-          <div className="p-3 rounded-full bg-purple-100 text-purple-600 text-xl">
+          <div className="p-3 rounded-full bg-green-100 text-purple-600 text-xl">
             📊
           </div>
         </div>

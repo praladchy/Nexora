@@ -8,11 +8,6 @@ export const serviceAggregateSlice = createApi({
   tagTypes: ["ServiceAggregate"],
 
   endpoints: (builder) => ({
-
-    // =========================================================
-    // ADMIN / VENDOR / OWNER
-    // =========================================================
-
     // GET /service/productAggregate
     getProductAggregate: builder.query({
       query: () => ({
@@ -49,7 +44,6 @@ export const serviceAggregateSlice = createApi({
       providesTags: ["ServiceAggregate"],
     }),
 
-
     // =========================================================
     // SUPER ADMIN - GLOBAL
     // =========================================================
@@ -81,6 +75,13 @@ export const serviceAggregateSlice = createApi({
       providesTags: ["ServiceAggregate"],
     }),
 
+    getCategoryAggregateForParentCategorySuperAdmin: builder.query({
+      query: (categoryId) => ({
+        url: `service/categoryAggregateForParentCategorySuperAdmin/${categoryId}`,
+        method: "GET",
+      }),
+      providesTags: ["ServiceAggregate"],
+    }),
     // GET /service/dateAggregateForSuperAdmin
     getDateAggregateForSuperAdmin: builder.query({
       query: () => ({
@@ -89,7 +90,6 @@ export const serviceAggregateSlice = createApi({
       }),
       providesTags: ["ServiceAggregate"],
     }),
-
 
     // =========================================================
     // SUPER ADMIN - SHOP
@@ -142,7 +142,6 @@ export const serviceAggregateSlice = createApi({
   }),
 });
 
-
 export const {
   // Admin / Vendor / Owner
   useGetProductAggregateQuery,
@@ -155,6 +154,7 @@ export const {
   useGetOrderAggregateForSuperAdminQuery,
   useGetCategoryAggregateForSuperAdminQuery,
   useGetDateAggregateForSuperAdminQuery,
+  useGetCategoryAggregateForParentCategorySuperAdminQuery,
 
   // Super Admin - Shop
   useGetProductAggregateForSuperAdminForShopQuery,
@@ -162,5 +162,4 @@ export const {
   useGetOrderAggregateForShopQuery,
   useGetCategoryAggregateForSuperAdminForShopQuery,
   useGetDateAggregateForSuperAdminForShopQuery,
-
 } = serviceAggregateSlice;

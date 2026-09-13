@@ -41,7 +41,7 @@ const Header = () => {
     >
       {/* Left Section: Branding */}
       <div className="flex items-center shrink-0">
-        <h1 className="text-xl font-bold text-purple-500">Dashboard</h1>
+        <h1 className="text-xl font-bold text-green-600">Dashboard</h1>
       </div>
 
       {/* Middle Section: Search Bar */}
@@ -51,7 +51,7 @@ const Header = () => {
           <input
             type="text"
             placeholder="Search anything..."
-            className={`w-full py-2 pl-4 pr-10 text-sm rounded-full border transition-all focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+            className={`w-full py-2 pl-4 pr-10 text-sm rounded-full border transition-all focus:outline-none focus:ring-2 focus:ring-green-600 ${
               isDarkMode
                 ? "bg-slate-800 border-slate-600 text-gray-200 placeholder-gray-500"
                 : "bg-gray-50 border-gray-300 text-gray-900"
@@ -111,7 +111,7 @@ const Header = () => {
               <img
                 src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nabin"
                 alt="User avatar"
-                className="h-9 w-9 rounded-full object-cover ring-2 ring-purple-500/20"
+                className="h-9 w-9 rounded-full object-cover ring-2 ring-green-600/20"
               />
               <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
             </div>

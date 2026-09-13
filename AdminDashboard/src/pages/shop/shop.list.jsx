@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { FaTrash, FaPencilAlt } from "react-icons/fa"; // Icons
+import { FaTrash, FaPencilAlt, FaEye } from "react-icons/fa"; // Icons
 import { useGetShopsActiveQuery } from "../../components/Redux/Shop.apiSlice";
 
 const ShopList = () => {
   const { data: shopList, isLoading } = useGetShopsActiveQuery();
   
   const shops = shopList?.shops;
-  console.log(shops);
+  console.log("gh;lkj",shops);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this shop?")) return;
@@ -68,6 +68,9 @@ const ShopList = () => {
                 )}
               </td>
               <td className="px-4 py-6 border flex justify-center gap-2">
+                <button className="text-blue-500 hover:text-blue-700" >
+                  <FaEye />
+                </button>
                 <button
                   onClick={() => handleEdit(shop._id)}
                   className="text-blue-500 hover:text-blue-700"

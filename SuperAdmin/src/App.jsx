@@ -37,6 +37,7 @@ import ShopDetails from "./components/shopDetails.jsx";
 import ProductDetails from "./pages/product/productDetails.jsx";
 import NotificationList from "./components/notification/NotificationList.jsx";
 import CategoryDetails from "./pages/category/CategoryDetails.jsx";
+import SubCategoryDetails from "./pages/category/SubCategoryDetails.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -231,6 +232,8 @@ export const privateRoutes = [
   {
     path: "/categoryDetails/:id",
     element: <CategoryDetails />,
+    // element: <SubCategoryDetails />,
+
     permission: "shop.view",
   },
   {

@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { FaTrash, FaPencilAlt } from "react-icons/fa"; // Icons
+import { FaTrash, FaPencilAlt, FaEye } from "react-icons/fa"; // Icons
 import { useGetShopsActiveQuery } from "../../components/Redux/Shop.apiSlice";
 import { useNavigate } from "react-router-dom";
 
 const ShopList = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const { data: shopList, isLoading } = useGetShopsActiveQuery();
-  
+
   const shops = shopList?.shops;
-  console.log(shops);
+    console.log("gh;lkj",shops);
+
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this shop?")) return;
@@ -19,10 +20,10 @@ const ShopList = () => {
     console.log("Edit shop with id:", id);
   };
 
-  const handleOnClick=(id)=>{
+  const handleOnClick = (id) => {
     console.log("Clicked shop with id:", id);
     navigate(`/shop/${id}`);
-  }
+  };
 
   if (isLoading) return <p className="text-center mt-10">Loading shops...</p>;
 
@@ -43,14 +44,18 @@ const ShopList = () => {
         </thead>
         <tbody>
           {shops.map((shop) => (
-            <tr key={shop._id} className="text-center hover:bg-gray-50" onClick={()=>handleOnClick(shop._id)}>
+            <tr
+              key={shop._id}
+              className="text-center hover:bg-gray-50"
+             
+            >
               <td className="px-4 py-2 border">{shop._id.slice(-6)}</td>
               <td className="px-4 py-2 border">{shop.name}</td>
-              <td className="px-4 py-2 border">{shop.owner?.name || "N/A"}</td>
+              <td className="px-4 py-2 border">{shop.owner?.email || "N/A"}</td>
               <td className="px-4 py-2 border">
-                {shop.admins?.map((a) => a.name).join(", ") || "N/A"}
+                {shop.admins?.map((a) => a.firstName).join(", ") || "N/A"}
               </td>
-               
+
               <td className="px-4 py-2 border">{shop.address}</td>
               <td className="px-4 py-2 border">
                 {shop.logo ? (
@@ -75,6 +80,9 @@ const ShopList = () => {
                 )}
               </td>
               <td className="px-4 py-6 border flex justify-center gap-2">
+                <button className="text-blue-500 hover:text-blue-700"  onClick={() => handleOnClick(shop._id)}>
+                  <FaEye />
+                </button>
                 <button
                   onClick={() => handleEdit(shop._id)}
                   className="text-blue-500 hover:text-blue-700"
