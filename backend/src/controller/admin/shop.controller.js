@@ -443,6 +443,7 @@ export const assignAdmin = async (req, res) => {
         success: false,
       });
     const shop = await Shop.findById(shopId).populate("admins");
+    console.log("lkjh",shop);
     if (!shop)
       return res.status(400).json({
         message: "Shop is not registered",

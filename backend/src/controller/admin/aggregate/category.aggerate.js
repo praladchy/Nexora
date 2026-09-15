@@ -22,12 +22,12 @@ export const categoryAggreate = async (req, res) => {
           },
           totalActiveCategories: {
             $sum: {
-              $cond: [{ $eq: ["$isActive", "true"] }, 1, 0],
+              $cond: [{ $eq: ["$isActive", true] }, 1, 0],
             },
           },
           totalGlobalCategories: {
             $sum: {
-              $cond: [{ $eq: ["$isGlobal", "true"] }, 1, 0],
+              $cond: [{ $eq: ["$isGlobal", true] }, 1, 0],
             },
           },
         },

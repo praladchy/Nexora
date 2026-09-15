@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { useGetProductAggregateQuery } from "../Redux/AggregateService.apiSlice";
+import { useGetCategoryAggregateForSuperAdminQuery, useGetProductAggregateForSuperAdminQuery, useGetProductAggregateQuery } from "../Redux/AggregateService.apiSlice";
 
 const TopSellingTable = () => {
-  const { data } = useGetProductAggregateQuery();
-
+    const { data } = useGetProductAggregateForSuperAdminQuery();
+  
+  const { data: categoryAggregateData } = useGetCategoryAggregateForSuperAdminQuery();
+console.log("TopSellingTable sdsd", categoryAggregateData);
   const productAggregateData = data?.data?.stockStats || [];
   console.log("TopSellingTable", data?.data.stockStats);
 

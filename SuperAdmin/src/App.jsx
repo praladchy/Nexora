@@ -33,11 +33,11 @@ import VendorList from "./pages/vendor/VendorList.jsx";
 import ProductList from "./pages/product/list.product.jsx";
 import CreateShopAdmin from "./pages/shop/createAdmin.shop.jsx";
 import CreateShopOwner from "./pages/shop/CreateShopOwner.jsx";
-import ShopDetails from "./components/shopDetails.jsx";
 import ProductDetails from "./pages/product/productDetails.jsx";
 import NotificationList from "./components/notification/NotificationList.jsx";
 import CategoryDetails from "./pages/category/CategoryDetails.jsx";
 import SubCategoryDetails from "./pages/category/SubCategoryDetails.jsx";
+import ShopDetails from "./pages/shop/shopDetails.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -233,6 +233,12 @@ export const privateRoutes = [
     path: "/categoryDetails/:id",
     element: <CategoryDetails />,
     // element: <SubCategoryDetails />,
+
+    permission: "shop.view",
+  },
+    {
+    path: "/subcategoryDetails/:id",
+    element: <SubCategoryDetails />,
 
     permission: "shop.view",
   },

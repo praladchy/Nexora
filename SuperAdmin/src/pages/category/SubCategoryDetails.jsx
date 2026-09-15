@@ -4,7 +4,6 @@ import {
   FolderTree,
   Package,
   Store,
-  ShoppingCart,
   DollarSign,
   Edit,
   Trash2,
@@ -13,153 +12,13 @@ import {
   Calendar,
   Layers,
   MoreVertical,
+  AlertCircle,
+  Clock,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useGetProductAggregateForSuperAdminForCategoryQuery } from "../../components/Redux/AggregateService.apiSlice";
 
-// --------------------------------------------------
-// STATIC DATA
-// Replace this later with RTK Query API data
-// --------------------------------------------------
-
-const category = {
-  id: "CAT-001",
-  name: "Electronics",
-  slug: "electronics",
-  description:
-    "Electronic products including smartphones, laptops, accessories and other electronic devices.",
-  image:
-    "https://images.unsplash.com/photo-1498049794561-7780e7231661",
-  parent: "Main Category",
-  status: "Active",
-  createdAt: "12 January 2026",
-  updatedAt: "05 September 2026",
-  products: 248,
-  activeProducts: 224,
-  shops: 38,
-  sales: "Rs. 42.8M",
-};
-
-const subCategories = [
-  {
-    id: "SUB-001",
-    name: "Smartphones",
-    products: 84,
-    shops: 24,
-    status: "Active",
-  },
-  {
-    id: "SUB-002",
-    name: "Laptops",
-    products: 52,
-    shops: 18,
-    status: "Active",
-  },
-  {
-    id: "SUB-003",
-    name: "Accessories",
-    products: 68,
-    shops: 29,
-    status: "Active",
-  },
-  {
-    id: "SUB-004",
-    name: "Televisions",
-    products: 31,
-    shops: 14,
-    status: "Active",
-  },
-  {
-    id: "SUB-005",
-    name: "Gaming",
-    products: 13,
-    shops: 9,
-    status: "Inactive",
-  },
-];
-
-const products = [
-  {
-    id: "PROD-001",
-    name: "iPhone 16 Pro Max",
-    shop: "Tech World",
-    price: "Rs. 189,999",
-    sales: 248,
-    stock: 42,
-    status: "Active",
-  },
-  {
-    id: "PROD-002",
-    name: "MacBook Air M4",
-    shop: "Apple Store Nepal",
-    price: "Rs. 164,999",
-    sales: 124,
-    stock: 18,
-    status: "Active",
-  },
-  {
-    id: "PROD-003",
-    name: "Samsung Galaxy S25",
-    shop: "Mobile Hub",
-    price: "Rs. 119,999",
-    sales: 184,
-    stock: 35,
-    status: "Active",
-  },
-  {
-    id: "PROD-004",
-    name: "Sony WH-1000XM6",
-    shop: "Gadget House",
-    price: "Rs. 54,999",
-    sales: 96,
-    stock: 64,
-    status: "Active",
-  },
-  {
-    id: "PROD-005",
-    name: "Dell XPS 15",
-    shop: "Laptop World",
-    price: "Rs. 179,999",
-    sales: 72,
-    stock: 8,
-    status: "Active",
-  },
-];
-
-const shops = [
-  {
-    id: "SHOP-001",
-    name: "Tech World",
-    owner: "Aarav Sharma",
-    products: 84,
-    sales: "Rs. 12.4M",
-    status: "Active",
-  },
-  {
-    id: "SHOP-002",
-    name: "Mobile Hub",
-    owner: "Nabin Shrestha",
-    products: 62,
-    sales: "Rs. 9.8M",
-    status: "Active",
-  },
-  {
-    id: "SHOP-003",
-    name: "Gadget House",
-    owner: "Bibek Lama",
-    products: 48,
-    sales: "Rs. 7.2M",
-    status: "Active",
-  },
-  {
-    id: "SHOP-004",
-    name: "Laptop World",
-    owner: "Ramesh Thapa",
-    products: 31,
-    sales: "Rs. 6.4M",
-    status: "Active",
-  },
-];
-
+ 
 
 // --------------------------------------------------
 // STATUS BADGE
@@ -170,6 +29,9 @@ function StatusBadge({ status }) {
     Active: "bg-emerald-50 text-emerald-700",
     Inactive: "bg-slate-100 text-slate-600",
     Pending: "bg-amber-50 text-amber-700",
+    Approved: "bg-emerald-50 text-emerald-700",
+    Blocked: "bg-red-50 text-red-700",
+    Draft: "bg-slate-100 text-slate-600",
   };
 
   return (
@@ -184,7 +46,6 @@ function StatusBadge({ status }) {
   );
 }
 
-
 // --------------------------------------------------
 // STAT CARD
 // --------------------------------------------------
@@ -198,7 +59,6 @@ function StatCard({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between">
-
         <div>
           <p className="text-sm text-slate-500">
             {title}
@@ -214,14 +74,15 @@ function StatCard({
         </div>
 
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-          <Icon size={21} className="text-slate-700" />
+          <Icon
+            size={21}
+            className="text-slate-700"
+          />
         </div>
-
       </div>
     </div>
   );
 }
-
 
 // --------------------------------------------------
 // INFO ITEM
@@ -234,7 +95,6 @@ function InfoItem({
 }) {
   return (
     <div className="flex gap-3">
-
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100">
         <Icon
           size={17}
@@ -243,7 +103,6 @@ function InfoItem({
       </div>
 
       <div className="min-w-0">
-
         <p className="text-xs text-slate-400">
           {label}
         </p>
@@ -251,25 +110,276 @@ function InfoItem({
         <p className="mt-1 break-words text-sm font-medium text-slate-700">
           {value}
         </p>
-
       </div>
-
     </div>
   );
 }
 
+// --------------------------------------------------
+// LOADING
+// --------------------------------------------------
+
+function LoadingState() {
+  return (
+    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+      <div className="animate-pulse space-y-5">
+        <div className="h-5 w-40 rounded bg-slate-200" />
+
+        <div className="h-32 rounded-2xl bg-white" />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {[1, 2, 3, 4].map((item) => (
+            <div
+              key={item}
+              className="h-32 rounded-2xl bg-white"
+            />
+          ))}
+        </div>
+
+        <div className="h-80 rounded-2xl bg-white" />
+      </div>
+    </div>
+  );
+}
+
+// --------------------------------------------------
+// ERROR
+// --------------------------------------------------
+
+function ErrorState({ error }) {
+  return (
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="mx-auto max-w-xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+          <AlertCircle
+            size={24}
+            className="text-red-600"
+          />
+        </div>
+
+        <h2 className="mt-4 text-lg font-semibold text-slate-900">
+          Failed to load category
+        </h2>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Something went wrong while loading
+          category information.
+        </p>
+
+        {error?.data?.message && (
+          <p className="mt-2 text-xs text-red-500">
+            {error.data.message}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // --------------------------------------------------
 // MAIN COMPONENT
 // --------------------------------------------------
 
 export default function SubCategoryDetails() {
-
   const navigate = useNavigate();
 
   const { id } = useParams();
 
-  console.log("Category ID:", id);
+  // --------------------------------------------------
+  // API
+  // --------------------------------------------------
+
+  const {
+    data: productAggregateData,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  } =
+    useGetProductAggregateForSuperAdminForCategoryQuery(
+      id,
+      {
+        skip: !id,
+      }
+    );
+
+  console.log(
+    "Product Aggregate:",
+    productAggregateData
+  );
+
+  // --------------------------------------------------
+  // LOADING
+  // --------------------------------------------------
+
+  if (isLoading) {
+    return <LoadingState />;
+  }
+
+  // --------------------------------------------------
+  // ERROR
+  // --------------------------------------------------
+
+  if (isError) {
+    return <ErrorState error={error} />;
+  }
+
+  // --------------------------------------------------
+  // API DATA
+  // --------------------------------------------------
+
+  const aggregate =
+    productAggregateData?.data;
+console.log("poiuy",aggregate)
+  const categoryStats =
+    aggregate?.CategoryStats;
+
+  const productOverview =
+    aggregate?.productOverview;
+
+  const productStats =
+    aggregate?.productStats;
+
+  const stockStats =
+    aggregate?.stockStats;
+
+  const shopsStats =
+    aggregate?.ShopsStats;
+
+  // --------------------------------------------------
+  // CATEGORY DATA
+  // --------------------------------------------------
+
+  const category =
+    productOverview?.category;
+
+  const categoryName =
+    categoryStats?.name ||
+    category?.name ||
+    "Unknown Category";
+
+  const categoryId =
+    categoryStats?._id ||
+    category?._id ||
+    id;
+
+  const categorySlug =
+    category?.slug || "";
+
+  const categoryDescription =
+    category?.description ||
+    "No description available.";
+
+  // Your API shows image as an array.
+  const categoryImage =
+    category?.image?.[0]?.url ||
+    category?.image?.[0] ||
+    "";
+
+  const categoryStatus =
+    category?.isActive
+      ? "Active"
+      : "Inactive";
+
+  // --------------------------------------------------
+  // CATEGORY STATISTICS
+  // --------------------------------------------------
+
+  const totalProducts =
+    categoryStats
+      ?.totalNumberOfProductsInCategory || 0;
+
+  const activeProducts =
+    categoryStats
+      ?.totalActiveProductsInCategory || 0;
+
+  const inactiveProducts =
+    categoryStats
+      ?.totalInactiveProductInCategory || 0;
+
+  const blockedProducts =
+    categoryStats
+      ?.totalBlockedProductInCategory || 0;
+
+  const draftProducts =
+    categoryStats
+      ?.totalDraftProductInCategory || 0;
+
+  // --------------------------------------------------
+  // PRODUCT APPROVAL STATS
+  // --------------------------------------------------
+
+  const approvedProducts =
+    productStats?.approvedProducts || 0;
+
+  const pendingProducts =
+    productStats?.pendingProductsapproval || 0;
+
+  // --------------------------------------------------
+  // PRODUCT
+  // --------------------------------------------------
+
+  const product =
+    productOverview;
+
+  // --------------------------------------------------
+  // SHOP
+  // --------------------------------------------------
+
+  const shopName =
+    stockStats?.shop || "No shop";
+
+  const stock =
+    stockStats?.stock ?? 0;
+
+  const stockLimit =
+    stockStats?.stockLimit ?? 0;
+
+  // --------------------------------------------------
+  // PRODUCT STATUS
+  // --------------------------------------------------
+
+  const productStatus =
+    product?.isApproved
+      ? "Approved"
+      : "Pending";
+
+  // --------------------------------------------------
+  // PRODUCT IMAGE
+  // --------------------------------------------------
+
+  const productImage =
+    product?.images?.[0]?.url || "";
+
+  // --------------------------------------------------
+  // PERCENTAGE
+  // --------------------------------------------------
+
+  const activePercentage =
+    totalProducts > 0
+      ? (activeProducts / totalProducts) * 100
+      : 0;
+
+  // --------------------------------------------------
+  // DATE FORMATTER
+  // --------------------------------------------------
+
+  const formatDate = (date) => {
+    if (!date) return "N/A";
+
+    return new Date(date).toLocaleDateString(
+      "en-GB",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }
+    );
+  };
+
+  // --------------------------------------------------
+  // RENDER
+  // --------------------------------------------------
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
@@ -285,9 +395,9 @@ export default function SubCategoryDetails() {
         className="mb-5 flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
       >
         <ArrowLeft size={18} />
+
         Back to Categories
       </button>
-
 
       {/* ------------------------------------------
           CATEGORY HEADER
@@ -303,14 +413,22 @@ export default function SubCategoryDetails() {
 
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100">
 
-              <img
-                src={category.image}
-                alt={category.name}
-                className="h-full w-full object-cover"
-              />
+              {categoryImage ? (
+                <img
+                  src={categoryImage}
+                  alt={categoryName}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <FolderTree
+                    size={30}
+                    className="text-slate-400"
+                  />
+                </div>
+              )}
 
             </div>
-
 
             {/* CATEGORY NAME */}
 
@@ -319,27 +437,31 @@ export default function SubCategoryDetails() {
               <div className="flex flex-wrap items-center gap-3">
 
                 <h1 className="text-2xl font-bold text-slate-900">
-                  {category.name}
+                  {categoryName}
                 </h1>
 
                 <StatusBadge
-                  status={category.status}
+                  status={categoryStatus}
                 />
 
               </div>
 
               <p className="mt-1 text-sm text-slate-500">
-                {category.id} · {category.slug}
+                {categoryId}
+                {categorySlug &&
+                  ` · ${categorySlug}`}
               </p>
 
               <p className="mt-1 text-xs text-slate-400">
-                Parent: {category.parent}
+                Parent:{" "}
+                {category?.parent
+                  ? category.parent
+                  : "None"}
               </p>
 
             </div>
 
           </div>
-
 
           {/* ACTIONS */}
 
@@ -365,7 +487,6 @@ export default function SubCategoryDetails() {
 
       </div>
 
-
       {/* ------------------------------------------
           STATISTICS
       ------------------------------------------ */}
@@ -374,41 +495,39 @@ export default function SubCategoryDetails() {
 
         <StatCard
           title="Total Products"
-          value={category.products}
+          value={totalProducts}
           description="Products in this category"
           icon={Package}
         />
 
         <StatCard
           title="Active Products"
-          value={category.activeProducts}
+          value={activeProducts}
           description="Currently available"
           icon={CheckCircle}
         />
 
         <StatCard
-          title="Total Shops"
-          value={category.shops}
-          description="Shops using this category"
-          icon={Store}
+          title="Pending Approval"
+          value={pendingProducts}
+          description="Products waiting for approval"
+          icon={Clock}
         />
 
         <StatCard
-          title="Total Sales"
-          value={category.sales}
-          description="Revenue generated"
-          icon={DollarSign}
+          title="Approved Products"
+          value={approvedProducts}
+          description="Approved products"
+          icon={CheckCircle}
         />
 
       </div>
 
-
       {/* ------------------------------------------
-          CATEGORY INFO + PERFORMANCE
+          CATEGORY INFORMATION + OVERVIEW
       ------------------------------------------ */}
 
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
-
 
         {/* CATEGORY INFORMATION */}
 
@@ -434,43 +553,57 @@ export default function SubCategoryDetails() {
 
           </div>
 
-
           <div className="mt-6 space-y-5">
 
             <InfoItem
               icon={FolderTree}
               label="Category Name"
-              value={category.name}
+              value={categoryName}
             />
 
             <InfoItem
               icon={Layers}
               label="Parent Category"
-              value={category.parent}
+              value={
+                category?.parent || "None"
+              }
             />
 
             <InfoItem
               icon={Calendar}
               label="Created At"
-              value={category.createdAt}
+              value={formatDate(
+                category?.createdAt
+              )}
             />
 
             <InfoItem
               icon={Calendar}
               label="Last Updated"
-              value={category.updatedAt}
+              value={formatDate(
+                category?.updatedAt
+              )}
             />
 
             <InfoItem
               icon={CheckCircle}
               label="Status"
-              value={category.status}
+              value={categoryStatus}
+            />
+
+            <InfoItem
+              icon={Layers}
+              label="Category Type"
+              value={
+                category?.isParent
+                  ? "Parent Category"
+                  : "Sub Category"
+              }
             />
 
           </div>
 
         </div>
-
 
         {/* DESCRIPTION + PERFORMANCE */}
 
@@ -481,20 +614,19 @@ export default function SubCategoryDetails() {
           </h2>
 
           <p className="mt-1 text-xs text-slate-400">
-            Category description and product distribution
+            Category description and product
+            distribution
           </p>
-
 
           {/* DESCRIPTION */}
 
           <div className="mt-5 rounded-xl bg-slate-50 p-4">
 
             <p className="text-sm leading-6 text-slate-600">
-              {category.description}
+              {categoryDescription}
             </p>
 
           </div>
-
 
           {/* PRODUCT DISTRIBUTION */}
 
@@ -507,11 +639,10 @@ export default function SubCategoryDetails() {
               </p>
 
               <p className="text-xs text-slate-400">
-                {category.products} Total
+                {totalProducts} Total
               </p>
 
             </div>
-
 
             <div className="mt-4">
 
@@ -520,11 +651,10 @@ export default function SubCategoryDetails() {
                 <div
                   className="h-full rounded-full bg-emerald-500"
                   style={{
-                    width: `${
-                      (category.activeProducts /
-                        category.products) *
+                    width: `${Math.min(
+                      activePercentage,
                       100
-                    }%`,
+                    )}%`,
                   }}
                 />
 
@@ -532,8 +662,9 @@ export default function SubCategoryDetails() {
 
             </div>
 
-
             <div className="mt-4 flex flex-wrap gap-5 text-xs">
+
+              {/* ACTIVE */}
 
               <div className="flex items-center gap-2">
 
@@ -544,11 +675,12 @@ export default function SubCategoryDetails() {
                 </span>
 
                 <span className="font-semibold text-slate-700">
-                  {category.activeProducts}
+                  {activeProducts}
                 </span>
 
               </div>
 
+              {/* INACTIVE */}
 
               <div className="flex items-center gap-2">
 
@@ -559,8 +691,39 @@ export default function SubCategoryDetails() {
                 </span>
 
                 <span className="font-semibold text-slate-700">
-                  {category.products -
-                    category.activeProducts}
+                  {inactiveProducts}
+                </span>
+
+              </div>
+
+              {/* BLOCKED */}
+
+              <div className="flex items-center gap-2">
+
+                <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+
+                <span className="text-slate-500">
+                  Blocked
+                </span>
+
+                <span className="font-semibold text-slate-700">
+                  {blockedProducts}
+                </span>
+
+              </div>
+
+              {/* DRAFT */}
+
+              <div className="flex items-center gap-2">
+
+                <span className="h-2.5 w-2.5 rounded-full bg-slate-400" />
+
+                <span className="text-slate-500">
+                  Draft
+                </span>
+
+                <span className="font-semibold text-slate-700">
+                  {draftProducts}
                 </span>
 
               </div>
@@ -573,364 +736,110 @@ export default function SubCategoryDetails() {
 
       </div>
 
-
       {/* ------------------------------------------
-          SUB CATEGORIES
+          PRODUCT
       ------------------------------------------ */}
 
-      {/* <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {product && (
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <div className="flex items-center justify-between p-5">
+          <div className="flex items-center justify-between p-5">
 
-          <div>
+            <div>
 
-            <h2 className="font-semibold text-slate-900">
-              Sub Categories
-            </h2>
+              <h2 className="font-semibold text-slate-900">
+                Product in This Category
+              </h2>
 
-            <p className="mt-1 text-xs text-slate-400">
-              Categories under {category.name}
-            </p>
+              <p className="mt-1 text-xs text-slate-400">
+                Product information from this category
+              </p>
+
+            </div>
+
+            <StatusBadge
+              status={productStatus}
+            />
 
           </div>
 
-          <button className="text-sm font-medium text-slate-700 hover:underline">
-            Add Sub Category
-          </button>
+          <div className="overflow-x-auto">
 
-        </div>
+            <table className="w-full">
 
+              <thead>
 
-        <div className="overflow-x-auto">
+                <tr className="border-y border-slate-100 bg-slate-50">
 
-          <table className="w-full">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Product
+                  </th>
 
-            <thead>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Shop
+                  </th>
 
-              <tr className="border-y border-slate-100 bg-slate-50">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Price
+                  </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Category
-                </th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Discount
+                  </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Products
-                </th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Final Price
+                  </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Shops
-                </th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Stock
+                  </th>
 
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Status
-                </th>
-
-                <th className="px-5 py-3 text-right text-xs font-semibold text-slate-500">
-                  Action
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody>
-
-              {subCategories.map((sub) => (
-
-                <tr
-                  key={sub.id}
-                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
-                >
-
-                  <td className="px-5 py-4">
-
-                    <p className="text-sm font-semibold text-slate-800">
-                      {sub.name}
-                    </p>
-
-                    <p className="mt-1 text-xs text-slate-400">
-                      {sub.id}
-                    </p>
-
-                  </td>
-
-
-                  <td className="px-5 py-4 text-sm text-slate-600">
-                    {sub.products}
-                  </td>
-
-
-                  <td className="px-5 py-4 text-sm text-slate-600">
-                    {sub.shops}
-                  </td>
-
-
-                  <td className="px-5 py-4">
-
-                    <StatusBadge
-                      status={sub.status}
-                    />
-
-                  </td>
-
-
-                  <td className="px-5 py-4 text-right">
-
-                    <button
-                      onClick={() =>
-                        navigate(
-                          `/superadmin/categories/${sub.id}`
-                        )
-                      }
-                      className="text-sm font-medium text-slate-700 hover:underline"
-                    >
-                      View
-                    </button>
-
-                  </td>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
+                    Status
+                  </th>
 
                 </tr>
 
-              ))}
+              </thead>
 
-            </tbody>
+              <tbody>
 
-          </table>
+                <tr className="border-b border-slate-100 hover:bg-slate-50">
 
-        </div>
-
-      </div> */}
-
-
-      {/* ------------------------------------------
-          TOP PRODUCTS
-      ------------------------------------------ */}
-
-      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-        <div className="flex items-center justify-between p-5">
-
-          <div>
-
-            <h2 className="font-semibold text-slate-900">
-              Top Products
-            </h2>
-
-            <p className="mt-1 text-xs text-slate-400">
-              Best selling products in this category
-            </p>
-
-          </div>
-
-          <button className="text-sm font-medium text-slate-700 hover:underline">
-            View All
-          </button>
-
-        </div>
-
-
-        <div className="overflow-x-auto">
-
-          <table className="w-full">
-
-            <thead>
-
-              <tr className="border-y border-slate-100 bg-slate-50">
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Product
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Shop
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Price
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Sales
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Stock
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Status
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody>
-
-              {products.map((product) => (
-
-                <tr
-                  key={product.id}
-                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
-                >
-
-                  <td className="px-5 py-4">
-
-                    <p className="text-sm font-semibold text-slate-800">
-                      {product.name}
-                    </p>
-
-                    <p className="mt-1 text-xs text-slate-400">
-                      {product.id}
-                    </p>
-
-                  </td>
-
-
-                  <td className="px-5 py-4 text-sm text-slate-600">
-                    {product.shop}
-                  </td>
-
-
-                  <td className="px-5 py-4 text-sm font-semibold text-slate-700">
-                    {product.price}
-                  </td>
-
-
-                  <td className="px-5 py-4 text-sm text-slate-600">
-                    {product.sales}
-                  </td>
-
-
-                  <td className="px-5 py-4">
-
-                    <span
-                      className={`text-sm font-semibold ${
-                        product.stock < 20
-                          ? "text-red-600"
-                          : "text-emerald-600"
-                      }`}
-                    >
-                      {product.stock}
-                    </span>
-
-                  </td>
-
-
-                  <td className="px-5 py-4">
-
-                    <StatusBadge
-                      status={product.status}
-                    />
-
-                  </td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-
-      {/* ------------------------------------------
-          SHOPS USING CATEGORY
-      ------------------------------------------ */}
-
-      <div className="mt-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-        <div className="flex items-center justify-between p-5">
-
-          <div>
-
-            <h2 className="font-semibold text-slate-900">
-              Shops Using This Category
-            </h2>
-
-            <p className="mt-1 text-xs text-slate-400">
-              Shops selling products under this category
-            </p>
-
-          </div>
-
-          <button className="text-sm font-medium text-slate-700 hover:underline">
-            View All
-          </button>
-
-        </div>
-
-
-        <div className="overflow-x-auto">
-
-          <table className="w-full">
-
-            <thead>
-
-              <tr className="border-y border-slate-100 bg-slate-50">
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Shop
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Owner
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Products
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Sales
-                </th>
-
-                <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500">
-                  Status
-                </th>
-
-                <th className="px-5 py-3 text-right text-xs font-semibold text-slate-500">
-                  Action
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody>
-
-              {shops.map((shop) => (
-
-                <tr
-                  key={shop.id}
-                  className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
-                >
+                  {/* PRODUCT */}
 
                   <td className="px-5 py-4">
 
                     <div className="flex items-center gap-3">
 
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
+                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
 
-                        <Store size={17} />
+                        {productImage ? (
+                          <img
+                            src={productImage}
+                            alt={product.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center">
+                            <Package
+                              size={20}
+                              className="text-slate-400"
+                            />
+                          </div>
+                        )}
 
                       </div>
 
                       <div>
 
                         <p className="text-sm font-semibold text-slate-800">
-                          {shop.name}
+                          {product.name}
                         </p>
 
-                        <p className="text-xs text-slate-400">
-                          {shop.id}
+                        <p className="mt-1 text-xs text-slate-400">
+                          SKU: {product.sku}
                         </p>
 
                       </div>
@@ -939,57 +848,140 @@ export default function SubCategoryDetails() {
 
                   </td>
 
+                  {/* SHOP */}
 
                   <td className="px-5 py-4 text-sm text-slate-600">
-                    {shop.owner}
+                    {shopName}
                   </td>
 
-
-                  <td className="px-5 py-4 text-sm text-slate-600">
-                    {shop.products}
-                  </td>
-
+                  {/* PRICE */}
 
                   <td className="px-5 py-4 text-sm font-semibold text-slate-700">
-                    {shop.sales}
+                    Rs. {product.price?.toLocaleString()}
                   </td>
 
+                  {/* DISCOUNT */}
+
+                  <td className="px-5 py-4 text-sm text-slate-600">
+                    {product.discount || 0}%
+                  </td>
+
+                  {/* FINAL PRICE */}
+
+                  <td className="px-5 py-4 text-sm font-semibold text-emerald-600">
+                    Rs.{" "}
+                    {product.finalPrice?.toLocaleString()}
+                  </td>
+
+                  {/* STOCK */}
 
                   <td className="px-5 py-4">
 
-                    <StatusBadge
-                      status={shop.status}
-                    />
+                    <span
+                      className={`text-sm font-semibold ${
+                        stock <= stockLimit
+                          ? "text-red-600"
+                          : "text-emerald-600"
+                      }`}
+                    >
+                      {stock}
+                    </span>
 
                   </td>
 
+                  {/* STATUS */}
 
-                  <td className="px-5 py-4 text-right">
-
-                    <button
-                      onClick={() =>
-                        navigate(
-                          `/superadmin/shops/${shop.id}`
-                        )
-                      }
-                      className="text-sm font-medium text-slate-700 hover:underline"
-                    >
-                      View Shop
-                    </button>
-
+                  <td className="px-5 py-4">
+                    <StatusBadge
+                      status={productStatus}
+                    />
                   </td>
 
                 </tr>
 
-              ))}
+              </tbody>
 
-            </tbody>
+            </table>
 
-          </table>
+          </div>
 
         </div>
+      )}
 
-      </div>
+      {/* ------------------------------------------
+          PRODUCT STOCK INFORMATION
+      ------------------------------------------ */}
+
+      {stockStats && (
+        <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <h2 className="font-semibold text-slate-900">
+                Stock Information
+              </h2>
+
+              <p className="mt-1 text-xs text-slate-400">
+                Current inventory information
+              </p>
+
+            </div>
+
+            <Package
+              size={20}
+              className="text-slate-400"
+            />
+
+          </div>
+
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+            <StatCard
+              title="Current Stock"
+              value={stock}
+              description="Available units"
+              icon={Package}
+            />
+
+            <StatCard
+              title="Stock Limit"
+              value={stockLimit}
+              description="Low stock threshold"
+              icon={AlertCircle}
+            />
+
+            <StatCard
+              title="Stock Status"
+              value={
+                stockStats.stockStatus || "Unknown"
+              }
+              description="Current inventory state"
+              icon={CheckCircle}
+            />
+
+            <StatCard
+              title="Shop"
+              value={shopName}
+              description="Product shop"
+              icon={Store}
+            />
+
+          </div>
+
+        </div>
+      )}
+
+      {/* ------------------------------------------
+          API FETCHING INDICATOR
+      ------------------------------------------ */}
+
+      {isFetching && (
+        <div className="fixed bottom-5 right-5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-medium text-white shadow-lg">
+          Updating...
+        </div>
+      )}
 
     </div>
   );

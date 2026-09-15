@@ -38,13 +38,14 @@ const navigate=useNavigate();
   // ==========================================
   // EXTRACT DATA
   // ==========================================
+    console.log("poiuyfdkmn ", superCategoryData);
 
   const categoryData =
-    superCategoryData?.data?.[0]?.categoryStats ?? [];
+    superCategoryData?.data?.categoryStats ?? [];
 
   const categoryOverview =
-    superCategoryData?.data?.[0]?.categoryOvervies?.[0] ?? {};
-
+    superCategoryData?.data?.categoryOverviews ?? {};
+console.log("poiuyfdkmnjh", categoryOverview);
   // ==========================================
   // PARENT CATEGORIES
   // ==========================================
@@ -224,7 +225,7 @@ const navigate=useNavigate();
           </p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-2">
-            {categoryOverview.totalCategories ?? 0}
+            {categoryOverview?.totalCategories ?? 0}
           </h2>
 
         </div>
@@ -771,7 +772,7 @@ const navigate=useNavigate();
                               text-gray-500
                               hover:text-blue-600
                             "
-                          onClick={() =>category.isparent? '/':navigate(`/categoryDetails/${category._id}`)}>
+                          onClick={() =>category.isParent? navigate(`/categoryDetails/${category._id}`):navigate(`/subcategoryDetails/${category._id}`)}>
                             <Eye size={17} />
                           </button>
 

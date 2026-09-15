@@ -17,6 +17,7 @@ import { OrderAggregate } from "../controller/admin/aggregate/order.aggregate.js
 // Super Admin
 import {
   getProductAggregateForSuperAdmin,
+  getProductAggregateForSuperAdminForCategory,
   getProductAggregateForSuperAdminForShop,
   getProductAggregateForSuperAdminForShopCategory,
 } from "../controller/superAdmin/aggregate/product.aggregate.js";
@@ -36,6 +37,8 @@ import {
   dateAggregateForSuperAdmin,
   dateAggregateForSuperAdminForShop,
 } from "../controller/superAdmin/aggregate/date.aggregate.js";
+import { shopAggregateForSuperAdminforShopId } from "../controller/superAdmin/aggregate/shop.aggregate.js";
+import { dashboardAggregateForSuperAdmin } from "../controller/superAdmin/aggregate/dashboard.aggregate.js";
 
 const router = express.Router();
 
@@ -68,7 +71,6 @@ router.get(
   roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "owner"]),
   dateAggregate,
 );
-
 
 router.get(
   "/productAggregateForSuperAdmin",
@@ -104,7 +106,6 @@ router.get(
   dateAggregateForSuperAdmin,
 );
 
-
 // Product by Shop
 router.get(
   "/productAggregateForShop/:shopId",
@@ -121,6 +122,12 @@ router.get(
   getProductAggregateForSuperAdminForShopCategory,
 );
 
+router.get(
+  "/productAggregateForCategory/:categoryId",
+  authMiddleware,
+  roleMiddleware(["superAdmin"]),
+  getProductAggregateForSuperAdminForCategory,
+);
 // Order by Shop
 router.get(
   "/orderAggregateForShop/:shopId",
@@ -143,6 +150,19 @@ router.get(
   authMiddleware,
   roleMiddleware(["superAdmin"]),
   dateAggregateForSuperAdminForShop,
+);
+
+router.get(
+  "/shopAggregateForSuperAdminforShopId/:shopId",
+  authMiddleware,
+  roleMiddleware(["superAdmin"]),
+  shopAggregateForSuperAdminforShopId,
+);
+router.get(
+  "/dashboardAggregateForSuperAdmin",
+  authMiddleware,
+  roleMiddleware(["superAdmin"]),
+  dashboardAggregateForSuperAdmin,
 );
 
 export const serviceRouter = router;

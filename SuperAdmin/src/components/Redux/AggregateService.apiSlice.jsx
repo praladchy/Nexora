@@ -112,7 +112,13 @@ export const serviceAggregateSlice = createApi({
       }),
       providesTags: ["ServiceAggregate"],
     }),
-
+    getProductAggregateForSuperAdminForCategory: builder.query({
+      query: (categoryId ) => ({
+        url: `service/productAggregateForCategory/${categoryId}`,
+        method: "GET",
+      }),
+      providesTags: ["ServiceAggregate"],
+    }),
     // GET /service/orderAggregateForShop/:shopId
     getOrderAggregateForShop: builder.query({
       query: (shopId) => ({
@@ -139,6 +145,20 @@ export const serviceAggregateSlice = createApi({
       }),
       providesTags: ["ServiceAggregate"],
     }),
+    getShopAggregateForSuperAdminforShopId: builder.query({
+      query: (shopId) => ({
+        url: `service/shopAggregateForSuperAdminforShopId/${shopId}`,
+        method: "GET",
+      }),
+      providesTags: ["ServiceAggregate"],
+    }),
+    getDashboardAggregateForSuperAdmin: builder.query({
+      query: () => ({
+        url: "service/dashboardAggregateForSuperAdmin",
+        method: "GET",
+      }),
+      providesTags: ["ServiceAggregate"],
+    })
   }),
 });
 
@@ -155,6 +175,7 @@ export const {
   useGetCategoryAggregateForSuperAdminQuery,
   useGetDateAggregateForSuperAdminQuery,
   useGetCategoryAggregateForParentCategorySuperAdminQuery,
+  useGetProductAggregateForSuperAdminForCategoryQuery,
 
   // Super Admin - Shop
   useGetProductAggregateForSuperAdminForShopQuery,
@@ -162,4 +183,6 @@ export const {
   useGetOrderAggregateForShopQuery,
   useGetCategoryAggregateForSuperAdminForShopQuery,
   useGetDateAggregateForSuperAdminForShopQuery,
+  useGetShopAggregateForSuperAdminforShopIdQuery,
+  useGetDashboardAggregateForSuperAdminQuery
 } = serviceAggregateSlice;
