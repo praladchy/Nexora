@@ -434,6 +434,15 @@ export const googleLogin = async (req, res) => {
       await user.save();
     }
 
+     const safeuser = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      permissions: user.permissions,
+      shop:user.shops
+    };
     const accessToken = await generateAccessToken(user);
     const refreshToken = await generaterefreshToken(user);
     user.refreshToken = refreshToken;
@@ -447,7 +456,9 @@ export const googleLogin = async (req, res) => {
     });
     res.json({
       success: true,
+      // safeuser,
       user,
+      accessToken
     });
   } catch (err) {
     res.status(401).json({
