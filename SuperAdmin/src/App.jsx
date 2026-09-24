@@ -2,13 +2,12 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRefreshTokenQuery } from "./components/Redux/auth.slice";
-import { setCredentials } from "./components/Redux/userData.slice";
+import { setCredentials,setInitialized } from "./components/Redux/userData.slice";
 
 import Navbar from "./components/Navbar";
 
 import AddProduct from "./pages/product/AddProduct";
 import MarketPlace from "./pages/MarketPlace";
-import ProductManag from "./pages/product/list.product.jsx";
 import VendorDashboard from "./pages/VendorDashboard";
 import Verification from "./pages/Verification";
 import SignUp from "./pages/SignUp";
@@ -34,15 +33,17 @@ import ProductList from "./pages/product/list.product.jsx";
 import CreateShopAdmin from "./pages/shop/createAdmin.shop.jsx";
 import CreateShopOwner from "./pages/shop/CreateShopOwner.jsx";
 import ProductDetails from "./pages/product/productDetails.jsx";
-import NotificationList from "./components/notification/NotificationList.jsx";
 import CategoryDetails from "./pages/category/CategoryDetails.jsx";
 import SubCategoryDetails from "./pages/category/SubCategoryDetails.jsx";
 import ShopDetails from "./pages/shop/shopDetails.jsx";
-
+import { socket } from "./service/socket.service.jsx";
+import { NotificationList } from "./pages/notification/NotificationList.jsx";
+import { notificationApiSlice } from "./components/Redux/notification.apiSlice.jsx";
+import { NotFound } from "./pages/NotFound.jsx";
 function App() {
   const dispatch = useDispatch();
 
-  const { data, isSuccess, isLoading } = useRefreshTokenQuery();
+  const { data, isSuccess, isLoading, isFetching } = useRefreshTokenQuery();
 
   useEffect(() => {
     if (isSuccess && data?.safeuser && data?.accessToken) {
@@ -52,9 +53,47 @@ function App() {
           accessToken: data.accessToken,
         }),
       );
+      // setCredentials internally sets isInitialized = true
+    } else if (!isLoading && !isFetching) {
+      dispatch(setInitialized()); // no session — but still mark as initialized
     }
-  }, [isSuccess, data, dispatch]);
-
+  }, [isSuccess, isLoading, isFetching, data, dispatch]);
+ useEffect(() => {
+     if (!data?.accessToken) {
+       return;
+     }
+ 
+     socket.auth = {
+       accessToken: data.accessToken,
+     };
+ 
+     socket.connect();
+ 
+     const handleWelcome = (data) => {
+       console.log("welcome", data);
+     };
+ 
+     const handleNotification = (data) => {
+       console.log("newNotification", data);
+       notificationApiSlice.util.updateQueryData(
+         "getNotification",
+         undefined,
+         (draft) => {
+           draft.data.unshift(data);
+         },
+       );
+     };
+ 
+     socket.on("welcome", handleWelcome);
+     socket.on("newNotification", handleNotification);
+ 
+     return () => {
+       socket.off("welcome", handleWelcome);
+       socket.off("newNotification", handleNotification);
+ 
+       socket.disconnect();
+     };
+   }, [data?.accessToken]);
   const user = useSelector((state) => state.auth.user);
 
   if (isLoading) {
@@ -64,35 +103,35 @@ function App() {
   return (
     <Routes>
       {/* Protected Routes */}
-      {user && (
-        <Route element={<Navbar />}>
-          {privateRoutes.map((route, idx) =>
-            route.index ? (
-              <Route
-                key={idx}
-                index
-                element={
-                  <PrivateRoutes
-                    element={route.element}
-                    permission={route.permission}
-                  />
-                }
-              />
-            ) : (
-              <Route
-                key={idx}
-                path={route.path}
-                element={
-                  <PrivateRoutes
-                    element={route.element}
-                    permission={route.permission}
-                  />
-                }
-              />
-            ),
-          )}
-        </Route>
-      )}
+      <Route element={<Navbar />}>
+        {privateRoutes.map((route, idx) =>
+          route.index ? (
+            <Route
+              key={idx}
+              index
+              element={
+                <PrivateRoutes
+                  element={route.element}
+                  permission={route.permission}
+                  path="index"
+                />
+              }
+            />
+          ) : (
+            <Route
+              key={idx}
+              path={route.path}
+              element={
+                <PrivateRoutes
+                  element={route.element}
+                  permission={route.permission}
+                  path={route.path}
+                />
+              }
+            />
+          ),
+        )}
+      </Route>
 
       {/* Public Routes */}
       {publicRoutes.map((route, idx) => (
@@ -132,11 +171,7 @@ export const privateRoutes = [
     element: <AddProduct />,
     permission: "product.create",
   },
-  {
-    path: "/product/list",
-    element: <ProductManag />,
-    permission: "product.list",
-  },
+
   {
     path: "/marketplace",
     element: <MarketPlace />,
@@ -219,11 +254,7 @@ export const privateRoutes = [
     element: <ProductList />,
     permission: "product.list",
   },
-  {
-    path: "/category/list",
-    element: <ListCategory />,
-    permission: "category.list",
-  },
+
   {
     path: "/shop/:id",
     element: <ShopDetails />,
@@ -236,7 +267,7 @@ export const privateRoutes = [
 
     permission: "shop.view",
   },
-    {
+  {
     path: "/subcategoryDetails/:id",
     element: <SubCategoryDetails />,
 
@@ -250,11 +281,13 @@ export const privateRoutes = [
   {
     path: "/notification",
     element: <NotificationList />,
-    permission: "product.view",
+    permission: "product.list",
   },
 ];
 
 export const publicRoutes = [
+  { path: "/*",
+    element: <NotFound />,},
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/forgot-password/:userId", element: <ForgotPassword /> },

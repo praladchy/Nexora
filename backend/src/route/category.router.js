@@ -19,7 +19,7 @@ const router = express.Router();
 router.post(
   "/createCategory",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   checkPermission("category.create"),
   upload.array("images", 5),
   createCategory,
@@ -27,41 +27,41 @@ router.post(
 router.get(
   "/getCategory",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user","owner"]),
   getCategory,
 );
 
 router.get(
   "/getParentCategory",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user","owner"]),
   getParentCategory,
 );
 router.get(
   "/getCategoryByParentId/:parentId",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin", "user",,"owner"]),
   getCategoryByParentId,
 );
 
 router.get(
   "/shop/:shopId",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   checkPermission("category.view"),
   getCategoryByShop,
 );
 router.get(
   "/:slug",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   checkPermission("category.view"),
   getCategoryBySlug,
 );
 router.patch(
   "/:id",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   checkPermission("category.update"),
   upload.array("images", 5),
   updateCategory,
@@ -69,7 +69,7 @@ router.patch(
 router.delete(
   "/:id",
   authMiddleware,
-  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin"]),
+  roleMiddleware(["superAdmin", "admin", "vendor", "vendorAdmin","owner"]),
   checkPermission("category.delete"),
   deleteCategory,
 );

@@ -8,6 +8,7 @@ const ProductList = () => {
   const { data } = useGetProductAggregateQuery();
 
   const productAggregateData = data?.data.stockStats || [];
+  console.log("productAggregateData dfghjk", data);
 
   const navigate = useNavigate();
   // Show 6 initially, otherwise show everything
@@ -18,7 +19,7 @@ const ProductList = () => {
   return (
     <div className="bg-white border p-4">
       <div className="flex justify-between mb-4">
-        <h3 className="font-semibold">Top-Selling Products</h3>
+        <h3 className="font-semibold">Products Lists</h3>
 
         {productAggregateData.length > 6 && (
           <button

@@ -20,7 +20,8 @@ import ProductCategoryList from "./components/product/ProductCategoryList";
 import CategoryProducts from "./page/category";
 import MyOrders from "./page/Order";
 import OrderDetails from "./components/Order/OrderDetails";
-// import { socket } from "./config/socketIo.config";
+import { socket } from "./config/socketIo";
+
 function App() {
   const dispatch = useDispatch();
   const { data, isSuccess, isLoading } = useRefreshTokenQuery();
@@ -34,17 +35,24 @@ function App() {
       );
     }
   }, [isSuccess, data, dispatch]);
+  console.log(data?.accessToken);
 
-  // useEffect(() => {
-  //   socket.on("connection", (data) => {
-  //     console.log(data);
-  //   });
-  //   socket.on("welcome", (data) => {
-  //     console.log(data);
-  //   });
+  useEffect(() => {
+     console.log("EFFECT RUN");
+  console.log("data:", data);
+  console.log("accessToken:", data?.accessToken);
+    if (!data?.accessToken) return;
 
-  //   return () => socket.off("connect");
-  // }, []);
+    socket.auth = { accessToken: data?.accessToken };
+    socket.connect();
+    socket.on("welcome", (data) => {
+      console.log("welcome", data);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [data?.accessToken]);
 
   const user = useSelector((state) => state.auth.user);
 

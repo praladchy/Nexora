@@ -4,7 +4,7 @@ import express from "express";
 const app = express();
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import http from "http";
+import http from "http"
 
 import { connectDb } from "./config/db.config.js";
 import { authRouter } from "./route/auth.router.js";
@@ -17,13 +17,10 @@ import { vendorRouter } from "./route/vendor.router.js";
 import whishListRouter from "./route/whishList.router.js";
 import cartRouter from "./route/cart.router.js";
 import orderRouter from "./route/order.router.js";
-import { serviceRouter } from "./route/service.router.js";
-import { socketIo } from "./service/socketio.js";
+import { aggregateRouter } from "./route/aggregate.router.js";
+import { SocketIO} from "./service/socketio.js";
+import { notificationRouter } from "./route/notification.router.js";
 const PORT = process.env.PORT || 8000;
-
-const server = http.createServer(app);
-
-socketIo(server);
 
 app.use(
   cors({
@@ -40,9 +37,13 @@ app.use(
   }),
 );
 
+
+const server=http.createServer(app)
+ const io=SocketIO(server)
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+ app.set("io",io)
 
 app.use("/api/auth", authRouter);
 app.use("/api/shop", shoprouter);
@@ -53,7 +54,8 @@ app.use("/api/vendor", vendorRouter);
 app.use("/api/whishList", whishListRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
-app.use("/api/service", serviceRouter);
+app.use("/api/service", aggregateRouter);
+app.use("/api/notification",notificationRouter)
 // app.use("/api/location",locationRouter)
 // connectDb().then(() => {
 //   superAdmin();

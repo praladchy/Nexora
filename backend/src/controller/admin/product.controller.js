@@ -1,8 +1,10 @@
 import Product from "../../models/product.model.js";
+import { shopNotification } from "../../service/notification.service.js";
 import { generateSlug } from "../../utils/slug.js";
 import { uploadToCloudinary } from "../../utils/uploadCloudinary.js";
  export const createProduct = async (req, res) => {
   try {
+    const io = req.app.get("io");
     // req.body from multer + formData
     const {
       name,
@@ -76,6 +78,15 @@ import { uploadToCloudinary } from "../../utils/uploadCloudinary.js";
     });
 
     await newProduct.save();
+    shopNotification({
+          shop: newProduct.shop,
+          product: newProduct._id,
+          type: "create.Product",
+          title: "Product created",
+          message: "Product create successfully",
+          io,
+          link:`product/${newProduct._id}`
+        });
 
     return res.status(201).json({
       message: "Product created successfully",

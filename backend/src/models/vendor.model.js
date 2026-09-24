@@ -10,7 +10,12 @@ const vendorSchema = new mongoose.Schema(
     vendorName: { type: String, required: true },
     email: String,
     phone: String,
-
+    admins: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     status: {
       type: String,
       enum: ["PENDING", "ACTIVE", "SUSPENDED"],

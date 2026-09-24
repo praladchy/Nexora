@@ -5,8 +5,10 @@ import Shop from "../../models/shop.model.js";
 import cloudinary from "../../config/cloudinary.js";
 import mongoose from "mongoose";
 import otp from "../../models/otpVerification.model.js";
-
+import { createShopNotification } from "../../service/notification.service.js";
 export const createShop = async (req, res) => {
+const io=req.app.get('io');
+  
   try {
     const { name, email, phone, description, address } = req.body;
 
@@ -51,8 +53,15 @@ export const createShop = async (req, res) => {
       address,
       logo: logoUrl,
     });
-
     await newShop.save();
+    createShopNotification({
+      shop: newShop._id,
+      message: "Shop created successfully",
+      title: "Shop created successfully",
+      type: "shop.Create",
+      io,
+      link:`shop/${newShop._id}`
+    });
 
     return res.status(201).json({
       message: "Shop created successfully",
@@ -443,7 +452,7 @@ export const assignAdmin = async (req, res) => {
         success: false,
       });
     const shop = await Shop.findById(shopId).populate("admins");
-    console.log("lkjh",shop);
+    console.log("lkjh", shop);
     if (!shop)
       return res.status(400).json({
         message: "Shop is not registered",

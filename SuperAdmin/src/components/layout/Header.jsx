@@ -9,6 +9,8 @@ import {
   LogOut,
   ChevronDown,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "../Redux/auth.slice";
 import { logout } from "../Redux/userData.slice";
@@ -18,6 +20,7 @@ const Header = () => {
 
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [authLogout , {isLoading}] = useLogoutMutation();
   console.log("header",user);
   // const userProfile = useSelector((state) => state.user.data);
@@ -85,7 +88,7 @@ const Header = () => {
             isDarkMode
               ? "hover:bg-slate-800 border-slate-700"
               : "hover:bg-gray-100 border-gray-200"
-          }`}
+          }`} onClick={()=>navigate("/notification")}
         >
           <Bell size={18} />
           <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold border-2 border-white dark:border-slate-900">
@@ -103,7 +106,7 @@ const Header = () => {
               <p
                 className={`text-sm font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}
               >
-                {user.firstName}
+                {user?.firstName}
               </p>
               <p className="text-xs text-gray-500">Admin</p>
             </div>

@@ -1,8 +1,10 @@
 import { generateSlug } from "../../utils/slug.js";
 import Category from "../../models/category.model.js";
 import { uploadToCloudinary } from "../../utils/uploadCloudinary.js";
+import { shopNotification } from "../../service/notification.service.js";
 export const createCategory = async (req, res) => {
   const { name, description, shop, isGlobal, isActive, isParent } = req.body;
+  const io = req.app.get("io");
   console.log("sdfghjkmnb", isParent);
   const parent = req.body.parent || null;
   const { createdBy } = req.user;
@@ -47,7 +49,17 @@ export const createCategory = async (req, res) => {
       createdBy,
       shop: shop || null,
     });
+
     await newCategory.save();
+    shopNotification({
+      shop: newCategory.shop,
+      category: newCategory._id,
+      type: "create.Category",
+      title: "Category created",
+      message: "category create successfully",
+      link:`/categoryDetails/${newCategory._id}`,
+      io,
+    });
     res.status(200).json({
       message: "Category created successfully",
       success: true,

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Bell,
   Check,
@@ -17,129 +17,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const initialNotifications = [
-  {
-    id: "NOT-001",
-    type: "order",
-    title: "New Order Received",
-    message:
-      "Order #ORD-1082 has been placed by Amit KC from Tech World.",
-    time: "5 minutes ago",
-    date: "Sep 06, 2026",
-    read: false,
-    priority: "normal",
-    relatedId: "ORD-1082",
-  },
-  {
-    id: "NOT-002",
-    type: "vendor",
-    title: "New Vendor Registration",
-    message:
-      "Sports Zone has submitted a new vendor registration request.",
-    time: "18 minutes ago",
-    date: "Sep 06, 2026",
-    read: false,
-    priority: "high",
-    relatedId: "VEN-004",
-  },
-  {
-    id: "NOT-003",
-    type: "product",
-    title: "Product Approval Required",
-    message:
-      "A new product from Fashion Hub is waiting for approval.",
-    time: "42 minutes ago",
-    date: "Sep 06, 2026",
-    read: false,
-    priority: "high",
-    relatedId: "PRD-109",
-  },
-  {
-    id: "NOT-004",
-    type: "shop",
-    title: "New Shop Created",
-    message:
-      "Tech World has created a new shop: Tech World Accessories.",
-    time: "1 hour ago",
-    date: "Sep 06, 2026",
-    read: true,
-    priority: "normal",
-    relatedId: "SHOP-002",
-  },
-  {
-    id: "NOT-005",
-    type: "user",
-    title: "New User Registered",
-    message:
-      "A new customer account has been registered on Nexora.",
-    time: "2 hours ago",
-    date: "Sep 06, 2026",
-    read: true,
-    priority: "normal",
-    relatedId: "USR-882",
-  },
-  {
-    id: "NOT-006",
-    type: "payment",
-    title: "Payment Completed",
-    message:
-      "Payment of Rs. 109,999 for order #ORD-1078 has been completed.",
-    time: "3 hours ago",
-    date: "Sep 06, 2026",
-    read: true,
-    priority: "normal",
-    relatedId: "ORD-1078",
-  },
-  {
-    id: "NOT-007",
-    type: "alert",
-    title: "Low Stock Alert",
-    message:
-      "iPhone 15 Pro at Tech World is running low on stock.",
-    time: "5 hours ago",
-    date: "Sep 06, 2026",
-    read: false,
-    priority: "high",
-    relatedId: "PRD-001",
-  },
-  {
-    id: "NOT-008",
-    type: "vendor",
-    title: "Vendor Suspended",
-    message:
-      "Beauty Store has been suspended due to policy violations.",
-    time: "Yesterday",
-    date: "Sep 05, 2026",
-    read: true,
-    priority: "high",
-    relatedId: "VEN-005",
-  },
-  {
-    id: "NOT-009",
-    type: "product",
-    title: "Product Approved",
-    message:
-      "MacBook Air M3 has been approved and is now visible on Nexora.",
-    time: "Yesterday",
-    date: "Sep 05, 2026",
-    read: true,
-    priority: "normal",
-    relatedId: "PRD-002",
-  },
-  {
-    id: "NOT-010",
-    type: "order",
-    title: "Order Delivered",
-    message:
-      "Order #ORD-1074 has been successfully delivered.",
-    time: "Yesterday",
-    date: "Sep 05, 2026",
-    read: true,
-    priority: "normal",
-    relatedId: "ORD-1074",
-  },
-];
+import { useGetNotificationQuery } from "../../../../SuperAdmin/src/components/Redux/notification.apiSlice";
 
 const typeConfig = {
   order: {
@@ -209,39 +87,43 @@ function PriorityBadge({ priority }) {
   );
 }
 
-export default function NotificationList() {
+export const NotificationList = () => {
   const navigate = useNavigate();
 
-  const [notifications, setNotifications] =
-    useState(initialNotifications);
+  const [notifications, setNotifications] = useState();
 
   const [activeTab, setActiveTab] = useState("all");
   const [typeFilter, setTypeFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [openMenu, setOpenMenu] = useState(null);
 
-  const unreadCount = notifications.filter(
-    (notification) => !notification.read
+  const { data, isloading, isFetching } = useGetNotificationQuery();
+
+  const notificationData = data?.data || [];
+  console.log("rtyuiolkn", notificationData);
+
+  useEffect(() => {
+    if (data?.success && Array.isArray(data.data)) {
+      setNotifications(data.data);
+    }
+  }, [data]);
+  const unreadCount = notificationData.filter(
+    (notification) => !notification.isRead,
   ).length;
 
   const filteredNotifications = useMemo(() => {
-    return notifications.filter((notification) => {
+    return notificationData.filter((notification) => {
       const tabMatch =
         activeTab === "all" ||
-        (activeTab === "unread" && !notification.read) ||
-        (activeTab === "read" && notification.read);
+        (activeTab === "unread" && !notification.isRead) ||
+        (activeTab === "read" && notification.isRead);
 
       const typeMatch =
-        typeFilter === "All" ||
-        notification.type === typeFilter;
+        typeFilter === "All" || notification.type === typeFilter;
 
       const searchMatch =
-        notification.title
-          .toLowerCase()
-          .includes(search.toLowerCase()) ||
-        notification.message
-          .toLowerCase()
-          .includes(search.toLowerCase());
+        notification.title?.toLowerCase().includes(search.toLowerCase()) ||
+        notification.message?.toLowerCase().includes(search.toLowerCase());
 
       return tabMatch && typeMatch && searchMatch;
     });
@@ -251,9 +133,9 @@ export default function NotificationList() {
     setNotifications((current) =>
       current.map((notification) =>
         notification.id === id
-          ? { ...notification, read: true }
-          : notification
-      )
+          ? { ...notification, isRead: true }
+          : notification,
+      ),
     );
   };
 
@@ -261,9 +143,9 @@ export default function NotificationList() {
     setNotifications((current) =>
       current.map((notification) =>
         notification.id === id
-          ? { ...notification, read: false }
-          : notification
-      )
+          ? { ...notification, isRead: false }
+          : notification,
+      ),
     );
   };
 
@@ -271,14 +153,14 @@ export default function NotificationList() {
     setNotifications((current) =>
       current.map((notification) => ({
         ...notification,
-        read: true,
-      }))
+        isRead: true,
+      })),
     );
   };
 
   const deleteNotification = (id) => {
     setNotifications((current) =>
-      current.filter((notification) => notification.id !== id)
+      current.filter((notification) => notification.id !== id),
     );
 
     setOpenMenu(null);
@@ -286,7 +168,7 @@ export default function NotificationList() {
 
   const clearReadNotifications = () => {
     setNotifications((current) =>
-      current.filter((notification) => !notification.read)
+      current.filter((notification) => !notification.read),
     );
   };
 
@@ -294,33 +176,23 @@ export default function NotificationList() {
     markAsRead(notification.id);
 
     if (notification.type === "vendor") {
-      navigate(
-        `/superadmin/vendors/${notification.relatedId}`
-      );
+      navigate(`/superadmin/vendors/${notification.relatedId}`);
     }
 
     if (notification.type === "shop") {
-      navigate(
-        `/superadmin/shops/${notification.relatedId}`
-      );
+      navigate(`/superadmin/shops/${notification.relatedId}`);
     }
 
     if (notification.type === "product") {
-      navigate(
-        `/superadmin/products/${notification.relatedId}`
-      );
+      navigate(`/superadmin/products/${notification.relatedId}`);
     }
 
     if (notification.type === "order") {
-      navigate(
-        `/superadmin/orders/${notification.relatedId}`
-      );
+      navigate(`/superadmin/orders/${notification.relatedId}`);
     }
 
     if (notification.type === "user") {
-      navigate(
-        `/superadmin/users/${notification.relatedId}`
-      );
+      navigate(`/superadmin/users/${notification.relatedId}`);
     }
   };
 
@@ -367,43 +239,36 @@ export default function NotificationList() {
       </div>
 
       {/* Stats */}
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">
-            Total Notifications
-          </p>
+      {/* <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm text-slate-500">Total Notifications</p>
 
-          <p className="mt-2 text-2xl font-bold text-slate-900">
-            {notifications.length}
-          </p>
-        </div>
+            <p className="mt-2 text-2xl font-bold text-slate-900">
+              {notifications.length}
+            </p>
+          </div>
 
-        <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
-          <p className="text-sm text-indigo-600">
-            Unread Notifications
-          </p>
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
+            <p className="text-sm text-indigo-600">Unread Notifications</p>
 
-          <p className="mt-2 text-2xl font-bold text-indigo-700">
-            {unreadCount}
-          </p>
-        </div>
+            <p className="mt-2 text-2xl font-bold text-indigo-700">
+              {unreadCount}
+            </p>
+          </div>
 
-        <div className="rounded-2xl border border-red-100 bg-red-50 p-5">
-          <p className="text-sm text-red-600">
-            Important
-          </p>
+          <div className="rounded-2xl border border-red-100 bg-red-50 p-5">
+            <p className="text-sm text-red-600">Important</p>
 
-          <p className="mt-2 text-2xl font-bold text-red-700">
-            {
-              notifications.filter(
-                (notification) =>
-                  notification.priority === "high" &&
-                  !notification.read
-              ).length
-            }
-          </p>
-        </div>
-      </div>
+            <p className="mt-2 text-2xl font-bold text-red-700">
+              {
+                notifications.filter(
+                  (notification) =>
+                    notification.priority === "high" && !notification.read,
+                ).length
+              }
+            </p>
+          </div>
+        </div> */}
 
       {/* Notification Card */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -419,11 +284,9 @@ export default function NotificationList() {
               }`}
             >
               All
-
-              <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
-                {notifications.length}
-              </span>
-
+              {/* <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
+                  {notifications.length}
+                </span> */}
               {activeTab === "all" && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
               )}
@@ -438,13 +301,11 @@ export default function NotificationList() {
               }`}
             >
               Unread
-
               {unreadCount > 0 && (
                 <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-600">
                   {unreadCount}
                 </span>
               )}
-
               {activeTab === "unread" && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
               )}
@@ -459,7 +320,6 @@ export default function NotificationList() {
               }`}
             >
               Read
-
               {activeTab === "read" && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600" />
               )}
@@ -502,19 +362,61 @@ export default function NotificationList() {
           </select>
         </div>
 
-        {/* Notification List */}
+        {/* admin
+  : 
+  null
+  category
+  : 
+  "6aafe063241c034b11f9c865"
+  createdAt
+  : 
+  "2026-09-20T13:32:19.926Z"
+  isRead
+  : 
+  false
+  link
+  : 
+  ""
+  message
+  : 
+  "category create successfully"
+  order
+  : 
+  null
+  owner
+  : 
+  null
+  product
+  : 
+  null
+  recipient
+  : 
+  "6a956bb1f54d6ebef6cfc675"
+  shop
+  : 
+  "6a82c4af4bbb64f4fe1f53cb"
+  title
+  : 
+  "Category created"
+  type
+  : 
+  "create.Category"
+  updatedAt
+  : 
+  "2026-09-20T13:32:19.926Z"
+  vendor
+  : 
+  null*/}
         <div>
           {filteredNotifications.length > 0 ? (
             filteredNotifications.map((notification) => {
-              const config =
-                typeConfig[notification.type] ||
-                typeConfig.alert;
+              const config = typeConfig[notification.type] || typeConfig.alert;
 
               return (
                 <div
-                  key={notification.id}
+                  key={notification._id}
                   className={`group relative border-b border-slate-100 p-4 transition sm:p-5 ${
-                    notification.read
+                    notification.isRead
                       ? "bg-white hover:bg-slate-50"
                       : "bg-indigo-50/40 hover:bg-indigo-50/70"
                   }`}
@@ -522,27 +424,23 @@ export default function NotificationList() {
                   <div className="flex gap-3 sm:gap-4">
                     {/* Unread indicator */}
                     <div className="flex w-2 shrink-0 justify-center">
-                      {!notification.read && (
+                      {!notification.isRead && (
                         <span className="mt-2 h-2.5 w-2.5 rounded-full bg-indigo-600" />
                       )}
                     </div>
 
                     {/* Icon */}
-                    <NotificationIcon
-                      type={notification.type}
-                    />
+                    <NotificationIcon type={notification.type} />
 
                     {/* Content */}
                     <button
-                      onClick={() =>
-                        handleNotificationClick(notification)
-                      }
+                      onClick={() => navigate(notification.link)}
                       className="min-w-0 flex-1 text-left"
                     >
                       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                         <h3
                           className={`text-sm ${
-                            notification.read
+                            notification.isRead
                               ? "font-medium text-slate-800"
                               : "font-semibold text-slate-900"
                           }`}
@@ -550,9 +448,9 @@ export default function NotificationList() {
                           {notification.title}
                         </h3>
 
-                        <PriorityBadge
-                          priority={notification.priority}
-                        />
+                        {/* <PriorityBadge
+                            priority={notification.priority}
+                          /> */}
                       </div>
 
                       <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
@@ -568,7 +466,7 @@ export default function NotificationList() {
 
                         <span className="flex items-center gap-1 text-xs text-slate-400">
                           <Clock size={12} />
-                          {notification.time}
+                          {notification.updatedAt}
                         </span>
                       </div>
                     </button>
@@ -578,9 +476,9 @@ export default function NotificationList() {
                       <button
                         onClick={() =>
                           setOpenMenu(
-                            openMenu === notification.id
+                            openMenu === notification._id
                               ? null
-                              : notification.id
+                              : notification._id,
                           )
                         }
                         className="rounded-lg p-2 text-slate-400 opacity-100 transition hover:bg-slate-100 hover:text-slate-700 sm:opacity-0 sm:group-hover:opacity-100"
@@ -588,12 +486,12 @@ export default function NotificationList() {
                         <MoreVertical size={18} />
                       </button>
 
-                      {openMenu === notification.id && (
+                      {openMenu === notification._id && (
                         <div className="absolute right-0 top-10 z-20 w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
-                          {!notification.read ? (
+                          {!notification.isRead ? (
                             <button
                               onClick={() => {
-                                markAsRead(notification.id);
+                                markAsRead(notification._id);
                                 setOpenMenu(null);
                               }}
                               className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
@@ -604,7 +502,7 @@ export default function NotificationList() {
                           ) : (
                             <button
                               onClick={() => {
-                                markAsUnread(notification.id);
+                                markAsUnread(notification._id);
                                 setOpenMenu(null);
                               }}
                               className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50"
@@ -615,11 +513,7 @@ export default function NotificationList() {
                           )}
 
                           <button
-                            onClick={() =>
-                              deleteNotification(
-                                notification.id
-                              )
-                            }
+                            onClick={() => deleteNotification(notification._id)}
                             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
                           >
                             <Trash2 size={16} />
@@ -682,6 +576,4 @@ export default function NotificationList() {
       </div>
     </div>
   );
-}
-
- 
+};

@@ -156,7 +156,7 @@ const Sidebar = () => {
           )}
         </div>
         {/* Product Management Dropdown */}
-        {/* <div className="space-y-1">
+          {/* <div className="space-y-1">
           <button
             onClick={() => setProductOpen(!productOpen)}
             className="w-full flex items-center justify-between px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -194,7 +194,7 @@ const Sidebar = () => {
               ))}
             </div>
           )}
-        </div> */}
+        </div>   */}
 
         <div className="space-y-1">
           <button
@@ -299,16 +299,16 @@ export default Sidebar;
 //     text: "Product List",
 //     permission: "product.list",
 //   },
-//   // {
-//   //   link: "/product/by-shop",
-//   //   text: "Products By Shop",
-//   //   permission: "product.list",
-//   // },
-//   // {
-//   //   link: "/product/by-category",
-//   //   text: "Products By Category",
-//   //   permission: "product.list",
-//   // },
+//   {
+//     link: "/product/by-shop",
+//     text: "Products By Shop",
+//     permission: "product.list",
+//   },
+//   {
+//     link: "/product/by-category",
+//     text: "Products By Category",
+//     permission: "product.list",
+//   },
 // ];
 export const mainMenu = [
   {

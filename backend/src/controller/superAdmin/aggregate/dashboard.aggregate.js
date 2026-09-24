@@ -20,8 +20,8 @@ export const dashboardAggregateForSuperAdmin = async (req, res) => {
       now.getDate() + 1
     );
 
-    console.log("Start Today:", startOfToday);
-    console.log("Start Tomorrow:", startOfTomorrow);
+    // console.log("Start Today:", startOfToday);
+    // console.log("Start Tomorrow:", startOfTomorrow);
 
     // ============================================
     // MAIN AGGREGATION

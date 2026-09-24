@@ -106,6 +106,12 @@ const Login = () => {
           
           <p>admin:lovable6028@gmail.com</p>
           <p>password:1234567890</p>
+          <NavLink
+            to="https://nexora-pralad1.vercel.app/"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            SuperAdmin
+          </NavLink>
         </div>
       </div>
     </div>
