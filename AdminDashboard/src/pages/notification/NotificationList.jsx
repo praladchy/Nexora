@@ -17,7 +17,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useGetNotificationQuery } from "../../../../SuperAdmin/src/components/Redux/notification.apiSlice";
+import { useGetNotificationQuery } from "../../components/Redux/notifiaction.apiSlice";
 
 const typeConfig = {
   order: {

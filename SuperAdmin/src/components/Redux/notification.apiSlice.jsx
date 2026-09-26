@@ -4,7 +4,7 @@ import { baseQueryWithInterceptor } from "./baseQueryInterceptor";
 export const notificationApiSlice = createApi({
   reducerPath: "notificationApiSlice",
   baseQuery: baseQueryWithInterceptor,
-  tagTypes: ["N otification"],
+  tagTypes: ["Notification"],
 
   endpoints: (builder) => ({
     getNotification: builder.query({
